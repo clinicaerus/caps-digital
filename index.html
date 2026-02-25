@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAPS Digital — UNIMED Consulting</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0d1f2d;
+      --teal: #0a7e6e;
+      --teal-light: #13a692;
+      --gold: #c9a84c;
+      --cream: #f7f3ed;
+      --white: #ffffff;
+      --muted: #6b7f8e;
+      --border: rgba(10,126,110,0.15);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--ink);
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.4rem 4rem;
+      background: rgba(13,31,45,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem; font-weight: 300; letter-spacing: 0.12em;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-logo span { color: var(--teal-light); }
+    .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+      color: rgba(255,255,255,0.6); text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover { color: var(--teal-light); }
+    .nav-cta {
+      font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase;
+      padding: 0.6rem 1.4rem;
+      border: 1px solid var(--teal);
+      color: var(--teal-light); text-decoration: none;
+      transition: all 0.3s;
+    }
+    .nav-cta:hover { background: var(--teal); color: var(--white); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; align-items: center;
+      padding: 8rem 4rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 70% 60% at 80% 50%, rgba(10,126,110,0.12) 0%, transparent 70%),
+                  radial-gradient(ellipse 40% 40% at 20% 80%, rgba(201,168,76,0.06) 0%, transparent 60%);
+    }
+    .hero-grid {
+      position: absolute; inset: 0;
+      background-image: 
+        linear-gradient(rgba(10,126,110,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(10,126,110,0.04) 1px, transparent 1px);
+      background-size: 60px 60px;
+    }
+    .hero-content { position: relative; z-index: 2; max-width: 700px; }
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.6rem;
+      font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--teal-light);
+      margin-bottom: 2rem;
+    }
+    .hero-tag::before {
+      content: '';
+      display: block; width: 2rem; height: 1px;
+      background: var(--teal-light);
+    }
+    h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3rem, 6vw, 5.5rem);
+      font-weight: 300; line-height: 1.08;
+      letter-spacing: -0.01em;
+      margin-bottom: 1.8rem;
+    }
+    h1 em { font-style: italic; color: var(--teal-light); }
+    .hero-sub {
+      font-size: 1.05rem; font-weight: 300; line-height: 1.7;
+      color: rgba(255,255,255,0.65);
+      max-width: 520px;
+      margin-bottom: 3rem;
+    }
+    .hero-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn-primary {
+      padding: 1rem 2.2rem;
+      background: var(--teal);
+      color: var(--white); text-decoration: none;
+      font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: all 0.3s;
+      border: none; cursor: pointer;
+    }
+    .btn-primary:hover { background: var(--teal-light); transform: translateY(-2px); }
+    .btn-secondary {
+      padding: 1rem 2.2rem;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.7); text-decoration: none;
+      font-size: 0.82rem; letter-spacing: 0.1em; text-transform: uppercase;
+      transition: all 0.3s;
+    }
+    .btn-secondary:hover { border-color: var(--teal-light); color: var(--teal-light); }
+
+    /* decorative circle */
+    .hero-orb {
+      position: absolute; right: -5rem; top: 50%; transform: translateY(-50%);
+      width: 600px; height: 600px;
+      border-radius: 50%;
+      border: 1px solid rgba(10,126,110,0.15);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hero-orb::before {
+      content: '';
+      position: absolute;
+      width: 420px; height: 420px;
+      border-radius: 50%;
+      border: 1px solid rgba(10,126,110,0.1);
+    }
+    .hero-orb::after {
+      content: '';
+      position: absolute;
+      width: 240px; height: 240px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(10,126,110,0.15), transparent 70%);
+    }
+    .orb-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.7rem; letter-spacing: 0.3em; text-transform: uppercase;
+      color: rgba(10,126,110,0.5);
+      position: absolute;
+      animation: orbit 30s linear infinite;
+    }
+
+    /* ── SECTION BASE ── */
+    section { padding: 7rem 4rem; }
+    .section-tag {
+      font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+      color: var(--teal-light);
+      margin-bottom: 1.2rem;
+    }
+    h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 4vw, 3.5rem);
+      font-weight: 300; line-height: 1.15;
+      margin-bottom: 1.5rem;
+    }
+    h2 em { font-style: italic; color: var(--teal-light); }
+
+    /* ── ABOUT ── */
+    .about {
+      background: rgba(255,255,255,0.025);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .about-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+      align-items: center;
+    }
+    .about-text p {
+      font-size: 1rem; line-height: 1.85; font-weight: 300;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 1.2rem;
+    }
+    .about-quote {
+      border-left: 2px solid var(--teal);
+      padding: 1.5rem 2rem;
+      margin-top: 2rem;
+    }
+    .about-quote p {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-style: italic; font-weight: 300;
+      line-height: 1.5;
+      color: var(--white) !important;
+      margin: 0 !important;
+    }
+    .about-quote cite {
+      display: block; margin-top: 0.8rem;
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--teal-light);
+    }
+
+    /* 8 dimensiones */
+    .dims-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+    }
+    .dim-card {
+      background: rgba(13,31,45,0.95);
+      padding: 1.5rem;
+      transition: background 0.3s;
+    }
+    .dim-card:hover { background: rgba(10,126,110,0.08); }
+    .dim-icon {
+      font-size: 1.2rem; margin-bottom: 0.6rem;
+    }
+    .dim-name {
+      font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--teal-light);
+      margin-bottom: 0.3rem;
+    }
+    .dim-q {
+      font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.5;
+    }
+
+    /* ── SERVICES ── */
+    .services { background: var(--cream); color: var(--ink); }
+    .services h2 { color: var(--ink); }
+    .services h2 em { color: var(--teal); }
+    .services .section-tag { color: var(--teal); }
+    .tiers {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .tier {
+      background: var(--white);
+      padding: 2.5rem;
+      position: relative;
+      transition: transform 0.3s;
+      border-bottom: 3px solid transparent;
+    }
+    .tier:hover { transform: translateY(-6px); }
+    .tier-basic { border-bottom-color: var(--teal); }
+    .tier-pro { border-bottom-color: var(--gold); background: var(--ink); color: var(--white); }
+    .tier-tele { border-bottom-color: #7c3aed; }
+    .tier-badge {
+      display: inline-block;
+      font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      margin-bottom: 1.5rem;
+    }
+    .tier-basic .tier-badge { background: rgba(10,126,110,0.1); color: var(--teal); }
+    .tier-pro .tier-badge { background: rgba(201,168,76,0.15); color: var(--gold); }
+    .tier-tele .tier-badge { background: rgba(124,58,237,0.1); color: #7c3aed; }
+    .tier h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.8rem; font-weight: 400;
+      margin-bottom: 0.4rem;
+    }
+    .tier-price {
+      font-size: 0.85rem; color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    .tier-pro .tier-price { color: rgba(255,255,255,0.5); }
+    .tier-features { list-style: none; }
+    .tier-features li {
+      font-size: 0.85rem; line-height: 1.6;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+      display: flex; align-items: flex-start; gap: 0.6rem;
+      color: #4a5568;
+    }
+    .tier-pro .tier-features li {
+      color: rgba(255,255,255,0.7);
+      border-bottom-color: rgba(255,255,255,0.06);
+    }
+    .tier-features li::before {
+      content: '—'; color: var(--teal); flex-shrink: 0;
+      font-size: 0.7rem; margin-top: 0.15rem;
+    }
+    .tier-pro .tier-features li::before { color: var(--gold); }
+
+    /* ── LIMITS ── */
+    .limits-box {
+      margin-top: 3rem;
+      padding: 2rem;
+      border: 1px solid rgba(201,168,76,0.2);
+      background: rgba(201,168,76,0.04);
+    }
+    .limits-box h4 {
+      font-size: 0.72rem; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1rem;
+    }
+    .limits-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; }
+    .limit-item {
+      font-size: 0.82rem; color: #64748b;
+      display: flex; gap: 0.5rem;
+    }
+    .limit-item::before { content: '⚠'; font-size: 0.7rem; }
+
+    /* ── DIFFERENTIATOR ── */
+    .diff {
+      position: relative; overflow: hidden;
+    }
+    .diff::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 60% 80% at 50% 50%, rgba(10,126,110,0.08), transparent);
+    }
+    .diff-inner { position: relative; z-index: 2; text-align: center; max-width: 800px; margin: 0 auto; }
+    .big-quote {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.8rem, 3.5vw, 3rem);
+      font-style: italic; font-weight: 300;
+      line-height: 1.3; color: var(--white);
+      margin: 2rem 0;
+    }
+    .big-quote em { color: var(--teal-light); font-style: normal; }
+    .diff-pillars {
+      display: flex; gap: 2rem; justify-content: center;
+      flex-wrap: wrap; margin-top: 3rem;
+    }
+    .pillar {
+      flex: 1; min-width: 200px; max-width: 240px;
+      padding: 2rem 1.5rem;
+      border: 1px solid var(--border);
+      text-align: left;
+      transition: border-color 0.3s;
+    }
+    .pillar:hover { border-color: var(--teal); }
+    .pillar-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3rem; font-weight: 300;
+      color: rgba(10,126,110,0.2);
+      line-height: 1; margin-bottom: 1rem;
+    }
+    .pillar h4 {
+      font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--teal-light); margin-bottom: 0.6rem;
+    }
+    .pillar p { font-size: 0.82rem; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+    /* ── CONTACT ── */
+    .contact {
+      background: rgba(255,255,255,0.02);
+      border-top: 1px solid var(--border);
+    }
+    .contact-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 6rem;
+      align-items: start;
+    }
+    .contact-info p {
+      font-size: 0.9rem; line-height: 1.8; font-weight: 300;
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 2rem;
+    }
+    .contact-details { list-style: none; }
+    .contact-details li {
+      font-size: 0.85rem; padding: 0.8rem 0;
+      border-bottom: 1px solid var(--border);
+      display: flex; gap: 1rem;
+      color: rgba(255,255,255,0.6);
+    }
+    .contact-details li strong {
+      font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--teal-light); min-width: 5rem;
+    }
+    .contact-cta {
+      padding: 3rem;
+      border: 1px solid var(--border);
+      background: rgba(10,126,110,0.04);
+    }
+    .contact-cta h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300; margin-bottom: 1rem;
+    }
+    .contact-cta p {
+      font-size: 0.88rem; color: rgba(255,255,255,0.55); line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem 4rem;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.9rem; font-weight: 300; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.4);
+    }
+    .footer-note {
+      font-size: 0.72rem; color: rgba(255,255,255,0.25); letter-spacing: 0.05em;
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero-content > * {
+      opacity: 0;
+      animation: fadeUp 0.8s ease forwards;
+    }
+    .hero-tag { animation-delay: 0.1s; }
+    .hero-content h1 { animation-delay: 0.25s; }
+    .hero-sub { animation-delay: 0.4s; }
+    .hero-actions { animation-delay: 0.55s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1.2rem 2rem; }
+      .nav-links, .nav-cta { display: none; }
+      section { padding: 5rem 2rem; }
+      .hero { padding: 7rem 2rem 4rem; }
+      .hero-orb { display: none; }
+      .about-inner, .contact-inner { grid-template-columns: 1fr; gap: 3rem; }
+      .tiers { grid-template-columns: 1fr; }
+      .dims-grid { grid-template-columns: 1fr; }
+      footer { flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a class="nav-logo" href="#"><span>CAPS</span> Digital · UNIMED</a>
+    <ul class="nav-links">
+      <li><a href="#about">Qué es</a></li>
+      <li><a href="#services">Servicios</a></li>
+      <li><a href="#diferencia">Diferencia</a></li>
+      <li><a href="#contacto">Contacto</a></li>
+    </ul>
+    <a class="nav-cta" href="#contacto">Hablar con CAPS Digital</a>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-grid"></div>
+    <div class="hero-content">
+      <div class="hero-tag">UNIMED Consulting · Barcelona</div>
+      <h1>Tu agente de salud<br /><em>integral</em> disponible<br />24 horas</h1>
+      <p class="hero-sub">
+        Orientación en salud desde el enfoque de la Holomedicina.
+        Porque eres mucho más que un síntoma — eres un sistema vivo
+        de ocho dimensiones que merecen ser comprendidas.
+      </p>
+      <div class="hero-actions">
+        <a href="#services" class="btn-primary">Explorar servicios</a>
+        <a href="#about" class="btn-secondary">Conocer el enfoque</a>
+      </div>
+    </div>
+    <div class="hero-orb">
+      <span class="orb-text">HOLOMEDICINA · UNIMED · CAPS DIGITAL · APS ·</span>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="about" id="about">
+    <div class="about-inner">
+      <div class="about-text">
+        <div class="section-tag">Qué es CAPS Digital</div>
+        <h2>No es un chatbot.<br />Es un <em>agente epistémico</em><br />de salud.</h2>
+        <p>
+          CAPS Digital es el agente digital de orientación en Atención Primaria de Salud
+          de UNIMED Consulting. Nace del modelo HoloMed, que comprende la salud como un
+          sistema dinámico y complejo donde ninguna dimensión de la persona puede ignorarse.
+        </p>
+        <p>
+          Razona con las mismas ontologías clínicas que usan los profesionales de salud
+          en todo el mundo — LOINC, SNOMED CT, MHMO — y actúa como puente entre el
+          conocimiento biomédico estructurado y tú, en lenguaje humano y accesible.
+        </p>
+        <p>
+          Su misión es acompañarte, informarte y orientarte. Y cuando lo necesites,
+          conectarte con el equipo clínico especializado de UNIMED.
+        </p>
+        <div class="about-quote">
+          <p>"La salud no es un dato. Es un sistema vivo. Y mereces ser comprendido/a como tal."</p>
+          <cite>CAPS Digital · UNIMED Consulting</cite>
+        </div>
+      </div>
+
+      <div>
+        <div class="section-tag" style="margin-bottom:1.2rem">Las 8 Dimensiones HoloMed</div>
+        <div class="dims-grid">
+          <div class="dim-card">
+            <div class="dim-icon">🧬</div>
+            <div class="dim-name">Biológica</div>
+            <div class="dim-q">¿Qué pasa en tu cuerpo?</div>
+          </div>
+          <div class="dim-card">
+            <div class="dim-icon">🧠</div>
+            <div class="dim-name">Psicológica</div>
+            <div class="dim-q">¿Cómo estás emocionalmente?</div>
+          </div>
+          <div class="dim-card">
+            <div class="dim-icon">👥</div>
+            <div class="dim-name">Social</div>
+            <div class="dim-q">¿Cómo es tu entorno?</div>
+          </div>
+          <div class="dim-card">
+            <div class="dim-icon">🌍</div>
+            <div class="dim-name">Cultural</div>
+            <div class="dim-q">¿Qué influencias culturales hay?</div>
+          </div>
+          <div class="dim-card">
+            <div class="dim-icon">💶</div>
+            <div class="dim-name">Económica</div>
+            <div class="dim-q">¿Tienes acceso a recursos?</div>
+          </div>
+          <div class="dim-card">
+            <div class="dim-icon">⚖️</div>
+            <div class="dim-name">Política</div>
+            <div class="dim-q">¿Qué barreras sistémicas existen?</div>
+          </div>
+          <div class="dim-card">
+            <div class="dim-icon">🤝</div>
+            <div class="dim-name">Ética</div>
+            <div class="dim-q">¿Cuáles son tus valores?</div>
+          </div>
+          <div class="dim-card">
+            <div class="dim-icon">✨</div>
+            <div class="dim-name">Espiritual</div>
+            <div class="dim-q">¿Qué sentido das a tu situación?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="services" id="services">
+    <div class="section-tag">Servicios</div>
+    <h2>Elige cómo quieres<br />ser <em>acompañado/a</em></h2>
+
+    <div class="tiers">
+      <!-- BÁSICO -->
+      <div class="tier tier-basic">
+        <div class="tier-badge">Gratuito</div>
+        <h3>Esencial</h3>
+        <div class="tier-price">Sin coste · Acceso inmediato</div>
+        <ul class="tier-features">
+          <li>Orientación en salud 24/7</li>
+          <li>Explicación de exámenes y procedimientos (LOINC)</li>
+          <li>Guías y protocolos OMS/OPS</li>
+          <li>Educación en autocuidado y estilos de vida</li>
+          <li>Enfoque HoloMed en cada respuesta</li>
+          <li>Derivación al equipo UNIMED cuando corresponda</li>
+        </ul>
+      </div>
+
+      <!-- PRO -->
+      <div class="tier tier-pro">
+        <div class="tier-badge">⭐ Pro</div>
+        <h3>Avanzado</h3>
+        <div class="tier-price">Suscripción mensual · Próximamente</div>
+        <ul class="tier-features">
+          <li>Todo lo del plan Esencial</li>
+          <li>Memoria de tu historial de consultas</li>
+          <li>Análisis profundo en las 8 dimensiones HoloMed</li>
+          <li>Informe PDF de orientación personalizado</li>
+          <li>Ontologías clínicas avanzadas (SNOMED, NBO, MHMO)</li>
+          <li>Prioridad en derivación al equipo especializado</li>
+        </ul>
+      </div>
+
+      <!-- TELEMEDICINA -->
+      <div class="tier tier-tele">
+        <div class="tier-badge">🏥 Clínico</div>
+        <h3>Telemedicina</h3>
+        <div class="tier-price">Pago por sesión · Próximamente</div>
+        <ul class="tier-features">
+          <li>Consulta con especialista UNIMED</li>
+          <li>CAPS Digital prepara tu resumen clínico HoloMed previo</li>
+          <li>Videoconsulta personalizada</li>
+          <li>Seguimiento post-consulta con el agente</li>
+          <li>Historial integrado en UNIMED</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="limits-box">
+      <h4>Lo que CAPS Digital no hace</h4>
+      <div class="limits-grid">
+        <div class="limit-item">No diagnostica enfermedades ni condiciones clínicas</div>
+        <div class="limit-item">No prescribe medicamentos ni tratamientos</div>
+        <div class="limit-item">No interpreta resultados individuales de exámenes</div>
+        <div class="limit-item">No sustituye la consulta médica profesional</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DIFFERENTIATOR -->
+  <section class="diff" id="diferencia">
+    <div class="diff-inner">
+      <div class="section-tag" style="text-align:center">¿Por qué CAPS Digital es diferente?</div>
+      <div class="big-quote">
+        "Mientras otros bots buscan síntomas,<br />
+        CAPS Digital comprende <em>personas</em>."
+      </div>
+      <div class="diff-pillars">
+        <div class="pillar">
+          <div class="pillar-num">01</div>
+          <h4>Epistémico</h4>
+          <p>Razona con ontologías clínicas reales usadas por médicos en todo el mundo.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num">02</div>
+          <h4>Integral</h4>
+          <p>Nunca reduce tu salud a un síntoma. Ve las 8 dimensiones de tu ser.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num">03</div>
+          <h4>Humano</h4>
+          <p>No reemplaza al médico. Te prepara para él. Y te conecta con UNIMED.</p>
+        </div>
+        <div class="pillar">
+          <div class="pillar-num">04</div>
+          <h4>Científico</h4>
+          <p>Fundamentado en LOINC, SNOMED CT, protocolos OMS y el marco HoloMed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact" id="contacto">
+    <div class="contact-inner">
+      <div class="contact-info">
+        <div class="section-tag">Contacto</div>
+        <h2>¿Necesitas hablar con el equipo<br /><em>humano</em> de UNIMED?</h2>
+        <p>
+          CAPS Digital está aquí para acompañarte. Pero cuando necesites
+          la valoración de un profesional clínico, el equipo de UNIMED
+          Consulting está disponible para ti.
+        </p>
+        <ul class="contact-details">
+          <li><strong>Centro</strong> UNIMED Consulting · Centro de Desarrollo e Innovación Médica</li>
+          <li><strong>Dirección</strong> Barcelona, España</li>
+          <li><strong>Email</strong> info@unimed-consulting.es</li>
+          <li><strong>Web</strong> unimed-consulting.es</li>
+          <li><strong>Teléfono</strong> +34 673 815 148</li>
+        </ul>
+      </div>
+      <div class="contact-cta">
+        <h3>Empieza ahora.<br />Es gratuito.</h3>
+        <p>
+          Habla con CAPS Digital ahora mismo. Sin registro, sin coste.
+          Descubre lo que significa ser comprendido/a en todas tus dimensiones.
+        </p>
+        <a href="#" class="btn-primary" style="display:inline-block">
+          Iniciar conversación →
+        </a>
+        <p style="margin-top:1.5rem; font-size:0.75rem; color:rgba(255,255,255,0.3);">
+          El agente aparece en la esquina inferior derecha de esta página.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">CAPS Digital · UNIMED Consulting · Barcelona</div>
+    <div class="footer-note">Marco HoloMed · Web Semántica · YouNet AI · © 2026 UNIMED</div>
+  </footer>
+
+  <!-- CAPS Digital Widget (YouNet AI) -->
+  <script
+    type="module"
+    src="https://widget.younet.ai/index.js?modelHash=uIrhK1&type=bubble">
+  </script>
+
+</body>
+</html>
