@@ -554,7 +554,7 @@
           <li>Enfoque HoloMed en cada respuesta</li>
           <li>Derivación al equipo UNIMED cuando corresponda</li>
         </ul>
-        <a href="#" onclick="document.querySelector('[data-younet]') && document.querySelector('[data-younet]').click(); return false;" style="display:inline-block;margin-top:1.5rem;padding:0.8rem 1.8rem;background:var(--teal);color:var(--white);text-decoration:none;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Iniciar conversación →</a>
+        <a href="#" onclick="var btn=document.querySelector('younet-bubble')||document.querySelector('[class*=younet]')||document.querySelector('[id*=younet]'); if(btn){btn.click();}else{window.scrollTo(0,document.body.scrollHeight);} return false;" style="display:inline-block;margin-top:1.5rem;padding:0.8rem 1.8rem;background:var(--teal);color:var(--white);text-decoration:none;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Iniciar conversación →</a>
       </div>
 
       <!-- PRO -->
@@ -658,7 +658,7 @@
           Habla con CAPS Digital ahora mismo. Sin registro, sin coste.
           Descubre lo que significa ser comprendido/a en todas tus dimensiones.
         </p>
-        <a href="#" class="btn-primary" style="display:inline-block">
+        <a href="#" onclick="var btn=document.querySelector('younet-bubble')||document.querySelector('[class*=younet]')||document.querySelector('[id*=younet]'); if(btn){btn.click();}else{window.scrollTo(0,document.body.scrollHeight);} return false;" class="btn-primary" style="display:inline-block">
           Iniciar conversación →
         </a>
         <p style="margin-top:1.5rem; font-size:0.75rem; color:rgba(255,255,255,0.3);">
