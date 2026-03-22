@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UNIMED · MH-AIAP · Escáner Semántico Clínico</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300;1,9..144,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F3ED;--bg2:#EFE9E0;--bg3:#E8E0D4;--bg4:#DDD4C6;--line:rgba(0,0,0,.08);--line2:rgba(0,0,0,.14);--line3:rgba(0,0,0,.22);--text:#1A1410;--text2:#4A3F35;--text3:#8A7A6A;--accent:#8B1A4A;--accent2:#2A6B4A;--sans:'Atkinson Hyperlegible','Trebuchet MS',sans-serif;--serif:'Fraunces','Georgia',serif}
+*,::before,::after{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:17px;min-height:100vh;line-height:1.6}
+
+/* ── ACCESS SCREEN ── */
+#access-screen{position:fixed;inset:0;background:var(--bg2);display:flex;align-items:center;justify-content:center;z-index:999;padding:24px}
+#access-screen.hidden{display:none}
+.access-box{max-width:420px;width:100%;text-align:center}
+.access-logo{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--accent);margin-bottom:6px}
+.access-sub{font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;font-weight:700;margin-bottom:36px}
+.access-label{font-size:13px;color:var(--text2);margin-bottom:12px;line-height:1.6}
+.access-input{width:100%;padding:14px 18px;border:2px solid var(--line2);border-radius:8px;font-family:var(--sans);font-size:20px;font-weight:700;letter-spacing:.15em;text-align:center;color:var(--text);background:white;outline:none;transition:border-color .2s;text-transform:uppercase;margin-bottom:10px}
+.access-input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(139,26,74,.1)}
+.access-btn{width:100%;padding:14px;background:var(--accent);color:white;border:none;border-radius:8px;font-family:var(--sans);font-size:16px;font-weight:700;cursor:pointer;transition:.15s;margin-bottom:12px}
+.access-btn:hover{background:#6b1238;transform:translateY(-1px)}
+.access-error{font-size:13px;color:#c0392b;min-height:20px;font-weight:700}
+.access-footer{margin-top:28px;font-size:11px;color:var(--text3);line-height:1.7}
+.access-divider{width:40px;height:2px;background:var(--line2);margin:20px auto}
+
+/* ── HEADER ── */
+.app-header{display:flex;align-items:center;justify-content:space-between;padding:12px 22px;border-bottom:2px solid var(--line2);background:var(--bg2);position:sticky;top:0;z-index:50}
+.brand{display:flex;align-items:baseline;gap:12px}
+.brand-name{font-family:var(--serif);font-size:19px;font-weight:600;color:var(--accent)}
+.brand-method{font-size:11px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.phase-nav{display:flex;gap:4px}
+.phase-btn{padding:7px 14px;font-family:var(--sans);font-size:12px;font-weight:700;letter-spacing:.05em;background:var(--bg3);border:2px solid var(--line2);border-radius:5px;color:var(--text2);cursor:pointer;transition:.15s}
+.phase-btn:hover:not(:disabled){background:var(--bg4)}
+.phase-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
+.phase-btn.done{color:var(--accent2);border-color:var(--accent2);background:var(--bg2)}
+.phase-btn:disabled{opacity:.3;cursor:not-allowed}
+.section{display:none}.section.active{display:block}
+
+/* ── FHH ── */
+.fhh-wrap{max-width:860px;margin:0 auto;padding:32px 22px 60px}
+.fhh-header{text-align:center;margin-bottom:32px;padding-bottom:22px;border-bottom:2px solid var(--line2)}
+.fhh-title{font-family:var(--serif);font-size:28px;font-weight:300;font-style:italic;color:var(--accent);margin-bottom:6px}
+.fhh-subtitle{font-size:11px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.sec-title{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text3);font-weight:700;margin-bottom:13px;padding-bottom:6px;border-bottom:2px solid var(--line2)}
+.patient-row{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:11px;margin-bottom:26px;padding:16px;border:2px solid var(--line2);border-radius:8px;background:var(--bg2)}
+.fg{display:flex;flex-direction:column;gap:4px}
+.fl{font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--text3);font-weight:700}
+.fi{background:white;border:2px solid var(--line2);border-radius:5px;color:var(--text);font-family:var(--sans);font-size:15px;padding:7px 11px;outline:none;transition:border-color .15s}
+.fi:focus{border-color:var(--accent)}
+.dim-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:26px}
+@media(max-width:640px){.dim-grid{grid-template-columns:1fr}}
+.dc{border:2px solid var(--line2);border-radius:8px;overflow:hidden;background:white;transition:border-color .15s}
+.dc:focus-within{border-color:var(--accent)}
+.dh{display:flex;align-items:center;gap:9px;padding:8px 13px;background:var(--bg2);border-bottom:1px solid var(--line)}
+.di{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.dn{font-size:12px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.03em}
+.dhint{font-size:10px;color:var(--text3);margin-left:auto;font-style:italic}
+.dt{width:100%;min-height:88px;padding:11px 13px;background:white;border:none;color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;resize:vertical;outline:none}
+.dt::placeholder{color:var(--text3);font-style:italic}
+.auto-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:26px}
+@media(max-width:640px){.auto-grid{grid-template-columns:1fr}}
+.ac{border:2px solid var(--line2);border-radius:8px;overflow:hidden;background:white}
+.ah{padding:8px 13px;background:var(--bg2);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text2);border-bottom:1px solid var(--line)}
+.ab{padding:10px 13px;display:flex;flex-direction:column;gap:8px}
+.ar{display:flex;align-items:center;gap:9px}
+.ak{font-size:12px;color:var(--text3);font-weight:700;min-width:88px;font-style:italic}
+.av{flex:1;background:transparent;border:none;border-bottom:1px solid var(--line2);color:var(--text);font-family:var(--sans);font-size:14px;padding:3px 0;outline:none}
+.av:focus{border-bottom-color:var(--accent)}
+.emo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(178px,1fr));gap:11px;margin-bottom:26px}
+.fhh-actions{display:flex;gap:11px;align-items:center;padding-top:18px;border-top:2px solid var(--line2)}
+.btn-p{padding:12px 24px;background:var(--accent);color:white;border:none;border-radius:7px;font-family:var(--sans);font-size:15px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-p:hover{background:#6b1238;transform:translateY(-1px)}
+.btn-p:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn-g{padding:10px 18px;background:transparent;color:var(--text2);border:2px solid var(--line2);border-radius:7px;font-family:var(--sans);font-size:14px;font-weight:700;cursor:pointer;transition:.15s}
+.btn-g:hover{border-color:var(--line3)}
+
+/* ── KW ── */
+.kw-wrap{max-width:860px;margin:0 auto;padding:32px 22px}
+.kw-title{font-family:var(--serif);font-size:23px;font-weight:600;color:var(--accent);margin-bottom:6px}
+.kw-desc{font-size:15px;color:var(--text2);line-height:1.65;max-width:640px;margin-bottom:18px}
+.kw-desc em{color:var(--accent);font-style:normal;font-weight:700}
+.kw-bar{display:flex;align-items:center;gap:13px;padding:11px 16px;background:var(--bg2);border:2px solid var(--line2);border-radius:8px;margin-bottom:20px}
+.kw-num{font-family:var(--serif);font-size:30px;font-weight:600;color:var(--accent);line-height:1;min-width:34px;text-align:center}
+.kw-of{font-size:11px;color:var(--text3);font-weight:700}
+.kw-bar progress{flex:1;height:8px;border-radius:4px;overflow:hidden;accent-color:var(--accent)}
+.kw-note{font-size:11px;color:var(--text3);font-style:italic}
+.kw-grid{display:flex;flex-wrap:wrap;gap:8px;padding:16px;border:2px solid var(--line2);border-radius:8px;background:white;min-height:66px;margin-bottom:16px}
+.kwt{display:flex;align-items:center;gap:6px;padding:7px 13px;border:2px solid var(--line2);border-radius:24px;cursor:pointer;font-size:14px;color:var(--text2);transition:.15s;background:var(--bg);user-select:none}
+.kwt:hover{border-color:var(--accent)}
+.kwt.sel{background:var(--accent);color:white;border-color:var(--accent);font-weight:700}
+.kwt.maxed:not(.sel){opacity:.3;cursor:not-allowed}
+.kwt .ck{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:8px;flex-shrink:0}
+.kwt.sel .ck{background:rgba(255,255,255,.3)}
+.kwt .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.kw-add{display:flex;gap:8px;margin-bottom:20px}
+.kw-add-i{flex:1;padding:8px 13px;background:white;border:2px solid var(--line2);border-radius:5px;color:var(--text);font-family:var(--sans);font-size:14px;outline:none}
+.kw-add-i:focus{border-color:var(--accent)}
+.kw-add-b{padding:8px 15px;background:var(--accent2);color:white;border:none;border-radius:5px;font-size:16px;font-weight:700;cursor:pointer}
+.kw-actions{display:flex;gap:11px;align-items:center;padding-top:22px;border-top:2px solid var(--line2)}
+
+/* ── SCANNER ── */
+.scanner-layout{display:grid;grid-template-columns:1fr 300px;height:calc(100vh - 50px);overflow:hidden}
+@media(max-width:800px){.scanner-layout{grid-template-columns:1fr;height:auto}}
+.scan-brain{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;background:var(--bg2);border-right:2px solid var(--line2);overflow:hidden}
+.scan-brain-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--text3);margin-bottom:9px;text-align:center}
+#brain-svg{width:100%;max-width:720px;max-height:calc(100vh - 110px);cursor:crosshair;border-radius:8px;display:block}
+.scan-side{display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+.ss-head{padding:13px 15px;border-bottom:2px solid var(--line2);background:var(--bg2)}
+.ss-label{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--text3);margin-bottom:6px}
+.ss-active-box{padding:11px 13px;background:white;border:2px solid var(--line2);border-radius:7px;min-height:46px;display:flex;align-items:center;justify-content:center}
+.ss-active-word{font-family:var(--serif);font-size:21px;font-weight:600;font-style:italic;color:var(--text3)}
+.ss-hint{margin-top:7px;font-size:12px;color:var(--text2);line-height:1.5;padding:7px 11px;background:rgba(139,26,74,.06);border:1px solid rgba(139,26,74,.14);border-radius:5px}
+.ss-hint span{color:var(--accent);font-weight:700}
+.ss-list-wrap{flex:1;overflow-y:auto;padding:9px 13px}
+.ss-list-title{font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--text3);margin-bottom:7px}
+.wi{display:flex;align-items:center;gap:7px;padding:9px 11px;border:2px solid var(--line2);border-radius:7px;cursor:pointer;transition:.15s;background:white;font-size:14px;font-weight:500;margin-bottom:5px}
+.wi:hover:not(.wp):not(.ws){border-color:var(--accent);background:rgba(139,26,74,.04)}
+.wi.wa{border-color:var(--accent);background:rgba(139,26,74,.08);font-weight:700}
+.wi.wp{opacity:.35;text-decoration:line-through;cursor:default;background:var(--bg2)}
+.wi.ws{opacity:.35;cursor:default;background:var(--bg2);font-style:italic}
+.wi-dot{font-size:13px;flex-shrink:0}
+.wi-word{flex:1}
+.wi-reg{font-size:10px;color:var(--text3);font-weight:700}
+.wi-skip{font-size:13px;color:var(--text3);padding:2px 5px;border-radius:3px;border:none;background:none;cursor:pointer;transition:.15s}
+.wi-skip:hover{color:var(--accent);background:rgba(139,26,74,.1)}
+.ss-foot{padding:11px 15px;border-top:2px solid var(--line2);background:var(--bg2)}
+.ss-prog-row{display:flex;justify-content:space-between;font-size:11px;color:var(--text3);margin-bottom:6px}
+.ss-prog-track{width:100%;height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin-bottom:9px;border:1px solid var(--line2)}
+.ss-prog-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .4s;width:0%}
+
+/* ── REPORT ── */
+.rpt-outer{padding:28px 22px 60px}
+.rpt-wrap{max-width:780px;margin:0 auto}
+.rpt-head{text-align:center;padding:28px 22px 22px;margin-bottom:28px;border-bottom:3px solid var(--accent);background:var(--bg2);border-radius:10px}
+.rpt-logo{font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--text3);margin-bottom:8px}
+.rpt-title{font-family:var(--serif);font-size:25px;font-weight:600;font-style:italic;color:var(--accent);margin-bottom:4px}
+.rpt-patient{font-size:15px;color:var(--text2)}
+.rpt-meta{display:flex;gap:16px;justify-content:center;margin-top:11px;font-size:12px;color:var(--text3);flex-wrap:wrap}
+.rpt-sec{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:700;color:var(--accent);margin:26px 0 13px;padding-bottom:6px;border-bottom:2px solid var(--line2)}
+.rpt-card{border:2px solid var(--line2);border-radius:8px;padding:15px 19px;margin-bottom:11px;background:white;font-size:15px;line-height:1.65}
+.metrics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(148px,1fr));gap:11px;margin-bottom:18px}
+.mc{border:2px solid var(--line2);border-radius:8px;padding:15px;text-align:center;background:white}
+.mv{font-family:var(--serif);font-size:28px;font-weight:600;color:var(--accent);line-height:1;margin-bottom:5px}
+.ml{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;font-weight:700}
+.holo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:11px;margin-bottom:18px}
+.hc{border-left:4px solid;border-radius:7px;padding:13px 15px;background:white}
+.hct{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:5px}
+.hcb{font-size:14px;color:var(--text);line-height:1.6}
+.insight{border-left:4px solid var(--accent);padding:12px 15px;background:rgba(139,26,74,.06);border-radius:0 7px 7px 0;font-size:15px;line-height:1.65;margin-bottom:9px}
+/* CAB table */
+.cab-table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:14px}
+.cab-table th{background:var(--accent);color:white;padding:9px 13px;text-align:left;font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.cab-table td{padding:9px 13px;border-bottom:1px solid var(--line2);background:white;line-height:1.5}
+.cab-table tr:last-child td{border-bottom:none}
+.cab-table tr:hover td{background:var(--bg2)}
+.cab-stars{color:var(--accent);font-size:14px;letter-spacing:-2px}
+.cab-stars.s2{color:#6a9ec4}
+.cab-area-tag{display:inline-block;padding:2px 7px;border-radius:3px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-left:6px;vertical-align:middle}
+/* Notes */
+.notes-field-wrap{margin:18px 0}
+.notes-field-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.notes-field-label span{font-size:10px;color:var(--text3);font-weight:400;text-transform:none;letter-spacing:0;font-style:italic}
+.notes-field{width:100%;min-height:130px;padding:13px 15px;border:2px solid var(--accent);border-radius:8px;background:white;color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.65;resize:vertical;outline:none}
+.notes-field:focus{box-shadow:0 0 0 3px rgba(139,26,74,.1)}
+.notes-field::placeholder{color:var(--text3);font-style:italic}
+.notes-rendered{border-left:4px solid var(--accent);padding:13px 15px;background:rgba(139,26,74,.04);border-radius:0 7px 7px 0;font-size:15px;line-height:1.65;white-space:pre-wrap;min-height:50px}
+.rpt-actions{display:flex;gap:11px;align-items:center;padding:18px 0 8px;border-top:2px solid var(--line2);margin-top:28px;flex-wrap:wrap}
+.rpt-footer{padding-top:14px;border-top:2px solid var(--line2);display:flex;justify-content:space-between;align-items:center;font-size:11px;color:var(--text3);flex-wrap:wrap;gap:8px;margin-top:24px}
+.fade-up{animation:fadeUp .25s ease both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-track{background:var(--bg2)}::-webkit-scrollbar-thumb{background:var(--line3);border-radius:3px}
+@media print{
+  .app-header,.fhh-actions,.ss-foot,.rpt-actions,.notes-field,.notes-field-label span,#access-screen{display:none!important}
+  .section{display:none!important}
+  #phase-4{display:block!important}
+  .rpt-outer{padding:0}
+  body{background:white;font-size:13px}
+  .notes-field-wrap{display:block!important}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ ACCESS SCREEN ══ -->
+<div id="access-screen">
+  <div class="access-box">
+    <div class="access-logo">UNIMED · MH-AIAP</div>
+    <div class="access-sub">Escáner Semántico Clínico · v1.3</div>
+    <div class="access-divider"></div>
+    <div class="access-label">
+      Este es un instrumento clínico de uso restringido.<br>
+      Introduce el código que te ha facilitado tu profesional de referencia para acceder.
+    </div>
+    <input class="access-input" id="access-input" type="text" placeholder="CÓDIGO" maxlength="20"
+      onkeydown="if(event.key==='Enter')checkCode()" autocomplete="off" autocorrect="off" autocapitalize="characters" spellcheck="false">
+    <button class="access-btn" onclick="checkCode()">Acceder →</button>
+    <div class="access-error" id="access-error"></div>
+    <div class="access-footer">
+      Holomedicina® · Samuel Carmona Aguirre, MSc<br>
+      Biomedical Scientist · Lic. Suecia-Europea (Socialstyrelsen)<br>
+      UNIMED Consulting · Barcelona
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app" style="display:none">
+<header class="app-header">
+  <div class="brand">
+    <span class="brand-name">UNIMED · MH-AIAP</span>
+    <span class="brand-method">Escáner Semántico Clínico · v1.3</span>
+  </div>
+  <nav class="phase-nav">
+    <button class="phase-btn active" id="nav-1" onclick="go(1)">01 · FHH</button>
+    <button class="phase-btn" id="nav-2" onclick="go(2)" disabled>02 · Palabras</button>
+    <button class="phase-btn" id="nav-3" onclick="go(3)" disabled>03 · Escáner</button>
+    <button class="phase-btn" id="nav-4" onclick="go(4)" disabled>04 · Informe</button>
+  </nav>
+</header>
+
+<!-- PHASE 1 -->
+<div id="phase-1" class="section active">
+<div class="fhh-wrap">
+  <div class="fhh-header">
+    <div class="fhh-title">Formulario de Historisidad y Holografía</div>
+    <div class="fhh-subtitle">Auto-investigación de contexto y situación de vida · UNIMED MH-AIAP</div>
+  </div>
+  <div class="sec-title">Datos del paciente</div>
+  <div class="patient-row">
+    <div class="fg"><span class="fl">Nombre / código</span><input class="fi" id="p-name" placeholder="Identificador clínico" autocomplete="off"></div>
+    <div class="fg"><span class="fl">Fecha de nacimiento</span><input class="fi" id="p-dob" placeholder="dd/mm/aaaa"></div>
+    <div class="fg"><span class="fl">Diagnósticos</span><input class="fi" id="p-dx" placeholder="Resumen diagnóstico"></div>
+    <div class="fg"><span class="fl">Tratamiento actual</span><input class="fi" id="p-tx" placeholder="Medicación / terapia"></div>
+    <div class="fg"><span class="fl">Localidad</span><input class="fi" id="p-place" placeholder="Ciudad"></div>
+    <div class="fg"><span class="fl">Fecha sesión</span><input class="fi" id="p-date" placeholder="dd/mm/aaaa"></div>
+  </div>
+  <div class="sec-title">Las 8 dimensiones · Escribe libremente sobre tu vida</div>
+  <div class="dim-grid">
+    <div class="dc"><div class="dh"><div class="di" style="background:#c47878"></div><span class="dn">Biológica</span><span class="dhint">Enfermedades, dolor, síntomas</span></div><textarea class="dt" id="dim-biologica" placeholder="Escribe libremente…" rows="4"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#c49a5a"></div><span class="dn">Psicológica</span><span class="dhint">Traumas, vivencias, emociones</span></div><textarea class="dt" id="dim-psicologica" placeholder="Escribe libremente…" rows="4"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#8b7ed4"></div><span class="dn">Social</span><span class="dhint">Familia, trabajo, amistades</span></div><textarea class="dt" id="dim-social" placeholder="Escribe libremente…" rows="4"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#6aab93"></div><span class="dn">Cultural</span><span class="dhint">Arraigo, idioma, tradiciones</span></div><textarea class="dt" id="dim-cultural" placeholder="Escribe libremente…" rows="4"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#6a9ec4"></div><span class="dn">Económica</span><span class="dhint">Situación financiera, recursos</span></div><textarea class="dt" id="dim-economica" placeholder="Escribe libremente…" rows="4"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#a46ac4"></div><span class="dn">Política</span><span class="dhint">Ideas, concepción del mundo</span></div><textarea class="dt" id="dim-politica" placeholder="Escribe libremente…" rows="4"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#c4956a"></div><span class="dn">Ética</span><span class="dhint">Valores, lo bueno y lo malo</span></div><textarea class="dt" id="dim-etica" placeholder="Escribe libremente…" rows="4"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#9278b8"></div><span class="dn">Espiritual</span><span class="dhint">Creencias, fe, sentido</span></div><textarea class="dt" id="dim-espiritual" placeholder="Escribe libremente…" rows="4"></textarea></div>
+  </div>
+  <div class="sec-title">Autopercepción</div>
+  <div class="auto-grid">
+    <div class="ac"><div class="ah">Evolución temporal</div><div class="ab">
+      <div class="ar"><span class="ak">1 año atrás</span><input class="av" id="h-1y" placeholder="¿Cómo estabas…"></div>
+      <div class="ar"><span class="ak">6 meses</span><input class="av" id="h-6m"></div>
+      <div class="ar"><span class="ak">3 meses</span><input class="av" id="h-3m"></div>
+      <div class="ar"><span class="ak">1 mes</span><input class="av" id="h-1m"></div>
+      <div class="ar"><span class="ak">Hoy</span><input class="av" id="h-hoy"></div>
+    </div></div>
+    <div class="ac"><div class="ah">Auto-opinión</div><div class="ab">
+      <div class="ar"><span class="ak">Vivo…</span><input class="av" id="a-vivo"></div>
+      <div class="ar"><span class="ak">Existo para…</span><input class="av" id="a-existo"></div>
+      <div class="ar"><span class="ak">Estoy…</span><input class="av" id="a-estoy"></div>
+      <div class="ar"><span class="ak">Vivo para…</span><input class="av" id="a-para"></div>
+      <div class="ar"><span class="ak">Me interesa…</span><input class="av" id="a-interes"></div>
+    </div></div>
+  </div>
+  <div class="sec-title">Autoevaluación emocional</div>
+  <div class="emo-grid">
+    <div class="dc"><div class="dh"><div class="di" style="background:#8B1A4A"></div><span class="dn">Alegría</span><span class="dhint">¿Cómo me perciben?</span></div><textarea class="dt" id="emo-alegria" placeholder="Describe…" rows="2"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#8B1A4A"></div><span class="dn">Tristeza</span><span class="dhint">¿Me siento realizado/a?</span></div><textarea class="dt" id="emo-tristeza" placeholder="Describe…" rows="2"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#8B1A4A"></div><span class="dn">Ira / paz</span><span class="dhint">¿Discuto? ¿Soy amigable?</span></div><textarea class="dt" id="emo-ira" placeholder="Describe…" rows="2"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#8B1A4A"></div><span class="dn">Satisfacción</span><span class="dhint">¿Qué sueños tengo?</span></div><textarea class="dt" id="emo-satisfaccion" placeholder="Describe…" rows="2"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#8B1A4A"></div><span class="dn">Optimismo</span><span class="dhint">¿Las cosas mejorarán?</span></div><textarea class="dt" id="emo-optimismo" placeholder="Describe…" rows="2"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#8B1A4A"></div><span class="dn">Gratitud</span><span class="dhint">¿Qué agradezco?</span></div><textarea class="dt" id="emo-gratitud" placeholder="Describe…" rows="2"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#8B1A4A"></div><span class="dn">Interés</span><span class="dhint">¿Qué me apasiona?</span></div><textarea class="dt" id="emo-interes" placeholder="Describe…" rows="2"></textarea></div>
+    <div class="dc"><div class="dh"><div class="di" style="background:#8B1A4A"></div><span class="dn">Tranquilidad</span><span class="dhint">¿Soy tranquilo/a?</span></div><textarea class="dt" id="emo-tranquilidad" placeholder="Describe…" rows="2"></textarea></div>
+  </div>
+  <div class="fhh-actions">
+    <button class="btn-g" onclick="loadExample()">Cargar ejemplo</button>
+    <button class="btn-p" onclick="extract()">Extraer palabras clave →</button>
+  </div>
+</div>
+</div>
+
+<!-- PHASE 2 -->
+<div id="phase-2" class="section">
+<div class="kw-wrap">
+  <div class="kw-title">Selección de palabras · máximo 25</div>
+  <div class="kw-desc">Las palabras más significativas han emergido del formulario de <em>historisidad y holografía</em>. Clínico y paciente las revisan juntos — ese acto de elección <em>ya es dato clínico</em>. Selecciona un máximo de <em>25 palabras</em>.</div>
+  <div class="kw-bar">
+    <div><div class="kw-num" id="kw-count">0</div><div class="kw-of">de 25</div></div>
+    <progress id="kw-prog" value="0" max="25" style="flex:1;height:8px"></progress>
+    <div class="kw-note" id="kw-note">Selecciona las más significativas</div>
+  </div>
+  <div id="kw-grid" class="kw-grid"></div>
+  <div class="kw-add">
+    <input class="kw-add-i" id="kw-add-i" placeholder="+ Añadir palabra…" onkeydown="if(event.key==='Enter')addWord()">
+    <button class="kw-add-b" onclick="addWord()">+</button>
+  </div>
+  <div class="kw-actions">
+    <button class="btn-g" onclick="go(1)">← Volver</button>
+    <button class="btn-p" onclick="startScanner()">Iniciar escáner →</button>
+  </div>
+</div>
+</div>
+
+<!-- PHASE 3 -->
+<div id="phase-3" class="section">
+<div class="scanner-layout">
+  <div class="scan-brain">
+    <div class="scan-brain-label">Haz clic en el cerebro donde sientes que vive la palabra activa</div>
+    <svg id="brain-svg" viewBox="0 0 800 570" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="bg-g" cx="48%" cy="42%"><stop offset="0%" stop-color="#1a2433"/><stop offset="100%" stop-color="#0d1420"/></radialGradient>
+        <filter id="glow"><feGaussianBlur stdDeviation="2.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      </defs>
+      <path d="M 160 440 Q 85 415 62 344 Q 38 270 62 196 Q 86 124 148 86 Q 210 48 292 40 Q 374 30 456 52 Q 538 72 594 114 Q 650 156 666 210 Q 682 264 666 316 Q 650 360 622 394 Q 588 428 550 448 Q 506 468 448 474 Q 376 480 310 476 Q 244 472 190 456 Z" fill="url(#bg-g)" stroke="rgba(255,255,255,.07)" stroke-width="1.5"/>
+      <path d="M 550 448 Q 614 462 652 448 Q 688 432 698 402 Q 710 370 686 348 Q 662 328 630 338 Q 598 348 584 372 Q 568 402 550 448 Z" fill="#111820" stroke="rgba(255,255,255,.04)" stroke-width="1"/>
+      <g stroke="rgba(255,255,255,.04)" stroke-width="1.5" fill="none">
+        <path d="M 228 80 Q 264 118 250 162 Q 236 200 268 226"/><path d="M 344 48 Q 360 94 340 132 Q 320 168 348 196"/>
+        <path d="M 460 58 Q 470 106 450 144 Q 430 180 456 206"/><path d="M 558 116 Q 548 158 532 194 Q 516 228 538 252"/>
+        <path d="M 150 232 Q 182 256 166 298 Q 150 332 184 350"/><path d="M 230 292 Q 256 318 240 356 Q 224 382 260 400"/>
+        <path d="M 404 138 Q 430 176 408 214 Q 386 248 414 280"/><path d="M 506 232 Q 528 270 512 308 Q 496 344 524 364"/>
+        <path d="M 334 328 Q 360 358 344 392 Q 328 420 358 438"/>
+      </g>
+      <path id="reg-FRONTAL" class="br" data-region="FRONTAL" d="M 160 440 Q 85 415 62 344 Q 38 270 62 196 Q 86 124 148 86 Q 202 56 274 48 Q 305 44 305 144 Q 305 236 258 280 Q 212 316 178 354 Z" fill="rgba(91,77,184,.14)" stroke="rgba(91,77,184,.4)" stroke-width="1.5" cursor="pointer"/>
+      <path id="reg-PREFRONTAL" class="br" data-region="PREFRONTAL" d="M 148 86 Q 202 56 274 48 Q 305 44 305 98 Q 258 94 210 108 Q 178 120 156 140 Z" fill="rgba(59,92,184,.14)" stroke="rgba(59,92,184,.4)" stroke-width="1.5" cursor="pointer"/>
+      <path id="reg-PARIETAL" class="br" data-region="PARIETAL" d="M 305 144 Q 305 44 376 40 Q 448 36 518 64 Q 568 86 588 134 Q 536 120 484 144 Q 440 166 406 210 Q 368 254 305 256 Q 305 204 305 144 Z" fill="rgba(26,74,139,.14)" stroke="rgba(26,74,139,.4)" stroke-width="1.5" cursor="pointer"/>
+      <path id="reg-TEMPORAL" class="br" data-region="TEMPORAL" d="M 178 354 Q 212 316 258 280 Q 305 248 305 330 Q 305 402 256 440 Q 220 462 182 452 Q 164 430 158 406 Z" fill="rgba(139,90,26,.14)" stroke="rgba(139,90,26,.4)" stroke-width="1.5" cursor="pointer"/>
+      <path id="reg-OCCIPITAL" class="br" data-region="OCCIPITAL" d="M 496 358 Q 542 320 590 304 Q 628 290 666 312 Q 650 360 622 394 Q 588 428 550 448 Q 514 464 478 468 Q 452 424 482 388 Z" fill="rgba(139,26,74,.14)" stroke="rgba(139,26,74,.4)" stroke-width="1.5" cursor="pointer"/>
+      <path id="reg-INSULA" class="br" data-region="ÍNSULA" d="M 305 256 Q 354 210 412 210 Q 478 210 492 288 Q 506 362 440 402 Q 394 426 336 418 Q 300 400 298 360 Q 296 310 305 256 Z" fill="rgba(107,42,139,.14)" stroke="rgba(107,42,139,.4)" stroke-width="1.5" cursor="pointer"/>
+      <path id="reg-HIPOCAMPAL" class="br" data-region="HIPOCAMPAL" d="M 256 440 Q 305 428 362 438 Q 414 450 450 462 Q 404 472 340 474 Q 288 476 248 466 Q 232 450 256 440 Z" fill="rgba(42,107,74,.14)" stroke="rgba(42,107,74,.4)" stroke-width="1.5" cursor="pointer"/>
+      <text x="154" y="262" fill="rgba(255,255,255,.42)" font-size="12" font-weight="700" font-family="'Trebuchet MS',sans-serif" text-anchor="middle" pointer-events="none">FRONTAL</text>
+      <text x="164" y="102" fill="rgba(255,255,255,.35)" font-size="10" font-weight="700" font-family="'Trebuchet MS',sans-serif" text-anchor="middle" pointer-events="none">PREFRONTAL</text>
+      <text x="460" y="102" fill="rgba(255,255,255,.42)" font-size="12" font-weight="700" font-family="'Trebuchet MS',sans-serif" text-anchor="middle" pointer-events="none">PARIETAL</text>
+      <text x="228" y="392" fill="rgba(255,255,255,.42)" font-size="12" font-weight="700" font-family="'Trebuchet MS',sans-serif" text-anchor="middle" pointer-events="none">TEMPORAL</text>
+      <text x="576" y="392" fill="rgba(255,255,255,.42)" font-size="12" font-weight="700" font-family="'Trebuchet MS',sans-serif" text-anchor="middle" pointer-events="none">OCCIPITAL</text>
+      <text x="400" y="328" fill="rgba(255,255,255,.42)" font-size="12" font-weight="700" font-family="'Trebuchet MS',sans-serif" text-anchor="middle" pointer-events="none">ÍNSULA</text>
+      <text x="352" y="462" fill="rgba(255,255,255,.35)" font-size="10" font-weight="700" font-family="'Trebuchet MS',sans-serif" text-anchor="middle" pointer-events="none">HIPOCAMPAL</text>
+      <g transform="translate(65,518)" font-size="9" font-family="'Trebuchet MS',sans-serif" fill="rgba(255,255,255,.38)">
+        <circle cx="0" cy="0" r="4" fill="#5B4DB8"/><text x="8" y="3">social</text>
+        <circle cx="64" cy="0" r="4" fill="#2A6B4A"/><text x="72" y="3">lugar</text>
+        <circle cx="124" cy="0" r="4" fill="#8B2A2A"/><text x="132" y="3">cuerpo</text>
+        <circle cx="196" cy="0" r="4" fill="#8B5A1A"/><text x="204" y="3">emoción</text>
+        <circle cx="272" cy="0" r="4" fill="#1A4A8B"/><text x="280" y="3">tiempo</text>
+        <circle cx="338" cy="0" r="4" fill="#6B2A8B"/><text x="346" y="3">identidad</text>
+      </g>
+      <g id="pwl"></g>
+    </svg>
+  </div>
+  <div class="scan-side">
+    <div class="ss-head">
+      <div class="ss-label">Palabra activa</div>
+      <div class="ss-active-box"><span class="ss-active-word" id="aw">—</span></div>
+      <div class="ss-hint" id="sh">Selecciona una palabra y haz clic en el cerebro</div>
+    </div>
+    <div class="ss-list-wrap">
+      <div class="ss-list-title">Lista de palabras</div>
+      <div id="wlist"></div>
+    </div>
+    <div class="ss-foot">
+      <div class="ss-prog-row"><span id="prog-t">0 de 0</span><span id="prog-p">0%</span></div>
+      <div class="ss-prog-track"><div class="ss-prog-fill" id="prog-f"></div></div>
+      <button class="btn-p" id="btn-rpt" onclick="genReport()" disabled style="width:100%;font-size:13px;padding:10px">Generar informe →</button>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- PHASE 4 -->
+<div id="phase-4" class="section">
+<div class="rpt-outer">
+<div class="rpt-wrap" id="rpt-pdf">
+  <div class="rpt-head">
+    <div class="rpt-logo">UNIMED Consulting · Holomedicina® · MH-AIAP</div>
+    <div class="rpt-title">Informe de Escáner Semántico Clínico</div>
+    <div class="rpt-patient" id="rp">—</div>
+    <div class="rpt-meta"><span id="rd">—</span><span>Huth et al. 2016 × FHH UNIMED · v1.3</span></div>
+  </div>
+  <div id="rc"></div>
+  <div class="notes-field-wrap">
+    <div class="rpt-sec">Análisis clínico complementario · Operador</div>
+    <div class="notes-field-label">Notas del clínico <span>(incluidas en el PDF)</span></div>
+    <textarea class="notes-field" id="clinical-notes" placeholder="Escribe aquí tu interpretación clínica complementaria, hipótesis de trabajo, observaciones de sesión, orientación terapéutica…"></textarea>
+  </div>
+  <div class="rpt-footer">
+    <div style="font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:11px">UNIMED · MH-AIAP · v1.3</div>
+    <div>Samuel Carmona Aguirre, MSc · Biomedical Scientist · Lic. Suecia-Europea (Socialstyrelsen)</div>
+  </div>
+</div>
+<div class="rpt-actions">
+  <button class="btn-p" onclick="downloadPDF()">⬇ Descargar PDF</button>
+  <button class="btn-g" onclick="go(3)">← Volver al escáner</button>
+  <button class="btn-g" onclick="window.print()">Imprimir</button>
+</div>
+</div>
+</div>
+
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════
+//  ACCESS CODES
+//  Añade aquí los códigos válidos.
+//  Puedes poner tantos como quieras.
+//  Para añadir uno nuevo: 'CODIGO123'
+// ══════════════════════════════════════
+const VALID_CODES = [
+  'UNIMED2026',   // código general de consulta
+  'CAPS2026',     // código alternativo
+  // Añade códigos personales por paciente aquí:
+  // 'OG2026',    // ejemplo: código para un paciente específico
+];
+
+let attempts = 0;
+function checkCode(){
+  const val = document.getElementById('access-input').value.trim().toUpperCase();
+  if(VALID_CODES.includes(val)){
+    document.getElementById('access-screen').classList.add('hidden');
+    document.getElementById('app').style.display='';
+  } else {
+    attempts++;
+    const err = document.getElementById('access-error');
+    err.textContent = attempts >= 3
+      ? 'Código incorrecto. Contacta con tu profesional de referencia.'
+      : 'Código incorrecto. Inténtalo de nuevo.';
+    document.getElementById('access-input').value='';
+    document.getElementById('access-input').focus();
+    if(attempts>=5){ document.getElementById('access-input').disabled=true; document.querySelector('.access-btn').disabled=true; err.textContent='Demasiados intentos. Recarga la página para reintentar.'; }
+  }
+}
+
+// ══════════════════════════════════════
+//  CONSTANTS
+// ══════════════════════════════════════
+const MAX=25;
+const DIMS=[
+  {id:'biologica',label:'Biológica',color:'#c47878'},
+  {id:'psicologica',label:'Psicológica',color:'#c49a5a'},
+  {id:'social',label:'Social',color:'#8b7ed4'},
+  {id:'cultural',label:'Cultural',color:'#6aab93'},
+  {id:'economica',label:'Económica',color:'#6a9ec4'},
+  {id:'politica',label:'Política',color:'#a46ac4'},
+  {id:'etica',label:'Ética',color:'#c4956a'},
+  {id:'espiritual',label:'Espiritual',color:'#9278b8'},
+];
+const STOP=new Set(['de','la','el','en','un','una','los','las','con','por','para','que','es','se','del','al','su','sus','lo','le','les','yo','me','mi','te','si','no','ni','o','a','e','y','u','más','muy','ya','pero','como','este','esta','estos','estas','ese','esa','esos','esas','ser','estar','ha','han','hay','he','fue','era','son','soy','fui','también','así','todo','todos','toda','todas','nos','os','sobre','entre','cuando','porque','aunque','sino','pues','ante','bajo','hasta','según','tras','durante','siempre','nunca','algo','alguien','cada','otro','otra','otros','otras','mismo','misma','cual','cuales','quien','quienes','donde','bien','mal','tan','poco','mucho','muchos','muchas','al','del']);
+const WM={health:3,social:2.5,emotion:2.5,identity:3,place:1.5,time:1.5,neutral:1};
+const RCOL={FRONTAL:'#5B4DB8',PREFRONTAL:'#3B5CB8',PARIETAL:'#1A4A8B',TEMPORAL:'#8B5A1A',OCCIPITAL:'#8B1A4A','ÍNSULA':'#6B2A8B',HIPOCAMPAL:'#2A6B4A'};
+const DM={};DIMS.forEach(d=>DM[d.id]=d);
+
+// CAB® × Región matrix
+const CAB_MATRIX = {
+  PREFRONTAL:[
+    {cap:'Inhibición',area:'Atención',color:'#4A90D9',prio:3,def:'Control de respuesta automática'},
+    {cap:'Flexibilidad cognitiva',area:'Razonamiento',color:'#8B5A1A',prio:3,def:'Capacidad de adaptar la conducta'},
+    {cap:'Planificación',area:'Razonamiento',color:'#8B5A1A',prio:3,def:'Pensar en el futuro'},
+    {cap:'Memoria de trabajo',area:'Memoria',color:'#E8A820',prio:3,def:'Manipular información en MCP'},
+    {cap:'Monitorización',area:'Atención',color:'#4A90D9',prio:2,def:'Supervisar las propias acciones'},
+  ],
+  FRONTAL:[
+    {cap:'Atención focalizada',area:'Atención',color:'#4A90D9',prio:3,def:'Concentración sostenida en un estímulo'},
+    {cap:'Atención dividida',area:'Atención',color:'#4A90D9',prio:3,def:'Atender dos estímulos simultáneamente'},
+    {cap:'Memoria de trabajo',area:'Memoria',color:'#E8A820',prio:3,def:'Manipular información en MCP'},
+    {cap:'Velocidad de procesamiento',area:'Razonamiento',color:'#8B5A1A',prio:2,def:'Tiempo en realizar una tarea mental'},
+    {cap:'Monitorización',area:'Atención',color:'#4A90D9',prio:2,def:'Supervisar las propias acciones'},
+  ],
+  PARIETAL:[
+    {cap:'Percepción espacial',area:'Percepción',color:'#2A6B4A',prio:3,def:'Consciencia de la relación con el entorno'},
+    {cap:'Escaneo visual',area:'Percepción',color:'#2A6B4A',prio:3,def:'Búsqueda activa de información'},
+    {cap:'Percepción visual',area:'Percepción',color:'#2A6B4A',prio:2,def:'Interpretar información visual'},
+    {cap:'Memoria visual a corto plazo',area:'Memoria',color:'#E8A820',prio:2,def:'Retener información visual breve'},
+    {cap:'Coordinación ojo-mano',area:'Coordinación',color:'#6B2A8B',prio:2,def:'Uso simultáneo de manos y ojos'},
+  ],
+  TEMPORAL:[
+    {cap:'Memoria fonológica a corto plazo',area:'Memoria',color:'#E8A820',prio:3,def:'Retener información fonológica breve'},
+    {cap:'Denominación',area:'Memoria',color:'#E8A820',prio:3,def:'Encontrar la palabra específica'},
+    {cap:'Memoria contextual',area:'Memoria',color:'#E8A820',prio:3,def:'Discernir el origen de un recuerdo'},
+    {cap:'Percepción auditiva',area:'Percepción',color:'#2A6B4A',prio:2,def:'Interpretar información auditiva'},
+    {cap:'Reconocimiento',area:'Percepción',color:'#2A6B4A',prio:2,def:'Identificar estímulos presentados'},
+  ],
+  'ÍNSULA':[
+    {cap:'Monitorización',area:'Atención',color:'#4A90D9',prio:3,def:'Supervisar las propias acciones'},
+    {cap:'Atención focalizada',area:'Atención',color:'#4A90D9',prio:2,def:'Concentración sostenida'},
+    {cap:'Estimación',area:'Percepción',color:'#2A6B4A',prio:2,def:'Predicción con poca información'},
+    {cap:'Tiempo de respuesta',area:'Coordinación',color:'#6B2A8B',prio:2,def:'Desde percepción hasta reacción'},
+  ],
+  HIPOCAMPAL:[
+    {cap:'Memoria contextual',area:'Memoria',color:'#E8A820',prio:3,def:'Discernir el origen de un recuerdo'},
+    {cap:'Memoria a corto plazo',area:'Memoria',color:'#E8A820',prio:3,def:'Retener información breve'},
+    {cap:'Memoria no verbal',area:'Memoria',color:'#E8A820',prio:2,def:'Codificar y recuperar información no verbal'},
+    {cap:'Reconocimiento',area:'Percepción',color:'#2A6B4A',prio:2,def:'Identificar estímulos presentados'},
+  ],
+  OCCIPITAL:[
+    {cap:'Percepción visual',area:'Percepción',color:'#2A6B4A',prio:3,def:'Interpretar información visual'},
+    {cap:'Escaneo visual',area:'Percepción',color:'#2A6B4A',prio:2,def:'Búsqueda activa de información'},
+    {cap:'Percepción espacial',area:'Percepción',color:'#2A6B4A',prio:2,def:'Consciencia de la relación con el entorno'},
+    {cap:'Reconocimiento',area:'Percepción',color:'#2A6B4A',prio:2,def:'Identificar estímulos presentados'},
+  ],
+};
+
+// CAB patología priorities
+const CAB_PATHO = {
+  TDAH:['Inhibición','Memoria de trabajo','Flexibilidad cognitiva','Atención focalizada','Monitorización','Velocidad de procesamiento','Planificación'],
+  TEA:['Percepción social','Escaneo visual','Memoria contextual','Reconocimiento','Atención dividida'],
+  Dislexia:['Memoria fonológica a corto plazo','Denominación','Percepción auditiva','Velocidad de procesamiento','Memoria a corto plazo'],
+  'Altas Capacidades':['Planificación','Flexibilidad cognitiva','Memoria de trabajo','Velocidad de procesamiento','Atención dividida'],
+};
+
+let kws=[],scan=[],placed=[],aIdx=-1;
+
+function go(n){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('phase-'+n).classList.add('active');
+  document.querySelectorAll('.phase-btn').forEach((b,i)=>b.classList.toggle('active',i+1===n));
+  window.scrollTo(0,0);
+}
+
+function classify(w){
+  if(/dolor|enferm|síntom|malestar|salud|cuerpo|físic|médic|vértigo|acidez|cabeza|sueño|migraña|taquicard|ansied/i.test(w))return'health';
+  if(/identidad|cultura|idioma|origen|nación|religión|fe|espiritual|valores|karma|creenc/i.test(w))return'identity';
+  if(/triste|alegr|miedo|ansiedad|angustia|feliz|amor|ira|rabia|culpa|frustrac|siento|emocion|sensible/i.test(w))return'emotion';
+  if(/familia|amigo|pareja|hijo|hija|madre|padre|padres|trabajo|compañer|relaci|person|gente|social/i.test(w))return'social';
+  if(/casa|ciudad|barrio|pueblo|lugar|aquí|allí/i.test(w))return'place';
+  if(/infancia|niñez|años|meses|antes|después|pasado|futuro|hoy|ayer|adolescencia/i.test(w))return'time';
+  return'neutral';
+}
+function tok(t){return t.replace(/[¿¡.,;:!?()«»""—\-–\/\\]/g,' ').split(/\s+/).map(w=>w.trim().toLowerCase()).filter(w=>w.length>2&&!STOP.has(w))}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+
+function extract(){
+  const freq={};
+  const srcs=[...DIMS.map(d=>({id:'dim-'+d.id,dim:d.id,color:d.color})),
+    ...['alegria','tristeza','ira','satisfaccion','optimismo','gratitud','interes','tranquilidad'].map(e=>({id:'emo-'+e,dim:'emocional',color:'#c47878'}))];
+  srcs.forEach(s=>{
+    const el=document.getElementById(s.id);if(!el)return;
+    tok(el.value).forEach(w=>{if(!freq[w])freq[w]={dim:s.dim,color:s.color,f:0,type:classify(w)};freq[w].f++;});
+  });
+  if(!Object.keys(freq).length){alert('Por favor escribe en al menos una dimensión antes de continuar.');return;}
+  kws=Object.entries(freq).map(([w,m])=>({word:cap(w),dim:m.dim,color:m.color,score:m.f*(WM[m.type]||1),selected:false})).sort((a,b)=>b.score-a.score);
+  kws.forEach((k,i)=>{k.selected=i<MAX});
+  renderKW();document.getElementById('nav-2').disabled=false;go(2);
+}
+
+function renderKW(){
+  const sel=kws.filter(k=>k.selected).length,atMax=sel>=MAX;
+  document.getElementById('kw-grid').innerHTML=kws.map((k,i)=>`<div class="kwt ${k.selected?'sel':''} ${atMax&&!k.selected?'maxed':''}" onclick="toggleKW(${i})"><div class="ck">${k.selected?'✓':''}</div><div class="dot" style="background:${k.color}"></div><span>${k.word}</span></div>`).join('');
+  document.getElementById('kw-count').textContent=sel;document.getElementById('kw-prog').value=sel;
+  document.getElementById('kw-note').textContent=sel>=MAX?'✓ Límite alcanzado':'Selecciona las más significativas para ti';
+}
+function toggleKW(i){const sel=kws.filter(k=>k.selected).length;if(!kws[i].selected&&sel>=MAX)return;kws[i].selected=!kws[i].selected;renderKW();}
+function addWord(){const inp=document.getElementById('kw-add-i');const w=inp.value.trim();if(!w)return;const sel=kws.filter(k=>k.selected).length;kws.unshift({word:cap(w),dim:'custom',color:'#8A7A6A',score:999,selected:sel<MAX});inp.value='';renderKW();}
+
+function startScanner(){
+  scan=kws.filter(k=>k.selected);if(!scan.length){alert('Selecciona al menos una palabra.');return;}
+  placed=[];aIdx=-1;document.getElementById('pwl').innerHTML='';
+  renderWList();setActive(0);document.getElementById('nav-3').disabled=false;go(3);
+}
+function renderWList(){document.getElementById('wlist').innerHTML=scan.map((k,i)=>`<div class="wi" id="wi${i}" onclick="setActive(${i})"><span class="wi-dot" style="color:${k.color}">●</span><span class="wi-word">${k.word}</span><span class="wi-reg" id="wr${i}"></span><button class="wi-skip" onclick="event.stopPropagation();skip(${i})" title="Saltar">—</button></div>`).join('');}
+function setActive(idx){
+  if(scan[idx]&&(scan[idx].placed||scan[idx].skipped)){let n=idx+1;while(n<scan.length&&(scan[n]?.placed||scan[n]?.skipped))n++;if(n>=scan.length){finish();return;}idx=n;}
+  aIdx=idx;const k=scan[idx];
+  document.querySelectorAll('.wi').forEach((el,i)=>{el.classList.toggle('wa',i===idx)});
+  const aw=document.getElementById('aw');aw.textContent=k.word;aw.style.color=k.color;
+  document.getElementById('sh').innerHTML=`Ubica <span>${k.word}</span> haciendo clic en el cerebro`;
+}
+function skip(idx){scan[idx].skipped=true;const el=document.getElementById('wi'+idx);if(el){el.classList.add('ws');el.classList.remove('wa')}if(idx===aIdx)advance();}
+function advance(){let n=aIdx+1;while(n<scan.length&&(scan[n]?.placed||scan[n]?.skipped))n++;if(n<scan.length)setActive(n);else finish();}
+
+document.getElementById('brain-svg').addEventListener('click',function(e){
+  if(aIdx<0||aIdx>=scan.length)return;
+  const k=scan[aIdx];if(k.placed||k.skipped)return;
+  let region='ÍNSULA';const tgt=e.target.closest('.br');if(tgt)region=tgt.dataset.region;
+  const svg=this,pt=svg.createSVGPoint();pt.x=e.clientX;pt.y=e.clientY;
+  const sp=pt.matrixTransform(svg.getScreenCTM().inverse());
+  placed.push({word:k.word,dim:k.dim,color:k.color,region,x:sp.x,y:sp.y});k.placed=true;k.region=region;
+  const g=document.createElementNS('http://www.w3.org/2000/svg','text');
+  g.setAttribute('x',sp.x);g.setAttribute('y',sp.y);g.setAttribute('fill',k.color);g.setAttribute('font-size','12');
+  g.setAttribute('font-family',"'Atkinson Hyperlegible','Trebuchet MS',sans-serif");g.setAttribute('font-weight','700');
+  g.setAttribute('text-anchor','middle');g.setAttribute('dominant-baseline','middle');g.setAttribute('pointer-events','none');
+  g.setAttribute('filter','url(#glow)');g.textContent=k.word;document.getElementById('pwl').appendChild(g);
+  const wi=document.getElementById('wi'+aIdx);if(wi){wi.classList.add('wp');wi.classList.remove('wa')}
+  const wr=document.getElementById('wr'+aIdx);if(wr)wr.textContent=region.substring(0,4);
+  updateProg();advance();
+});
+function updateProg(){const t=scan.length,p=placed.length,pct=t>0?Math.round(p/t*100):0;document.getElementById('prog-t').textContent=p+' de '+t+' ubicadas';document.getElementById('prog-p').textContent=pct+'%';document.getElementById('prog-f').style.width=pct+'%';}
+function finish(){const aw=document.getElementById('aw');aw.textContent='✓ Completado';aw.style.color='var(--accent2)';document.getElementById('sh').textContent='Escáner completado. Genera el informe.';document.getElementById('btn-rpt').disabled=false;document.getElementById('nav-4').disabled=false;updateProg();}
+
+// ── CAB RECOMMENDATIONS ──
+function getCabRecommendations(byRegion, dx){
+  const capScore={};
+  // Score from regions
+  Object.entries(byRegion).sort((a,b)=>b[1].length-a[1].length).forEach(([reg,ps],rank)=>{
+    const caps=CAB_MATRIX[reg]||[];
+    const regionWeight=Math.max(1, ps.length);
+    caps.forEach(c=>{
+      if(!capScore[c.cap])capScore[c.cap]={...c,score:0,regions:[]};
+      capScore[c.cap].score+=c.prio*regionWeight/(rank+1);
+      capScore[c.cap].regions.push(reg);
+    });
+  });
+  // Boost from diagnosis
+  const dxLower=(dx||'').toLowerCase();
+  let pathKey=null;
+  if(/tdah|adhd|atención/i.test(dxLower))pathKey='TDAH';
+  else if(/tea|autismo|espectro/i.test(dxLower))pathKey='TEA';
+  else if(/dislexia/i.test(dxLower))pathKey='Dislexia';
+  else if(/altas capacidades|superdotad/i.test(dxLower))pathKey='Altas Capacidades';
+  if(pathKey&&CAB_PATHO[pathKey]){
+    CAB_PATHO[pathKey].forEach((cap,i)=>{
+      if(capScore[cap])capScore[cap].score+=(5-i)*2;
+      else capScore[cap]={cap,area:'—',color:'#8A7A6A',score:(5-i)*2,regions:['Diagnóstico'],def:'Relevante para '+pathKey};
+    });
+  }
+  return Object.values(capScore).sort((a,b)=>b.score-a.score).slice(0,8);
+}
+
+// ── INTERPRETATION ENGINE ──
+function interpretMap(byRegion,placed,dx){
+  const dom=Object.entries(byRegion).sort((a,b)=>b[1].length-a[1].length)[0]?.[0]||'—';
+  const frontalWords=(byRegion['FRONTAL']||[]).map(p=>p.word);
+  const parietalWords=(byRegion['PARIETAL']||[]).map(p=>p.word);
+  const prefrontalWords=(byRegion['PREFRONTAL']||[]).map(p=>p.word);
+  const temporalWords=(byRegion['TEMPORAL']||[]).map(p=>p.word);
+  const insulaWords=(byRegion['ÍNSULA']||[]).map(p=>p.word);
+  const hipocampalWords=(byRegion['HIPOCAMPAL']||[]).map(p=>p.word);
+  const totalRegions=Object.keys(byRegion).length;
+  const isTDAH=/TDAH|ADHD|deficit|atención/i.test(dx);
+  const familyInFrontal=frontalWords.filter(w=>/padre|madre|padres|familia|abuelo|abuela|hermano|hermana/i.test(w));
+  const strengthsInParietal=parietalWords.filter(w=>/amor|espiritual|inteligente|siento|creatividad|talento|capaz/i.test(w));
+  const anxietyInTemporal=temporalWords.filter(w=>/ansiedad|miedo|angustia|preocup/i.test(w));
+  const bodyInInsula=insulaWords.filter(w=>/cabeza|cuerpo|dolor|siento|físico/i.test(w));
+  const impInPrefrontal=prefrontalWords.filter(w=>/impulsiv|inquiet|nervi|hiperactiv/i.test(w));
+  let insights=[];
+  const domColor=RCOL[dom]||'#4A5A6A';
+  insights.push({color:domColor,text:`<strong>Región dominante: ${dom}</strong> (${(byRegion[dom]||[]).length} palabras). La mayor densidad semántica del sujeto se concentra en esta región, lo que orienta el eje clínico central de intervención.`});
+  if(familyInFrontal.length>=2)insights.push({color:'#5B4DB8',text:`<strong>Carga vincular-familiar en FRONTAL:</strong> ${familyInFrontal.join(', ')} — el sistema de apego actúa como organizador semántico primario. Desde la perspectiva epigenética (Ceberio & Berardino, 2023), el entorno familiar temprano puede estar modulando activamente la expresión génica y compitiendo con los recursos ejecutivos disponibles para la regulación.`});
+  if(isTDAH&&impInPrefrontal.length>0)insights.push({color:'#3B5CB8',text:`<strong>Mapa directo del fenotipo TDAH en PREFRONTAL:</strong> ${impInPrefrontal.join(', ')} — el sujeto ubica intuitivamente su fenomenología de TDAH en la región neurobiológicamente deficitaria. Esto evidencia <strong>metacognición activa</strong> del propio perfil: recurso terapéutico de primer orden.`});
+  if(anxietyInTemporal.length>0)insights.push({color:'#8B5A1A',text:`<strong>Ansiedad cognitivo-verbal en TEMPORAL:</strong> ${anxietyInTemporal.join(', ')} junto a verbos epistémicos — patrón de ansiedad mediada verbalmente que se piensa y rumia. La intervención más eficaz apunta a la desaceleración del flujo verbal interno.`});
+  if(bodyInInsula.length>0)insights.push({color:'#6B2A8B',text:`<strong>Sistema interceptivo activo en ÍNSULA:</strong> ${bodyInInsula.join(', ')} — el sujeto tiene acceso a la señal corporal de su estado interno. La ínsula es puerta de entrada para intervenciones de regulación somática.`});
+  if(strengthsInParietal.length>=2)insights.push({color:'#2A6B4A',text:`<strong>Zona de fortaleza en PARIETAL:</strong> ${strengthsInParietal.join(', ')} — recursos emocionales, identitarios y trascendentes intactos. <strong>Esta es la región con mayor potencial terapéutico no activado.</strong> Anclar las intervenciones desde estos recursos.`});
+  if(hipocampalWords.length<=2&&hipocampalWords.length>0)insights.push({color:'#1A4A8B',text:`<strong>Hipocampal con baja densidad semántica (${hipocampalWords.length}):</strong> ${hipocampalWords.join(', ')} — puede indicar dificultad en la consolidación del pasado o proyección al futuro, patrón frecuente en carga traumática o TDAH.`});
+  if(totalRegions>=6)insights.push({color:'#4A5A6A',text:`<strong>Activación semántica amplia (${totalRegions} regiones):</strong> el sujeto distribuye su mundo semántico en múltiples regiones, indicando riqueza cognitiva y alta plasticidad potencial para la intervención.`});
+  return {dom,insights};
+}
+
+// ── REPORT ──
+function genReport(){
+  const name=document.getElementById('p-name').value||'Sujeto';
+  const dob=document.getElementById('p-dob').value||'—';
+  const dx=document.getElementById('p-dx').value||'—';
+  const tx=document.getElementById('p-tx').value||'—';
+  const pl=document.getElementById('p-place').value||'—';
+  const dt=document.getElementById('p-date').value||new Date().toLocaleDateString('es-ES');
+  document.getElementById('rp').textContent=name;
+  document.getElementById('rd').textContent='Sesión: '+dt;
+  const byR={},byD={};
+  placed.forEach(p=>{if(!byR[p.region])byR[p.region]=[];byR[p.region].push(p);if(!byD[p.dim])byD[p.dim]=[];byD[p.dim].push(p);});
+  const {dom,insights}=interpretMap(byR,placed,dx);
+  const cabRecs=getCabRecommendations(byR,dx);
+  const prioStars=n=>n>=3?'★★★':n>=2?'★★':'★';
+
+  const html=`
+    <div class="metrics-grid">
+      <div class="mc"><div class="mv">${scan.length}</div><div class="ml">Palabras escaneadas</div></div>
+      <div class="mc"><div class="mv">${placed.length}</div><div class="ml">Ubicadas</div></div>
+      <div class="mc"><div class="mv">${Object.keys(byR).length}</div><div class="ml">Regiones activas</div></div>
+      <div class="mc"><div class="mv" style="font-size:16px;line-height:1.3;padding-top:4px">${dom}</div><div class="ml">Región dominante</div></div>
+    </div>
+
+    <div class="rpt-sec">Mapa de activación cerebral</div>
+    <div class="holo-grid">${Object.entries(byR).sort((a,b)=>b[1].length-a[1].length).map(([r,ps])=>`<div class="hc" style="border-left-color:${RCOL[r]||'#4A5A6A'}"><div class="hct">${r} · ${ps.length}</div><div class="hcb">${ps.map(p=>`<span style="color:${p.color};font-weight:700">${p.word}</span>`).join(' · ')}</div></div>`).join('')}</div>
+
+    <div class="rpt-sec">Palabras por dimensión HoloMed 8D</div>
+    <div class="holo-grid">${Object.entries(byD).map(([d,ps])=>{const m=DM[d]||{label:d,color:'#8a7a6a'};return`<div class="hc" style="border-left-color:${m.color}"><div class="hct">${m.label||d} · ${ps.length}</div><div class="hcb">${ps.map(p=>`<strong>${p.word}</strong> → ${p.region}`).join('<br>')}</div></div>`}).join('')}</div>
+
+    <div class="rpt-sec">Interpretación holofractal · 13MIL v6.0</div>
+    ${insights.map(i=>`<div class="insight" style="border-left-color:${i.color}">${i.text}</div>`).join('')}
+
+    <div class="rpt-sec">Capacidades CAB® prioritarias para evaluación neuropsicológica</div>
+    <div class="rpt-card" style="padding:0;overflow:hidden">
+      <table class="cab-table">
+        <tr><th>Prioridad</th><th>Capacidad CAB®</th><th>Área</th><th>Definición</th><th>Regiones implicadas</th></tr>
+        ${cabRecs.map(c=>`<tr>
+          <td><span class="cab-stars ${c.score<6?'s2':''}">${prioStars(c.prio)}</span></td>
+          <td><strong>${c.cap}</strong></td>
+          <td><span class="cab-area-tag" style="background:${c.color}22;color:${c.color}">${c.area}</span></td>
+          <td style="font-size:13px;color:var(--text3)">${c.def}</td>
+          <td style="font-size:12px;color:var(--text3)">${(c.regions||[]).slice(0,2).join(' · ')}</td>
+        </tr>`).join('')}
+      </table>
+    </div>
+    <div class="insight" style="border-left-color:#4A90D9;background:rgba(74,144,217,.06);font-size:13px">
+      Esta tabla orienta qué subhabilidades del CAB® CogniFit explorar con mayor prioridad, basándose en la distribución semántica del sujeto y el diagnóstico declarado. No sustituye la evaluación neuropsicológica completa — la orienta y personaliza.
+    </div>
+
+    <div class="rpt-sec">Datos del sujeto · FHH</div>
+    <div class="rpt-card"><strong>Identificador:</strong> ${name} &nbsp;·&nbsp; <strong>Nacimiento:</strong> ${dob} &nbsp;·&nbsp; <strong>Localidad:</strong> ${pl}<br><strong>Diagnósticos:</strong> ${dx}<br><strong>Tratamiento:</strong> ${tx}</div>
+
+    <div class="rpt-sec">Narrativa HoloMed 8D</div>
+    ${DIMS.map(d=>{const v=(document.getElementById('dim-'+d.id)||{}).value||'';if(!v.trim())return'';return`<div class="hc" style="border-left-color:${d.color}"><div class="hct">${d.label}</div><div class="hcb">${v}</div></div>`}).join('')}
+
+    <div class="rpt-sec">Base metodológica</div>
+    <div class="insight" style="border-left-color:#1A4A8B;background:rgba(26,74,139,.05);font-size:13px">Huth et al. (2016). <em>A continuous semantic space describes the representation of thousands of object and action categories across the human brain.</em> Nature. &nbsp;·&nbsp; Ceberio, M.R. & Berardino, B.G. (2023). <em>Contexto, ser humano y epigenética.</em> INTERDISCIPLINARIA, 40(1). &nbsp;·&nbsp; CogniFit CAB® (2026). Batería de Evaluación Cognitiva. &nbsp;·&nbsp; Carmona Aguirre, S. (2014/UNESCO 2016). Holomedicina® · Modelo Holomédico. Este informe es apoyo clínico. El juicio diagnóstico final pertenece al profesional humano.</div>
+  `;
+  document.getElementById('rc').innerHTML=html;
+  document.getElementById('nav-4').disabled=false;go(4);
+}
+
+function downloadPDF(){
+  const notesVal=document.getElementById('clinical-notes').value.trim();
+  const notesWrap=document.getElementById('clinical-notes').parentNode;
+  const origTA=document.getElementById('clinical-notes');
+  const rendered=document.createElement('div');
+  rendered.className='notes-rendered';
+  rendered.textContent=notesVal||'(Sin notas del clínico)';
+  origTA.style.display='none';notesWrap.appendChild(rendered);
+  const name=document.getElementById('p-name').value||'Sujeto';
+  const dt=document.getElementById('p-date').value||new Date().toLocaleDateString('es-ES');
+  const filename=`Informe_UNIMED_${name.replace(/\s+/g,'_')}_${dt.replace(/\//g,'-')}.pdf`;
+  const opt={margin:[10,10,10,10],filename,image:{type:'jpeg',quality:.95},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'},pagebreak:{mode:['avoid-all','css','legacy']}};
+  html2pdf().set(opt).from(document.getElementById('rpt-pdf')).save().then(()=>{origTA.style.display='';rendered.remove();});
+}
+
+function loadExample(){
+  document.getElementById('p-name').value='Ejemplo · Demo';
+  document.getElementById('p-date').value=new Date().toLocaleDateString('es-ES');
+  document.getElementById('dim-biologica').value='Tengo TDAH, soy impulsivo y nervioso. Mi cabeza es como un motor que no deja de funcionar. También sufro migrañas y ansiedad en ocasiones.';
+  document.getElementById('dim-psicologica').value='Me cuesta tomar decisiones y le doy muchas vueltas a las cosas. Tuve una adolescencia complicada con algunos traumas. Me considero sensible y bastante emocional.';
+  document.getElementById('dim-social').value='Me considero poco sociable aunque me adapto bien. Prefiero estar en casa con la familia. En el trabajo me llevo bien.';
+  document.getElementById('dim-cultural').value='Nací en Barcelona. Mis abuelos emigraron. Me identifico con mis raíces aunque no soy muy tradicional. La familia es mi centro.';
+  document.getElementById('dim-economica').value='Mi situación económica ha mejorado. He empezado a ahorrar e invertir. Aún necesito controlar los impulsos de compra.';
+  document.getElementById('dim-espiritual').value='Creo en el karma y en que existe algo después de la muerte. Pienso que cada uno tiene un propósito en esta vida.';
+  document.getElementById('dim-etica').value='Mis valores como persona son bastante correctos. Soy inteligente, amable y creativo. Pero también impulsivo e inmaduro a veces.';
+  document.getElementById('a-existo').value='crecer y aprender cada día';
+  document.getElementById('h-hoy').value='con energía moderada, algo ansioso';
+}
+document.getElementById('p-date').value=new Date().toLocaleDateString('es-ES');
+</script>
+</body>
+</html>
