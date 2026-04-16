@@ -1,0 +1,1916 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuestionario de Estilo de Vida · CAPS Digital · UNIMED</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #060d14;
+    --surface: #0d1b26;
+    --surface2: #112233;
+    --border: #1e3448;
+    --border-bright: #2a4a68;
+    --teal: #00c9b1;
+    --teal-dim: rgba(0,201,177,0.12);
+    --teal-glow: rgba(0,201,177,0.25);
+    --cyan: #38d9f5;
+    --amber: #f5a623;
+    --rose: #f05a6e;
+    --green: #3ecf8e;
+    --text: #cfe4f5;
+    --text-dim: #7a9ab8;
+    --text-muted: #3d6080;
+    --white: #eef6ff;
+    --radius: 10px;
+    --radius-lg: 16px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.65;
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0,201,177,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 30% at 90% 80%, rgba(56,217,245,0.04) 0%, transparent 60%);
+  }
+
+  /* ── GATE ── */
+  #gate {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .gate-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 40px 28px;
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,201,177,0.05);
+  }
+
+  .logo-mark {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 20px;
+    background: var(--teal-dim);
+    border: 1.5px solid var(--teal);
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+  }
+
+  .gate-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .gate-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 22px;
+    color: var(--white);
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  .gate-sub {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 28px;
+    line-height: 1.5;
+  }
+
+  .gate-input-wrap { text-align: left; margin-bottom: 16px; }
+
+  .gate-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .gate-input {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 12px 16px;
+    color: var(--white);
+    font-family: 'DM Mono', monospace;
+    font-size: 15px;
+    letter-spacing: 0.1em;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .gate-input:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-glow);
+  }
+  .gate-input::placeholder { color: var(--text-muted); }
+
+  .gate-btn {
+    width: 100%;
+    background: var(--teal);
+    color: #060d14;
+    border: none;
+    border-radius: var(--radius);
+    padding: 14px 24px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    margin-top: 4px;
+  }
+  .gate-btn:hover { opacity: 0.9; }
+  .gate-btn:active { transform: scale(0.98); }
+
+  .gate-error {
+    display: none;
+    background: rgba(240,90,110,0.1);
+    border: 1px solid rgba(240,90,110,0.3);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 13px;
+    color: var(--rose);
+    margin-top: 12px;
+  }
+
+  /* ── MAIN FORM ── */
+  #form-wrap { display: none; }
+
+  header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(12px);
+  }
+
+  .header-inner {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .header-brand {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--teal);
+    text-transform: uppercase;
+    line-height: 1.2;
+  }
+
+  .header-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--white);
+  }
+
+  .progress-ring-wrap { flex-shrink: 0; }
+
+  .progress-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--teal);
+    text-align: right;
+  }
+
+  /* Progress bar */
+  .progress-bar-track {
+    height: 3px;
+    background: var(--border);
+    border-radius: 2px;
+    margin-top: 10px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--teal), var(--cyan));
+    border-radius: 2px;
+    transition: width 0.4s ease;
+    width: 0%;
+  }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 24px 16px 80px;
+  }
+
+  /* Section nav pills */
+  .section-nav {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 28px;
+    scrollbar-width: none;
+  }
+  .section-nav::-webkit-scrollbar { display: none; }
+
+  .nav-pill {
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .nav-pill.active, .nav-pill:hover {
+    background: var(--teal-dim);
+    border-color: var(--teal);
+    color: var(--teal);
+  }
+
+  /* Form sections */
+  .form-section {
+    display: none;
+    animation: fadeUp 0.3s ease;
+  }
+  .form-section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--teal);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+
+  .section-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 24px;
+    color: var(--white);
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+
+  .section-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.55;
+  }
+
+  /* Question blocks */
+  .q-block {
+    margin-bottom: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    transition: border-color 0.2s;
+  }
+  .q-block:focus-within {
+    border-color: var(--border-bright);
+  }
+
+  .q-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 14px;
+    line-height: 1.4;
+  }
+
+  .q-sublabel {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+    font-style: italic;
+  }
+
+  /* Radio / Checkbox options */
+  .options-grid { display: flex; flex-direction: column; gap: 8px; }
+  .options-2col { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+
+  .opt {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+  .opt:hover { border-color: var(--border-bright); background: rgba(255,255,255,0.03); }
+  .opt.selected {
+    background: var(--teal-dim);
+    border-color: var(--teal);
+  }
+
+  .opt input[type="radio"],
+  .opt input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--teal);
+    flex-shrink: 0;
+    cursor: pointer;
+  }
+
+  .opt-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.35;
+  }
+
+  /* Likert scale */
+  .likert-row {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 6px;
+  }
+
+  .likert-item {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .likert-q {
+    font-size: 13px;
+    color: var(--text);
+    margin-bottom: 10px;
+    line-height: 1.4;
+  }
+
+  .likert-opts {
+    display: flex;
+    gap: 6px;
+  }
+
+  .likert-opt {
+    flex: 1;
+    text-align: center;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 4px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .likert-opt:hover { border-color: var(--border-bright); }
+  .likert-opt.selected { background: var(--teal-dim); border-color: var(--teal); }
+  .likert-opt input { display: none; }
+  .likert-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--white);
+    display: block;
+  }
+  .likert-label {
+    font-size: 9px;
+    color: var(--text-muted);
+    line-height: 1.2;
+    display: block;
+    margin-top: 2px;
+  }
+
+  /* Text input */
+  .q-input, .q-textarea {
+    width: 100%;
+    background: var(--bg);
+    border: 1px solid var(--border-bright);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    margin-top: 8px;
+  }
+  .q-input:focus, .q-textarea:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px var(--teal-glow);
+  }
+  .q-textarea { resize: vertical; min-height: 80px; }
+
+  /* Info callout */
+  .callout {
+    background: rgba(0,201,177,0.06);
+    border: 1px solid rgba(0,201,177,0.2);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    line-height: 1.55;
+  }
+  .callout strong { color: var(--teal); }
+
+  /* Optional section toggle */
+  .optional-toggle {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 8px;
+  }
+  .optional-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 14px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-dim);
+    user-select: none;
+  }
+  .optional-header:hover { color: var(--text); }
+  .optional-icon {
+    font-size: 16px;
+    transition: transform 0.2s;
+  }
+  .optional-icon.open { transform: rotate(180deg); }
+  .optional-body {
+    display: none;
+    padding: 0 14px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .optional-body.open { display: block; }
+
+  /* Subsection divider */
+  .subsec-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 24px 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .subsec-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Navigation buttons */
+  .nav-btns {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  .btn-prev {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border-bright);
+    border-radius: var(--radius);
+    padding: 13px 20px;
+    color: var(--text-dim);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-prev:hover { border-color: var(--text-dim); color: var(--text); }
+
+  .btn-next {
+    flex: 2;
+    background: var(--teal);
+    border: none;
+    border-radius: var(--radius);
+    padding: 13px 20px;
+    color: #060d14;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity 0.2s, transform 0.1s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+  .btn-next:hover { opacity: 0.9; }
+  .btn-next:active { transform: scale(0.98); }
+  .btn-next:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  /* Summary / completion */
+  #summary-section {
+    display: none;
+    animation: fadeUp 0.4s ease;
+  }
+
+  .summary-hero {
+    text-align: center;
+    padding: 32px 0 24px;
+  }
+
+  .summary-icon {
+    width: 64px;
+    height: 64px;
+    background: var(--teal-dim);
+    border: 1.5px solid var(--teal);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 16px;
+  }
+
+  .summary-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+
+  .summary-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.6;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+
+  .summary-meta {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin: 24px 0;
+    font-size: 13px;
+  }
+
+  .meta-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+  .meta-row:last-child { border-bottom: none; }
+  .meta-row strong { color: var(--text); }
+
+  .btn-pdf {
+    width: 100%;
+    background: var(--teal);
+    border: none;
+    border-radius: var(--radius);
+    padding: 16px 24px;
+    color: #060d14;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: opacity 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .btn-pdf:hover { opacity: 0.9; }
+
+  /* PDF output content */
+  #pdf-content {
+    display: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    color: #1a2a3a;
+    line-height: 1.6;
+    padding: 20px;
+  }
+
+  #pdf-content h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    color: #003a50;
+    margin-bottom: 4px;
+  }
+
+  #pdf-content .pdf-meta {
+    font-size: 10px;
+    color: #6a8a9a;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #00c9b1;
+    padding-bottom: 8px;
+  }
+
+  #pdf-content h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #003a50;
+    margin: 16px 0 8px;
+    padding: 6px 10px;
+    background: #f0faf8;
+    border-left: 3px solid #00c9b1;
+  }
+
+  #pdf-content .pdf-q { margin-bottom: 8px; }
+  #pdf-content .pdf-q-label { font-weight: 600; color: #2a4a5a; font-size: 11px; }
+  #pdf-content .pdf-q-answer { color: #1a2a3a; padding-left: 8px; font-size: 11px; }
+
+  #pdf-content .pdf-footer {
+    margin-top: 24px;
+    padding-top: 8px;
+    border-top: 1px solid #cde;
+    font-size: 10px;
+    color: #6a8a9a;
+    text-align: center;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-bright); border-radius: 2px; }
+
+  /* Responsive tweaks */
+  @media (max-width: 480px) {
+    .options-2col { grid-template-columns: 1fr; }
+    .section-title { font-size: 20px; }
+    .gate-card { padding: 32px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══ ACCESS GATE ═══ -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="logo-mark">🧬</div>
+    <div class="gate-brand">CAPS Digital · UNIMED Consulting</div>
+    <h1 class="gate-title">Cuestionario de Estilo de Vida y Salud</h1>
+    <p class="gate-sub">Introduce el código de acceso facilitado por tu profesional UNIMED para comenzar.</p>
+    <div class="gate-input-wrap">
+      <label class="gate-label" for="access-code">Código de acceso</label>
+      <input class="gate-input" type="text" id="access-code" placeholder="UNIMED2026" autocomplete="off" autocapitalize="characters" spellcheck="false">
+    </div>
+    <div class="gate-input-wrap">
+      <label class="gate-label" for="patient-name">Nombre del paciente</label>
+      <input class="gate-input" type="text" id="patient-name" placeholder="Nombre y apellidos">
+    </div>
+    <button class="gate-btn" onclick="checkAccess()">Comenzar evaluación →</button>
+    <div class="gate-error" id="gate-error">Código incorrecto. Contacta con tu profesional UNIMED.</div>
+  </div>
+</div>
+
+<!-- ═══ MAIN FORM ═══ -->
+<div id="form-wrap">
+  <header>
+    <div class="header-inner">
+      <div>
+        <div class="header-brand">CAPS Digital · UNIMED</div>
+        <div class="header-title">Estilo de Vida v1.1</div>
+      </div>
+      <div class="progress-ring-wrap">
+        <div class="progress-label" id="progress-label">1 / 9</div>
+      </div>
+    </div>
+    <div class="progress-bar-track">
+      <div class="progress-bar-fill" id="progress-fill"></div>
+    </div>
+  </header>
+
+  <main>
+    <!-- Section navigation pills -->
+    <div class="section-nav" id="section-nav"></div>
+
+    <!-- ── SECTION 1: Alimentación ── -->
+    <div class="form-section active" id="sec-1">
+      <div class="section-header">
+        <div class="section-num">Sección 01 · 9</div>
+        <h2 class="section-title">Alimentación y Nutrición</h2>
+        <p class="section-desc">Sus hábitos alimentarios nos ayudan a cruzar su perfil nutrigenómico con la realidad de su dieta actual.</p>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Con qué frecuencia realiza las comidas principales del día?</div>
+        <div class="options-grid" data-field="comidas-frecuencia" data-type="radio">
+          <label class="opt"><input type="radio" name="comidas-frecuencia" value="todas"><span class="opt-text">Todas las comidas (desayuno, comida, cena)</span></label>
+          <label class="opt"><input type="radio" name="comidas-frecuencia" value="2"><span class="opt-text">2 comidas al día</span></label>
+          <label class="opt"><input type="radio" name="comidas-frecuencia" value="1"><span class="opt-text">1 comida al día</span></label>
+          <label class="opt"><input type="radio" name="comidas-frecuencia" value="irregular"><span class="opt-text">Irregular / sin horario fijo</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿A qué hora realiza habitualmente su última comida del día?</div>
+        <div class="options-grid" data-field="ultima-comida" data-type="radio">
+          <label class="opt"><input type="radio" name="ultima-comida" value="antes-19"><span class="opt-text">Antes de las 19:00 h</span></label>
+          <label class="opt"><input type="radio" name="ultima-comida" value="19-21"><span class="opt-text">Entre las 19:00 y las 21:00 h</span></label>
+          <label class="opt"><input type="radio" name="ultima-comida" value="21-23"><span class="opt-text">Entre las 21:00 y las 23:00 h</span></label>
+          <label class="opt"><input type="radio" name="ultima-comida" value="despues-23"><span class="opt-text">Después de las 23:00 h</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuánta agua u otras bebidas sin azúcar consume diariamente?</div>
+        <div class="options-grid" data-field="hidratacion" data-type="radio">
+          <label class="opt"><input type="radio" name="hidratacion" value="<1L"><span class="opt-text">Menos de 1 litro</span></label>
+          <label class="opt"><input type="radio" name="hidratacion" value="1-1.5L"><span class="opt-text">1 – 1,5 litros</span></label>
+          <label class="opt"><input type="radio" name="hidratacion" value="1.5-2L"><span class="opt-text">1,5 – 2 litros</span></label>
+          <label class="opt"><input type="radio" name="hidratacion" value=">2L"><span class="opt-text">Más de 2 litros</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Consume frutas y verduras diariamente?</div>
+        <div class="options-grid" data-field="frutas-verduras" data-type="radio">
+          <label class="opt"><input type="radio" name="frutas-verduras" value="varias-veces"><span class="opt-text">Sí, varias veces al día</span></label>
+          <label class="opt"><input type="radio" name="frutas-verduras" value="al-menos-1"><span class="opt-text">Sí, al menos una vez al día</span></label>
+          <label class="opt"><input type="radio" name="frutas-verduras" value="ocasional"><span class="opt-text">Ocasionalmente</span></label>
+          <label class="opt"><input type="radio" name="frutas-verduras" value="rara-vez"><span class="opt-text">Rara vez o nunca</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Consume comida rápida o procesada?</div>
+        <div class="options-grid" data-field="procesada" data-type="radio">
+          <label class="opt"><input type="radio" name="procesada" value="diariamente"><span class="opt-text">Diariamente</span></label>
+          <label class="opt"><input type="radio" name="procesada" value="3-6/semana"><span class="opt-text">3 – 6 veces / semana</span></label>
+          <label class="opt"><input type="radio" name="procesada" value="1-2/semana"><span class="opt-text">1 – 2 veces / semana</span></label>
+          <label class="opt"><input type="radio" name="procesada" value="ocasional"><span class="opt-text">Ocasionalmente</span></label>
+          <label class="opt"><input type="radio" name="procesada" value="rara-vez"><span class="opt-text">Rara vez o nunca</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">Marcadores de dieta mediterránea <span style="color:var(--text-dim);font-weight:400">(marque todos los que apliquen)</span></div>
+        <div class="options-grid" data-field="mediterranea" data-type="checkbox">
+          <label class="opt"><input type="checkbox" name="mediterranea" value="aove"><span class="opt-text">Aceite de oliva virgen extra como grasa principal</span></label>
+          <label class="opt"><input type="checkbox" name="mediterranea" value="pescado-azul"><span class="opt-text">Pescado azul ≥ 2 veces / semana</span></label>
+          <label class="opt"><input type="checkbox" name="mediterranea" value="legumbres"><span class="opt-text">Legumbres ≥ 2 veces / semana</span></label>
+          <label class="opt"><input type="checkbox" name="mediterranea" value="frutos-secos"><span class="opt-text">Frutos secos a diario</span></label>
+          <label class="opt"><input type="checkbox" name="mediterranea" value="ninguno"><span class="opt-text">Ninguno de los anteriores</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Toma actualmente algún suplemento nutricional?</div>
+        <div class="options-grid" data-field="suplementos" data-type="radio">
+          <label class="opt"><input type="radio" name="suplementos" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="suplementos" value="no"><span class="opt-text">No</span></label>
+        </div>
+        <input class="q-input" type="text" id="suplementos-spec" placeholder="Especifique: vitamina D, omega-3, 5-MTHF, B12..." style="display:none">
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Ha notado síntomas de intolerancia a algún alimento?</div>
+        <div class="options-grid" data-field="intolerancia" data-type="radio">
+          <label class="opt"><input type="radio" name="intolerancia" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="intolerancia" value="no"><span class="opt-text">No</span></label>
+          <label class="opt"><input type="radio" name="intolerancia" value="no-se"><span class="opt-text">No lo sé</span></label>
+        </div>
+        <input class="q-input" type="text" id="intolerancia-spec" placeholder="Especifique: lactosa, gluten, histamina..." style="display:none">
+      </div>
+
+      <div class="callout">
+        <strong>🧬 Integración CAPS Digital:</strong> Si dispone de estudio genómico, sus respuestas se cruzarán con su perfil NutriGx (MTHFR, FADS1/2, VDR, MCM6) para personalizar las recomendaciones nutricionales.
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-next" onclick="goNext()">Siguiente: Actividad Física →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 2: Actividad Física ── -->
+    <div class="form-section" id="sec-2">
+      <div class="section-header">
+        <div class="section-num">Sección 02 · 9</div>
+        <h2 class="section-title">Actividad Física</h2>
+        <p class="section-desc">El tipo e intensidad de ejercicio son relevantes para su perfil genético (ACTN3, ADRB2).</p>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Realiza actividad física planificada?</div>
+        <div class="options-grid" data-field="ejercicio" data-type="radio">
+          <label class="opt"><input type="radio" name="ejercicio" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="ejercicio" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="q-block" id="blq-frecuencia-ej">
+        <div class="q-label">¿Con qué frecuencia?</div>
+        <div class="options-grid" data-field="ejercicio-frecuencia" data-type="radio">
+          <label class="opt"><input type="radio" name="ejercicio-frecuencia" value="diario"><span class="opt-text">Diariamente</span></label>
+          <label class="opt"><input type="radio" name="ejercicio-frecuencia" value="3-6/sem"><span class="opt-text">3 – 6 veces / semana</span></label>
+          <label class="opt"><input type="radio" name="ejercicio-frecuencia" value="1-2/sem"><span class="opt-text">1 – 2 veces / semana</span></label>
+          <label class="opt"><input type="radio" name="ejercicio-frecuencia" value="ocasional"><span class="opt-text">Ocasionalmente</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Qué tipo de actividad física realiza? <span style="color:var(--text-dim);font-weight:400">(puede marcar varias)</span></div>
+        <div class="options-grid" data-field="ejercicio-tipo" data-type="checkbox">
+          <label class="opt"><input type="checkbox" name="ejercicio-tipo" value="aerobico"><span class="opt-text">Aeróbica / cardiovascular (caminar, correr, nadar, ciclismo)</span></label>
+          <label class="opt"><input type="checkbox" name="ejercicio-tipo" value="fuerza"><span class="opt-text">Fuerza / musculación</span></label>
+          <label class="opt"><input type="checkbox" name="ejercicio-tipo" value="flexibilidad"><span class="opt-text">Flexibilidad / movilidad (yoga, pilates)</span></label>
+          <label class="opt"><input type="checkbox" name="ejercicio-tipo" value="deportes-equipo"><span class="opt-text">Deportes de equipo o raqueta</span></label>
+          <label class="opt"><input type="checkbox" name="ejercicio-tipo" value="no-realizo"><span class="opt-text">No realizo actividad física</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuántas horas al día permanece sentado/a de forma continuada? <span style="color:var(--text-dim);font-weight:400">(trabajo, pantallas, transporte)</span></div>
+        <div class="options-grid" data-field="sedentarismo" data-type="radio">
+          <label class="opt"><input type="radio" name="sedentarismo" value="<4h"><span class="opt-text">Menos de 4 horas</span></label>
+          <label class="opt"><input type="radio" name="sedentarismo" value="4-6h"><span class="opt-text">4 – 6 horas</span></label>
+          <label class="opt"><input type="radio" name="sedentarismo" value="7-8h"><span class="opt-text">7 – 8 horas</span></label>
+          <label class="opt"><input type="radio" name="sedentarismo" value=">8h"><span class="opt-text">Más de 8 horas</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuánto tiempo pasa al aire libre o con exposición a luz natural diariamente?</div>
+        <div class="options-grid" data-field="luz-natural" data-type="radio">
+          <label class="opt"><input type="radio" name="luz-natural" value="<30min"><span class="opt-text">Menos de 30 minutos</span></label>
+          <label class="opt"><input type="radio" name="luz-natural" value="30-60min"><span class="opt-text">30 minutos – 1 hora</span></label>
+          <label class="opt"><input type="radio" name="luz-natural" value="1-2h"><span class="opt-text">1 – 2 horas</span></label>
+          <label class="opt"><input type="radio" name="luz-natural" value=">2h"><span class="opt-text">Más de 2 horas</span></label>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goPrev()">← Anterior</button>
+        <button class="btn-next" onclick="goNext()">Siguiente: Sueño →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 3: Ritmo Circadiano y Sueño ── -->
+    <div class="form-section" id="sec-3">
+      <div class="section-header">
+        <div class="section-num">Sección 03 · 9</div>
+        <h2 class="section-title">Ritmo Circadiano y Sueño</h2>
+        <p class="section-desc">Su cronotipo y calidad del sueño se cruzan con las variantes CLOCK, PER3 y CRY de su perfil genómico.</p>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuántas horas duerme habitualmente?</div>
+        <div class="options-2col" data-field="horas-sueno" data-type="radio">
+          <label class="opt"><input type="radio" name="horas-sueno" value="<5h"><span class="opt-text">Menos de 5 horas</span></label>
+          <label class="opt"><input type="radio" name="horas-sueno" value="5-6h"><span class="opt-text">5 – 6 horas</span></label>
+          <label class="opt"><input type="radio" name="horas-sueno" value="7-8h"><span class="opt-text">7 – 8 horas</span></label>
+          <label class="opt"><input type="radio" name="horas-sueno" value=">8h"><span class="opt-text">Más de 8 horas</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cómo se considera en cuanto a su cronotipo?</div>
+        <div class="options-grid" data-field="cronotipo" data-type="radio">
+          <label class="opt"><input type="radio" name="cronotipo" value="matutino"><span class="opt-text">🌅 Persona de mañana — se despierta fácilmente temprano, rinde más a primera hora</span></label>
+          <label class="opt"><input type="radio" name="cronotipo" value="vespertino"><span class="opt-text">🌙 Persona de tarde-noche — le cuesta madrugar, rinde más por la tarde o noche</span></label>
+          <label class="opt"><input type="radio" name="cronotipo" value="intermedio"><span class="opt-text">⚖️ Intermedio — no tiene preferencia clara</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿A qué hora se duerme habitualmente?</div>
+        <div class="options-2col" data-field="hora-sueno" data-type="radio">
+          <label class="opt"><input type="radio" name="hora-sueno" value="antes-22:30"><span class="opt-text">Antes de las 22:30 h</span></label>
+          <label class="opt"><input type="radio" name="hora-sueno" value="22:30-00:00"><span class="opt-text">22:30 – 00:00 h</span></label>
+          <label class="opt"><input type="radio" name="hora-sueno" value="00:00-01:30"><span class="opt-text">00:00 – 01:30 h</span></label>
+          <label class="opt"><input type="radio" name="hora-sueno" value=">01:30"><span class="opt-text">Después de las 01:30 h</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">Cribado de insomnio — ISI abreviado</div>
+        <div class="q-sublabel">Valore del 0 (nada) al 4 (extremadamente)</div>
+        <div class="likert-row">
+          <div class="likert-item">
+            <div class="likert-q">¿Tiene dificultad para conciliar el sueño?</div>
+            <div class="likert-opts" data-field="isi-1" data-type="likert">
+              <label class="likert-opt" onclick="selectLikert(this,'isi-1')"><input type="radio" name="isi-1" value="0"><span class="likert-num">0</span><span class="likert-label">Nada</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-1')"><input type="radio" name="isi-1" value="1"><span class="likert-num">1</span><span class="likert-label">Leve</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-1')"><input type="radio" name="isi-1" value="2"><span class="likert-num">2</span><span class="likert-label">Mod.</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-1')"><input type="radio" name="isi-1" value="3"><span class="likert-num">3</span><span class="likert-label">Grave</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-1')"><input type="radio" name="isi-1" value="4"><span class="likert-num">4</span><span class="likert-label">Muy grave</span></label>
+            </div>
+          </div>
+          <div class="likert-item">
+            <div class="likert-q">¿Se despierta durante la noche o demasiado temprano?</div>
+            <div class="likert-opts" data-field="isi-2" data-type="likert">
+              <label class="likert-opt" onclick="selectLikert(this,'isi-2')"><input type="radio" name="isi-2" value="0"><span class="likert-num">0</span><span class="likert-label">Nada</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-2')"><input type="radio" name="isi-2" value="1"><span class="likert-num">1</span><span class="likert-label">Leve</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-2')"><input type="radio" name="isi-2" value="2"><span class="likert-num">2</span><span class="likert-label">Mod.</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-2')"><input type="radio" name="isi-2" value="3"><span class="likert-num">3</span><span class="likert-label">Grave</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-2')"><input type="radio" name="isi-2" value="4"><span class="likert-num">4</span><span class="likert-label">Muy grave</span></label>
+            </div>
+          </div>
+          <div class="likert-item">
+            <div class="likert-q">¿En qué medida su problema de sueño interfiere con su funcionamiento diario?</div>
+            <div class="likert-opts" data-field="isi-3" data-type="likert">
+              <label class="likert-opt" onclick="selectLikert(this,'isi-3')"><input type="radio" name="isi-3" value="0"><span class="likert-num">0</span><span class="likert-label">Nada</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-3')"><input type="radio" name="isi-3" value="1"><span class="likert-num">1</span><span class="likert-label">Poco</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-3')"><input type="radio" name="isi-3" value="2"><span class="likert-num">2</span><span class="likert-label">Algo</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-3')"><input type="radio" name="isi-3" value="3"><span class="likert-num">3</span><span class="likert-label">Mucho</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'isi-3')"><input type="radio" name="isi-3" value="4"><span class="likert-num">4</span><span class="likert-label">Extremad.</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><strong>Ref. clínica:</strong> ISI breve ≥ 8 sugiere insomnio clínicamente significativo (Morin et al., 2011).</div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Usa dispositivos con pantalla en la hora previa a dormir?</div>
+        <div class="options-grid" data-field="pantallas-noche" data-type="radio">
+          <label class="opt"><input type="radio" name="pantallas-noche" value="habitualmente"><span class="opt-text">Sí, habitualmente</span></label>
+          <label class="opt"><input type="radio" name="pantallas-noche" value="a-veces"><span class="opt-text">A veces</span></label>
+          <label class="opt"><input type="radio" name="pantallas-noche" value="rara-vez"><span class="opt-text">Rara vez o nunca</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Realiza siestas habitualmente?</div>
+        <div class="options-grid" data-field="siestas" data-type="radio">
+          <label class="opt"><input type="radio" name="siestas" value=">30min"><span class="opt-text">Sí, de más de 30 minutos</span></label>
+          <label class="opt"><input type="radio" name="siestas" value="<30min"><span class="opt-text">Sí, de menos de 30 minutos (siesta corta)</span></label>
+          <label class="opt"><input type="radio" name="siestas" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goPrev()">← Anterior</button>
+        <button class="btn-next" onclick="goNext()">Siguiente: Sustancias →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 4: Consumo de Sustancias ── -->
+    <div class="form-section" id="sec-4">
+      <div class="section-header">
+        <div class="section-num">Sección 04 · 9</div>
+        <h2 class="section-title">Consumo de Sustancias</h2>
+        <p class="section-desc">Incluye cribado AUDIT-C validado para alcohol, cafeína (relevante para CYP1A2) y cannabis (CYP2C9).</p>
+      </div>
+
+      <div class="subsec-title">Tabaco</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Fuma o ha fumado?</div>
+        <div class="options-grid" data-field="tabaco" data-type="radio">
+          <label class="opt"><input type="radio" name="tabaco" value="si-ahora"><span class="opt-text">Sí, actualmente fumo</span></label>
+          <label class="opt"><input type="radio" name="tabaco" value="exfumador"><span class="opt-text">Sí, fumé en el pasado pero lo dejé</span></label>
+          <label class="opt"><input type="radio" name="tabaco" value="nunca"><span class="opt-text">Nunca he fumado</span></label>
+        </div>
+      </div>
+
+      <div class="q-block" id="blq-tabaco-cantidad">
+        <div class="q-label">¿Cuánto fuma actualmente?</div>
+        <div class="options-grid" data-field="tabaco-cantidad" data-type="radio">
+          <label class="opt"><input type="radio" name="tabaco-cantidad" value="<5"><span class="opt-text">Menos de 5 cigarrillos / día</span></label>
+          <label class="opt"><input type="radio" name="tabaco-cantidad" value="5-10"><span class="opt-text">5 – 10 cigarrillos / día</span></label>
+          <label class="opt"><input type="radio" name="tabaco-cantidad" value="11-20"><span class="opt-text">11 – 20 cigarrillos / día (1 paquete)</span></label>
+          <label class="opt"><input type="radio" name="tabaco-cantidad" value=">20"><span class="opt-text">Más de 20 cigarrillos / día</span></label>
+        </div>
+      </div>
+
+      <div class="subsec-title">Alcohol — Cribado AUDIT-C</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Con qué frecuencia consume bebidas alcohólicas? <span style="color:var(--text-dim);font-weight:400">(AUDIT-C 1)</span></div>
+        <div class="options-grid" data-field="audit-1" data-type="radio">
+          <label class="opt"><input type="radio" name="audit-1" value="0"><span class="opt-text">Nunca</span></label>
+          <label class="opt"><input type="radio" name="audit-1" value="1"><span class="opt-text">Una vez al mes o menos</span></label>
+          <label class="opt"><input type="radio" name="audit-1" value="2"><span class="opt-text">2 – 4 veces al mes</span></label>
+          <label class="opt"><input type="radio" name="audit-1" value="3"><span class="opt-text">2 – 3 veces a la semana</span></label>
+          <label class="opt"><input type="radio" name="audit-1" value="4"><span class="opt-text">4 o más veces a la semana</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuántas consumiciones toma en un día típico cuando bebe? <span style="color:var(--text-dim);font-weight:400">(AUDIT-C 2)</span></div>
+        <div class="options-grid" data-field="audit-2" data-type="radio">
+          <label class="opt"><input type="radio" name="audit-2" value="0"><span class="opt-text">1 – 2 consumiciones</span></label>
+          <label class="opt"><input type="radio" name="audit-2" value="1"><span class="opt-text">3 – 4 consumiciones</span></label>
+          <label class="opt"><input type="radio" name="audit-2" value="2"><span class="opt-text">5 – 6 consumiciones</span></label>
+          <label class="opt"><input type="radio" name="audit-2" value="3"><span class="opt-text">7 – 9 consumiciones</span></label>
+          <label class="opt"><input type="radio" name="audit-2" value="4"><span class="opt-text">10 o más consumiciones</span></label>
+        </div>
+        <div class="callout"><strong>Ref.:</strong> 1 consumición = 1 cerveza 250 ml / 1 copa de vino 100 ml / 1 chupito 40 ml</div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Con qué frecuencia toma 6 o más consumiciones en una sola ocasión? <span style="color:var(--text-dim);font-weight:400">(AUDIT-C 3)</span></div>
+        <div class="options-grid" data-field="audit-3" data-type="radio">
+          <label class="opt"><input type="radio" name="audit-3" value="0"><span class="opt-text">Nunca</span></label>
+          <label class="opt"><input type="radio" name="audit-3" value="1"><span class="opt-text">Menos de una vez al mes</span></label>
+          <label class="opt"><input type="radio" name="audit-3" value="2"><span class="opt-text">Mensualmente</span></label>
+          <label class="opt"><input type="radio" name="audit-3" value="3"><span class="opt-text">Semanalmente</span></label>
+          <label class="opt"><input type="radio" name="audit-3" value="4"><span class="opt-text">A diario o casi a diario</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿A qué edad comenzó a consumir alcohol?</div>
+        <div class="options-grid" data-field="alcohol-edad" data-type="radio">
+          <label class="opt"><input type="radio" name="alcohol-edad" value="adolescencia"><span class="opt-text">Adolescencia (12 – 17 años)</span></label>
+          <label class="opt"><input type="radio" name="alcohol-edad" value="adulto-joven"><span class="opt-text">Adulto joven (18 – 30 años)</span></label>
+          <label class="opt"><input type="radio" name="alcohol-edad" value="adulto"><span class="opt-text">Edad adulta (más de 30 años)</span></label>
+          <label class="opt"><input type="radio" name="alcohol-edad" value="no-consume"><span class="opt-text">No consumo regularmente</span></label>
+        </div>
+      </div>
+
+      <div class="subsec-title">Cafeína</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuántas bebidas con cafeína consume al día? <span style="color:var(--text-dim);font-weight:400">(café, té, energéticas)</span></div>
+        <div class="options-2col" data-field="cafeina" data-type="radio">
+          <label class="opt"><input type="radio" name="cafeina" value="0"><span class="opt-text">Ninguna</span></label>
+          <label class="opt"><input type="radio" name="cafeina" value="1-2"><span class="opt-text">1 – 2</span></label>
+          <label class="opt"><input type="radio" name="cafeina" value="3-4"><span class="opt-text">3 – 4</span></label>
+          <label class="opt"><input type="radio" name="cafeina" value="5+"><span class="opt-text">5 o más</span></label>
+        </div>
+      </div>
+
+      <div class="subsec-title">Cannabis</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Consume o ha consumido cannabis?</div>
+        <div class="options-grid" data-field="cannabis" data-type="radio">
+          <label class="opt"><input type="radio" name="cannabis" value="si-regular"><span class="opt-text">Sí, actualmente con regularidad (≥ 1 vez / semana)</span></label>
+          <label class="opt"><input type="radio" name="cannabis" value="si-ocasional"><span class="opt-text">Sí, actualmente de forma ocasional</span></label>
+          <label class="opt"><input type="radio" name="cannabis" value="pasado"><span class="opt-text">Sí, en el pasado</span></label>
+          <label class="opt"><input type="radio" name="cannabis" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="subsec-title">Otras sustancias</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Consume o ha consumido otras sustancias?</div>
+        <div class="options-grid" data-field="otras-sustancias" data-type="radio">
+          <label class="opt"><input type="radio" name="otras-sustancias" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="otras-sustancias" value="no"><span class="opt-text">No</span></label>
+        </div>
+        <input class="q-input" type="text" id="otras-spec" placeholder="Especifique (cocaína, MDMA, anfetaminas...)" style="display:none">
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goPrev()">← Anterior</button>
+        <button class="btn-next" onclick="goNext()">Siguiente: Vida Sexual →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 5: Vida Sexual ── -->
+    <div class="form-section" id="sec-5">
+      <div class="section-header">
+        <div class="section-num">Sección 05 · 9</div>
+        <h2 class="section-title">Vida Sexual y Relacional</h2>
+        <p class="section-desc">Información relevante para el perfil holónico completo. Puede omitir cualquier pregunta con "Prefiero no responder".</p>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Mantiene relaciones sexuales actualmente?</div>
+        <div class="options-grid" data-field="relaciones-sexuales" data-type="radio">
+          <label class="opt"><input type="radio" name="relaciones-sexuales" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="relaciones-sexuales" value="no"><span class="opt-text">No</span></label>
+          <label class="opt"><input type="radio" name="relaciones-sexuales" value="pnr"><span class="opt-text">Prefiero no responder</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Utiliza métodos anticonceptivos? <span style="color:var(--text-dim);font-weight:400">(si aplica)</span></div>
+        <div class="options-grid" data-field="anticonceptivos" data-type="radio">
+          <label class="opt"><input type="radio" name="anticonceptivos" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="anticonceptivos" value="no"><span class="opt-text">No</span></label>
+          <label class="opt"><input type="radio" name="anticonceptivos" value="no-aplica"><span class="opt-text">No aplica / Prefiero no responder</span></label>
+        </div>
+        <input class="q-input" type="text" id="anticonceptivos-spec" placeholder="Especifique: hormonal, DIU, barrera..." style="display:none">
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Ha tenido historia de infecciones de transmisión sexual (ITS)?</div>
+        <div class="options-grid" data-field="its" data-type="radio">
+          <label class="opt"><input type="radio" name="its" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="its" value="no"><span class="opt-text">No</span></label>
+          <label class="opt"><input type="radio" name="its" value="pnr"><span class="opt-text">Prefiero no responder</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Tiene alguna preocupación relacionada con su vida sexual o relacional?</div>
+        <div class="options-grid" data-field="preocupacion-sexual" data-type="radio">
+          <label class="opt"><input type="radio" name="preocupacion-sexual" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="preocupacion-sexual" value="no"><span class="opt-text">No</span></label>
+          <label class="opt"><input type="radio" name="preocupacion-sexual" value="pnr"><span class="opt-text">Prefiero no responder</span></label>
+        </div>
+        <input class="q-input" type="text" id="preocupacion-spec" placeholder="Especifique (opcional)..." style="display:none">
+      </div>
+
+      <div class="optional-toggle">
+        <div class="optional-header" onclick="toggleOptional(this)">
+          <span>🔒 Preguntas opcionales de profundización — voluntarias</span>
+          <span class="optional-icon">▼</span>
+        </div>
+        <div class="optional-body">
+          <div class="q-block" style="margin-top:12px">
+            <div class="q-label">¿Consume contenido pornográfico?</div>
+            <div class="options-grid" data-field="pornografia" data-type="radio">
+              <label class="opt"><input type="radio" name="pornografia" value="diariamente"><span class="opt-text">Sí, diariamente</span></label>
+              <label class="opt"><input type="radio" name="pornografia" value="varias/semana"><span class="opt-text">Sí, varias veces / semana</span></label>
+              <label class="opt"><input type="radio" name="pornografia" value="ocasional"><span class="opt-text">Ocasionalmente</span></label>
+              <label class="opt"><input type="radio" name="pornografia" value="no"><span class="opt-text">No</span></label>
+              <label class="opt"><input type="radio" name="pornografia" value="pnr"><span class="opt-text">Prefiero no responder</span></label>
+            </div>
+          </div>
+          <div class="q-block">
+            <div class="q-label">¿Ha pagado por servicios sexuales?</div>
+            <div class="options-grid" data-field="servicios-sexuales" data-type="radio">
+              <label class="opt"><input type="radio" name="servicios-sexuales" value="si-ahora"><span class="opt-text">Sí, actualmente</span></label>
+              <label class="opt"><input type="radio" name="servicios-sexuales" value="si-pasado"><span class="opt-text">Sí, en el pasado</span></label>
+              <label class="opt"><input type="radio" name="servicios-sexuales" value="no"><span class="opt-text">No</span></label>
+              <label class="opt"><input type="radio" name="servicios-sexuales" value="pnr"><span class="opt-text">Prefiero no responder</span></label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goPrev()">← Anterior</button>
+        <button class="btn-next" onclick="goNext()">Siguiente: Tecnología →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 6: Tecnología ── -->
+    <div class="form-section" id="sec-6">
+      <div class="section-header">
+        <div class="section-num">Sección 06 · 9</div>
+        <h2 class="section-title">Uso de Tecnología y Pantallas</h2>
+        <p class="section-desc">El tiempo de ocio digital y el gaming tienen impacto en el ritmo circadiano y el bienestar emocional.</p>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuántas horas al día usa internet en tiempo de <strong>ocio</strong>? <span style="color:var(--text-dim);font-weight:400">(excluye trabajo)</span></div>
+        <div class="options-2col" data-field="internet-ocio" data-type="radio">
+          <label class="opt"><input type="radio" name="internet-ocio" value="<1h"><span class="opt-text">< 1 hora</span></label>
+          <label class="opt"><input type="radio" name="internet-ocio" value="1-2h"><span class="opt-text">1 – 2 horas</span></label>
+          <label class="opt"><input type="radio" name="internet-ocio" value="3-4h"><span class="opt-text">3 – 4 horas</span></label>
+          <label class="opt"><input type="radio" name="internet-ocio" value="5-6h"><span class="opt-text">5 – 6 horas</span></label>
+          <label class="opt"><input type="radio" name="internet-ocio" value=">6h"><span class="opt-text">> 6 horas</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuántas horas al día usa pantallas por <strong>trabajo o estudio</strong>?</div>
+        <div class="options-2col" data-field="internet-trabajo" data-type="radio">
+          <label class="opt"><input type="radio" name="internet-trabajo" value="<2h"><span class="opt-text">< 2 horas</span></label>
+          <label class="opt"><input type="radio" name="internet-trabajo" value="2-4h"><span class="opt-text">2 – 4 horas</span></label>
+          <label class="opt"><input type="radio" name="internet-trabajo" value="4-6h"><span class="opt-text">4 – 6 horas</span></label>
+          <label class="opt"><input type="radio" name="internet-trabajo" value=">6h"><span class="opt-text">> 6 horas</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Qué redes sociales utiliza? <span style="color:var(--text-dim);font-weight:400">(puede marcar varias)</span></div>
+        <div class="options-2col" data-field="redes-sociales" data-type="checkbox">
+          <label class="opt"><input type="checkbox" name="redes-sociales" value="instagram"><span class="opt-text">Instagram</span></label>
+          <label class="opt"><input type="checkbox" name="redes-sociales" value="tiktok"><span class="opt-text">TikTok</span></label>
+          <label class="opt"><input type="checkbox" name="redes-sociales" value="twitter"><span class="opt-text">X / Twitter</span></label>
+          <label class="opt"><input type="checkbox" name="redes-sociales" value="facebook"><span class="opt-text">Facebook</span></label>
+          <label class="opt"><input type="checkbox" name="redes-sociales" value="youtube"><span class="opt-text">YouTube</span></label>
+          <label class="opt"><input type="checkbox" name="redes-sociales" value="whatsapp"><span class="opt-text">WhatsApp / Telegram</span></label>
+          <label class="opt"><input type="checkbox" name="redes-sociales" value="linkedin"><span class="opt-text">LinkedIn</span></label>
+          <label class="opt"><input type="checkbox" name="redes-sociales" value="ninguna"><span class="opt-text">No uso redes sociales</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Con qué frecuencia revisa las redes sociales?</div>
+        <div class="options-grid" data-field="frecuencia-redes" data-type="radio">
+          <label class="opt"><input type="radio" name="frecuencia-redes" value="constantemente"><span class="opt-text">Constantemente (cada pocos minutos)</span></label>
+          <label class="opt"><input type="radio" name="frecuencia-redes" value="varias/dia"><span class="opt-text">Varias veces al día</span></label>
+          <label class="opt"><input type="radio" name="frecuencia-redes" value="1/dia"><span class="opt-text">Una vez al día</span></label>
+          <label class="opt"><input type="radio" name="frecuencia-redes" value="ocasional"><span class="opt-text">Ocasionalmente</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Juega a videojuegos?</div>
+        <div class="options-grid" data-field="videojuegos" data-type="radio">
+          <label class="opt"><input type="radio" name="videojuegos" value=">3h"><span class="opt-text">Sí, más de 3 horas / día</span></label>
+          <label class="opt"><input type="radio" name="videojuegos" value="1-3h"><span class="opt-text">Sí, 1 – 3 horas / día</span></label>
+          <label class="opt"><input type="radio" name="videojuegos" value="ocasional"><span class="opt-text">Sí, ocasionalmente</span></label>
+          <label class="opt"><input type="radio" name="videojuegos" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Siente que el uso de internet / redes sociales / videojuegos interfiere con su vida diaria?</div>
+        <div class="options-grid" data-field="interferencia-digital" data-type="radio">
+          <label class="opt"><input type="radio" name="interferencia-digital" value="si-frecuente"><span class="opt-text">Sí, frecuentemente</span></label>
+          <label class="opt"><input type="radio" name="interferencia-digital" value="a-veces"><span class="opt-text">A veces</span></label>
+          <label class="opt"><input type="radio" name="interferencia-digital" value="rara-vez"><span class="opt-text">Rara vez</span></label>
+          <label class="opt"><input type="radio" name="interferencia-digital" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goPrev()">← Anterior</button>
+        <button class="btn-next" onclick="goNext()">Siguiente: Estrés →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 7: Estrés y Bienestar ── -->
+    <div class="form-section" id="sec-7">
+      <div class="section-header">
+        <div class="section-num">Sección 07 · 9</div>
+        <h2 class="section-title">Estrés, Bienestar y Recursos</h2>
+        <p class="section-desc">Incluye PSS-4 (estrés percibido), cribado de burnout, red de apoyo, adversidad temprana ACE y dimensión espiritual.</p>
+      </div>
+
+      <div class="subsec-title">Estrés percibido — PSS-4</div>
+
+      <div class="q-block">
+        <div class="q-sublabel">Durante el último mes, ¿con qué frecuencia? · 0 = Nunca · 4 = Muy a menudo</div>
+        <div class="likert-row">
+          <div class="likert-item">
+            <div class="likert-q">¿Se ha sentido incapaz de controlar las cosas importantes de su vida?</div>
+            <div class="likert-opts" data-field="pss-1" data-type="likert">
+              <label class="likert-opt" onclick="selectLikert(this,'pss-1')"><input type="radio" name="pss-1" value="0"><span class="likert-num">0</span><span class="likert-label">Nunca</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-1')"><input type="radio" name="pss-1" value="1"><span class="likert-num">1</span><span class="likert-label">C.nunca</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-1')"><input type="radio" name="pss-1" value="2"><span class="likert-num">2</span><span class="likert-label">A veces</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-1')"><input type="radio" name="pss-1" value="3"><span class="likert-num">3</span><span class="likert-label">B.menudo</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-1')"><input type="radio" name="pss-1" value="4"><span class="likert-num">4</span><span class="likert-label">M.menudo</span></label>
+            </div>
+          </div>
+          <div class="likert-item">
+            <div class="likert-q">¿Ha sentido dificultades que se acumulaban tanto que no podía superarlas?</div>
+            <div class="likert-opts" data-field="pss-2" data-type="likert">
+              <label class="likert-opt" onclick="selectLikert(this,'pss-2')"><input type="radio" name="pss-2" value="0"><span class="likert-num">0</span><span class="likert-label">Nunca</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-2')"><input type="radio" name="pss-2" value="1"><span class="likert-num">1</span><span class="likert-label">C.nunca</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-2')"><input type="radio" name="pss-2" value="2"><span class="likert-num">2</span><span class="likert-label">A veces</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-2')"><input type="radio" name="pss-2" value="3"><span class="likert-num">3</span><span class="likert-label">B.menudo</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-2')"><input type="radio" name="pss-2" value="4"><span class="likert-num">4</span><span class="likert-label">M.menudo</span></label>
+            </div>
+          </div>
+          <div class="likert-item">
+            <div class="likert-q">¿Ha podido controlar las irritaciones de su vida? <span style="font-size:11px;color:var(--amber)">(ítem positivo)</span></div>
+            <div class="likert-opts" data-field="pss-3" data-type="likert">
+              <label class="likert-opt" onclick="selectLikert(this,'pss-3')"><input type="radio" name="pss-3" value="4"><span class="likert-num">0</span><span class="likert-label">Nunca</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-3')"><input type="radio" name="pss-3" value="3"><span class="likert-num">1</span><span class="likert-label">C.nunca</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-3')"><input type="radio" name="pss-3" value="2"><span class="likert-num">2</span><span class="likert-label">A veces</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-3')"><input type="radio" name="pss-3" value="1"><span class="likert-num">3</span><span class="likert-label">B.menudo</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-3')"><input type="radio" name="pss-3" value="0"><span class="likert-num">4</span><span class="likert-label">M.menudo</span></label>
+            </div>
+          </div>
+          <div class="likert-item">
+            <div class="likert-q">¿Ha sentido que las cosas le iban bien? <span style="font-size:11px;color:var(--amber)">(ítem positivo)</span></div>
+            <div class="likert-opts" data-field="pss-4" data-type="likert">
+              <label class="likert-opt" onclick="selectLikert(this,'pss-4')"><input type="radio" name="pss-4" value="4"><span class="likert-num">0</span><span class="likert-label">Nunca</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-4')"><input type="radio" name="pss-4" value="3"><span class="likert-num">1</span><span class="likert-label">C.nunca</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-4')"><input type="radio" name="pss-4" value="2"><span class="likert-num">2</span><span class="likert-label">A veces</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-4')"><input type="radio" name="pss-4" value="1"><span class="likert-num">3</span><span class="likert-label">B.menudo</span></label>
+              <label class="likert-opt" onclick="selectLikert(this,'pss-4')"><input type="radio" name="pss-4" value="0"><span class="likert-num">4</span><span class="likert-label">M.menudo</span></label>
+            </div>
+          </div>
+        </div>
+        <div class="callout"><strong>Ref. clínica:</strong> PSS-4 ≥ 7 indica estrés percibido elevado (Cohen et al., 1983). Los ítems 3 y 4 ya están invertidos automáticamente.</div>
+      </div>
+
+      <div class="subsec-title">Estrategias de afrontamiento</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Qué hace habitualmente para manejar el estrés? <span style="color:var(--text-dim);font-weight:400">(puede marcar varias)</span></div>
+        <div class="options-grid" data-field="afrontamiento" data-type="checkbox">
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="ejercicio"><span class="opt-text">Ejercicio físico</span></label>
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="meditacion"><span class="opt-text">Meditación / mindfulness / relajación</span></label>
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="hablar"><span class="opt-text">Hablar con personas de confianza</span></label>
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="hobbies"><span class="opt-text">Hobbies / actividades creativas o recreativas</span></label>
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="naturaleza"><span class="opt-text">Naturaleza / paseos al aire libre</span></label>
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="alcohol"><span class="opt-text">Consumo de alcohol o sustancias</span></label>
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="pantallas"><span class="opt-text">Uso de internet / redes sociales / pantallas</span></label>
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="comer"><span class="opt-text">Comer en exceso</span></label>
+          <label class="opt"><input type="checkbox" name="afrontamiento" value="ninguna"><span class="opt-text">No tengo estrategias específicas</span></label>
+        </div>
+      </div>
+
+      <div class="subsec-title">Burnout y ocio</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Se siente emocionalmente agotado/a por sus responsabilidades laborales, familiares o de cuidado?</div>
+        <div class="options-grid" data-field="burnout" data-type="radio">
+          <label class="opt"><input type="radio" name="burnout" value="severo"><span class="opt-text">Sí, de forma severa</span></label>
+          <label class="opt"><input type="radio" name="burnout" value="moderado"><span class="opt-text">Sí, de forma moderada</span></label>
+          <label class="opt"><input type="radio" name="burnout" value="a-veces"><span class="opt-text">A veces</span></label>
+          <label class="opt"><input type="radio" name="burnout" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Realiza actividades de ocio o disfrute regularmente?</div>
+        <div class="options-grid" data-field="ocio" data-type="radio">
+          <label class="opt"><input type="radio" name="ocio" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="ocio" value="no"><span class="opt-text">No</span></label>
+        </div>
+        <input class="q-input" type="text" id="ocio-spec" placeholder="¿Cuáles?" style="display:none">
+      </div>
+
+      <div class="subsec-title">Red de apoyo social</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuenta con personas de confianza con quienes hablar cuando lo necesita?</div>
+        <div class="options-grid" data-field="apoyo-social" data-type="radio">
+          <label class="opt"><input type="radio" name="apoyo-social" value="varias"><span class="opt-text">Sí, varias personas cercanas</span></label>
+          <label class="opt"><input type="radio" name="apoyo-social" value="una-dos"><span class="opt-text">Sí, una o dos personas</span></label>
+          <label class="opt"><input type="radio" name="apoyo-social" value="pocas-ninguna"><span class="opt-text">Pocas o ninguna</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Con qué frecuencia se siente solo/a o aislado/a?</div>
+        <div class="options-grid" data-field="soledad" data-type="radio">
+          <label class="opt"><input type="radio" name="soledad" value="frecuente"><span class="opt-text">Frecuentemente</span></label>
+          <label class="opt"><input type="radio" name="soledad" value="a-veces"><span class="opt-text">A veces</span></label>
+          <label class="opt"><input type="radio" name="soledad" value="rara-vez"><span class="opt-text">Rara vez o nunca</span></label>
+        </div>
+      </div>
+
+      <div class="subsec-title">Adversidad temprana — Cribado ACE</div>
+
+      <div class="q-block">
+        <div class="callout" style="margin-bottom:12px"><strong>Nota:</strong> Las siguientes preguntas son opcionales y de carácter sensible. Su respuesta ayuda a comprender el contexto vital completo. ACEs ≥ 4 tipos multiplica el riesgo de depresión (4,5×) y enfermedad cardiovascular (Felitti et al., 1998).</div>
+        <div class="q-label">Antes de los 18 años, ¿vivió alguna de las siguientes situaciones? <span style="color:var(--text-dim);font-weight:400">(puede marcar varias)</span></div>
+        <div class="options-grid" data-field="aces" data-type="checkbox">
+          <label class="opt"><input type="checkbox" name="aces" value="maltrato"><span class="opt-text">Maltrato físico o emocional</span></label>
+          <label class="opt"><input type="checkbox" name="aces" value="negligencia"><span class="opt-text">Negligencia o abandono</span></label>
+          <label class="opt"><input type="checkbox" name="aces" value="violencia-hogar"><span class="opt-text">Violencia en el hogar</span></label>
+          <label class="opt"><input type="checkbox" name="aces" value="familiar-enfermo"><span class="opt-text">Familiar con enfermedad mental grave, adicción o encarcelamiento</span></label>
+          <label class="opt"><input type="checkbox" name="aces" value="ninguna"><span class="opt-text">Ninguna de las anteriores</span></label>
+          <label class="opt"><input type="checkbox" name="aces" value="pnr"><span class="opt-text">Prefiero no responder</span></label>
+        </div>
+      </div>
+
+      <div class="subsec-title">Dimensión espiritual y propósito vital</div>
+
+      <div class="q-block">
+        <div class="q-label">¿Tiene un sentido claro de propósito o significado en su vida?</div>
+        <div class="options-grid" data-field="proposito" data-type="radio">
+          <label class="opt"><input type="radio" name="proposito" value="muy-claro"><span class="opt-text">Sí, muy claro</span></label>
+          <label class="opt"><input type="radio" name="proposito" value="bastante-claro"><span class="opt-text">Sí, bastante claro</span></label>
+          <label class="opt"><input type="radio" name="proposito" value="a-veces"><span class="opt-text">A veces lo tengo, a veces no</span></label>
+          <label class="opt"><input type="radio" name="proposito" value="cuesta"><span class="opt-text">No, me cuesta encontrarlo</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Practica alguna actividad espiritual, filosófica o de reflexión interior?</div>
+        <div class="options-grid" data-field="espiritualidad" data-type="radio">
+          <label class="opt"><input type="radio" name="espiritualidad" value="regularmente"><span class="opt-text">Sí, regularmente</span></label>
+          <label class="opt"><input type="radio" name="espiritualidad" value="ocasional"><span class="opt-text">Ocasionalmente</span></label>
+          <label class="opt"><input type="radio" name="espiritualidad" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goPrev()">← Anterior</button>
+        <button class="btn-next" onclick="goNext()">Siguiente: Entorno →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 8: Entorno y Contexto ── -->
+    <div class="form-section" id="sec-8">
+      <div class="section-header">
+        <div class="section-num">Sección 08 · 9</div>
+        <h2 class="section-title">Entorno Ambiental y Contexto Vital</h2>
+        <p class="section-desc">La situación laboral, exposición tóxica y estrés económico son determinantes sociales de salud de primer orden.</p>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cuál es su situación laboral actual?</div>
+        <div class="options-grid" data-field="situacion-laboral" data-type="radio">
+          <label class="opt"><input type="radio" name="situacion-laboral" value="empleado"><span class="opt-text">Empleado/a</span></label>
+          <label class="opt"><input type="radio" name="situacion-laboral" value="autonomo"><span class="opt-text">Autónomo/a / empresario/a</span></label>
+          <label class="opt"><input type="radio" name="situacion-laboral" value="desempleado"><span class="opt-text">Desempleado/a</span></label>
+          <label class="opt"><input type="radio" name="situacion-laboral" value="estudiante"><span class="opt-text">Estudiante</span></label>
+          <label class="opt"><input type="radio" name="situacion-laboral" value="baja"><span class="opt-text">Baja laboral / incapacidad</span></label>
+          <label class="opt"><input type="radio" name="situacion-laboral" value="jubilado"><span class="opt-text">Jubilado/a / pensionista</span></label>
+          <label class="opt"><input type="radio" name="situacion-laboral" value="cuidador"><span class="opt-text">Cuidador/a no remunerado/a</span></label>
+        </div>
+        <input class="q-input" type="text" id="sector-spec" placeholder="Sector / tipo de trabajo (opcional)..." style="margin-top:10px">
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Su trabajo o entorno habitual implica exposición a alguno de los siguientes? <span style="color:var(--text-dim);font-weight:400">(puede marcar varias)</span></div>
+        <div class="options-grid" data-field="exposicion-toxica" data-type="checkbox">
+          <label class="opt"><input type="checkbox" name="exposicion-toxica" value="quimicos"><span class="opt-text">Productos químicos / disolventes / pesticidas</span></label>
+          <label class="opt"><input type="checkbox" name="exposicion-toxica" value="metales"><span class="opt-text">Metales pesados (plomo, mercurio, cadmio)</span></label>
+          <label class="opt"><input type="checkbox" name="exposicion-toxica" value="polvo-gases"><span class="opt-text">Polvo, partículas o gases en el aire</span></label>
+          <label class="opt"><input type="checkbox" name="exposicion-toxica" value="ruido"><span class="opt-text">Ruido intenso o continuo</span></label>
+          <label class="opt"><input type="checkbox" name="exposicion-toxica" value="turnos-nocturnos"><span class="opt-text">Turnos nocturnos o rotatorios</span></label>
+          <label class="opt"><input type="checkbox" name="exposicion-toxica" value="ninguna"><span class="opt-text">Ninguno de los anteriores</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Cómo calificaría la calidad del aire en su entorno habitual?</div>
+        <div class="options-grid" data-field="calidad-aire" data-type="radio">
+          <label class="opt"><input type="radio" name="calidad-aire" value="buena"><span class="opt-text">🟢 Buena — zona verde, rural, poca contaminación</span></label>
+          <label class="opt"><input type="radio" name="calidad-aire" value="moderada"><span class="opt-text">🟡 Moderada — ciudad con tráfico habitual</span></label>
+          <label class="opt"><input type="radio" name="calidad-aire" value="deficiente"><span class="opt-text">🔴 Deficiente — zona industrial, mucho tráfico, humo</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Está expuesto/a a fuentes significativas de estrés económico o financiero?</div>
+        <div class="options-grid" data-field="estres-economico" data-type="radio">
+          <label class="opt"><input type="radio" name="estres-economico" value="severo"><span class="opt-text">Sí, de forma severa</span></label>
+          <label class="opt"><input type="radio" name="estres-economico" value="moderado"><span class="opt-text">Sí, de forma moderada</span></label>
+          <label class="opt"><input type="radio" name="estres-economico" value="ocasional"><span class="opt-text">Ocasionalmente</span></label>
+          <label class="opt"><input type="radio" name="estres-economico" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goPrev()">← Anterior</button>
+        <button class="btn-next" onclick="goNext()">Siguiente: Info Clínica →</button>
+      </div>
+    </div>
+
+    <!-- ── SECTION 9: Información Clínica ── -->
+    <div class="form-section" id="sec-9">
+      <div class="section-header">
+        <div class="section-num">Sección 09 · 9</div>
+        <h2 class="section-title">Información Clínica Complementaria</h2>
+        <p class="section-desc">Última sección. Sus respuestas completan el perfil holónico para la integración con CAPS Digital.</p>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Toma algún medicamento regularmente?</div>
+        <div class="options-grid" data-field="medicacion" data-type="radio">
+          <label class="opt"><input type="radio" name="medicacion" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="medicacion" value="no"><span class="opt-text">No</span></label>
+        </div>
+        <textarea class="q-textarea" id="medicacion-spec" placeholder="Especifique nombre y dosis de cada medicamento..." style="display:none"></textarea>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Tiene alguna condición médica diagnosticada?</div>
+        <div class="options-grid" data-field="condicion-medica" data-type="radio">
+          <label class="opt"><input type="radio" name="condicion-medica" value="si"><span class="opt-text">Sí</span></label>
+          <label class="opt"><input type="radio" name="condicion-medica" value="no"><span class="opt-text">No</span></label>
+        </div>
+        <input class="q-input" type="text" id="condicion-spec" placeholder="Especifique diagnósticos..." style="display:none">
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Ha recibido atención psicológica o psiquiátrica en los últimos 2 años?</div>
+        <div class="options-grid" data-field="atencion-psi" data-type="radio">
+          <label class="opt"><input type="radio" name="atencion-psi" value="si-ahora"><span class="opt-text">Sí, actualmente en seguimiento</span></label>
+          <label class="opt"><input type="radio" name="atencion-psi" value="si-pasado"><span class="opt-text">Sí, en el pasado pero no actualmente</span></label>
+          <label class="opt"><input type="radio" name="atencion-psi" value="no"><span class="opt-text">No</span></label>
+        </div>
+      </div>
+
+      <div class="q-block">
+        <div class="q-label">¿Hay algo más sobre su estilo de vida o contexto vital que considere importante compartir?</div>
+        <textarea class="q-textarea" id="comentarios-finales" placeholder="Espacio libre para cualquier información adicional..."></textarea>
+      </div>
+
+      <div class="callout">
+        <strong>🔗 Integración CAPS Digital:</strong> Sus respuestas serán procesadas por 13MIL v6.1 e integradas con su FHH, Escáner Semántico Clínico y datos genómicos (N-GENE / ADNTRO) para construir su perfil holónico completo en las 8 dimensiones.<br><br>
+        <strong>🔒 Confidencialidad:</strong> Toda la información es estrictamente confidencial y está protegida bajo el RGPD (UE 2016/679).
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-prev" onclick="goPrev()">← Anterior</button>
+        <button class="btn-next" onclick="finishForm()" style="background: var(--green);">✓ Completar y generar PDF</button>
+      </div>
+    </div>
+
+    <!-- ── SUMMARY ── -->
+    <div id="summary-section">
+      <div class="summary-hero">
+        <div class="summary-icon">✓</div>
+        <h2 class="summary-title">Cuestionario completado</h2>
+        <p class="summary-desc">Sus respuestas han sido registradas. Descargue el PDF para entregar a su profesional UNIMED o para su archivo personal.</p>
+      </div>
+
+      <div class="summary-meta">
+        <div class="meta-row"><span>Paciente</span><strong id="meta-nombre">—</strong></div>
+        <div class="meta-row"><span>Fecha</span><strong id="meta-fecha">—</strong></div>
+        <div class="meta-row"><span>Puntuación ISI breve</span><strong id="meta-isi">—</strong></div>
+        <div class="meta-row"><span>Puntuación AUDIT-C</span><strong id="meta-audit">—</strong></div>
+        <div class="meta-row"><span>Puntuación PSS-4</span><strong id="meta-pss">—</strong></div>
+        <div class="meta-row"><span>Plataforma</span><strong>CAPS Digital · UNIMED Consulting</strong></div>
+      </div>
+
+      <button class="btn-pdf" onclick="generatePDF()">
+        ⬇ Descargar PDF para el profesional
+      </button>
+    </div>
+
+  </main>
+</div>
+
+<!-- ═══ HIDDEN PDF CONTENT ═══ -->
+<div id="pdf-content"></div>
+
+<script>
+  // ── CONFIG ──
+  const VALID_CODES = ['UNIMED2026', 'CAPS2026', 'unimed2026', 'caps2026'];
+  const SECTIONS = [
+    'Alimentación y Nutrición',
+    'Actividad Física',
+    'Ritmo Circadiano y Sueño',
+    'Consumo de Sustancias',
+    'Vida Sexual y Relacional',
+    'Uso de Tecnología',
+    'Estrés y Bienestar',
+    'Entorno y Contexto',
+    'Información Clínica'
+  ];
+
+  let currentSection = 1;
+  let patientName = '';
+  const answers = {};
+
+  // ── GATE ──
+  function checkAccess() {
+    const code = document.getElementById('access-code').value.trim();
+    const name = document.getElementById('patient-name').value.trim();
+    const err = document.getElementById('gate-error');
+    if (!VALID_CODES.includes(code)) {
+      err.style.display = 'block';
+      return;
+    }
+    if (!name) {
+      err.style.display = 'block';
+      err.textContent = 'Por favor, introduce tu nombre.';
+      return;
+    }
+    patientName = name;
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('form-wrap').style.display = 'block';
+    buildNavPills();
+    updateProgress();
+    setupListeners();
+  }
+
+  document.getElementById('access-code').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkAccess();
+  });
+  document.getElementById('patient-name').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkAccess();
+  });
+
+  // ── NAV PILLS ──
+  function buildNavPills() {
+    const nav = document.getElementById('section-nav');
+    SECTIONS.forEach((s, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'nav-pill' + (i === 0 ? ' active' : '');
+      btn.textContent = (i + 1);
+      btn.title = s;
+      btn.onclick = () => goToSection(i + 1);
+      nav.appendChild(btn);
+    });
+  }
+
+  function updateNavPills() {
+    const pills = document.querySelectorAll('.nav-pill');
+    pills.forEach((p, i) => p.classList.toggle('active', i + 1 === currentSection));
+  }
+
+  // ── PROGRESS ──
+  function updateProgress() {
+    const pct = ((currentSection - 1) / SECTIONS.length) * 100;
+    document.getElementById('progress-fill').style.width = pct + '%';
+    document.getElementById('progress-label').textContent = currentSection + ' / ' + SECTIONS.length;
+  }
+
+  // ── NAVIGATION ──
+  function goToSection(n) {
+    document.getElementById('sec-' + currentSection)?.classList.remove('active');
+    document.getElementById('summary-section').style.display = 'none';
+    currentSection = n;
+    const sec = document.getElementById('sec-' + n);
+    if (sec) {
+      sec.classList.add('active');
+      updateNavPills();
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }
+
+  function goNext() { if (currentSection < 9) goToSection(currentSection + 1); }
+  function goPrev() { if (currentSection > 1) goToSection(currentSection - 1); }
+
+  // ── OPTION SELECTION ──
+  function setupListeners() {
+    // Radio + checkbox click highlights
+    document.querySelectorAll('.opt input').forEach(input => {
+      input.addEventListener('change', function() {
+        const name = this.name;
+        const type = this.type;
+        if (type === 'radio') {
+          document.querySelectorAll(`input[name="${name}"]`).forEach(r => {
+            r.closest('.opt').classList.remove('selected');
+          });
+          this.closest('.opt').classList.add('selected');
+        } else {
+          this.closest('.opt').classList.toggle('selected', this.checked);
+        }
+        saveAnswer(name, type);
+        handleConditional(name, this.value, this.checked);
+      });
+    });
+  }
+
+  function selectLikert(label, field) {
+    const container = label.closest('[data-field]') || label.closest('.likert-opts');
+    const name = field;
+    document.querySelectorAll(`[name="${name}"]`).forEach(r => {
+      r.closest('.likert-opt').classList.remove('selected');
+    });
+    label.classList.add('selected');
+    label.querySelector('input').checked = true;
+    saveAnswer(name, 'radio');
+  }
+
+  function saveAnswer(name, type) {
+    if (type === 'radio') {
+      const checked = document.querySelector(`input[name="${name}"]:checked`);
+      answers[name] = checked ? checked.value : '';
+    } else {
+      const checked = [...document.querySelectorAll(`input[name="${name}"]:checked`)];
+      answers[name] = checked.map(c => c.value).join(', ');
+    }
+  }
+
+  // ── CONDITIONAL SHOW/HIDE ──
+  function handleConditional(name, value, checked) {
+    const map = {
+      'suplementos': { show: 'si', el: 'suplementos-spec' },
+      'intolerancia': { show: 'si', el: 'intolerancia-spec' },
+      'tabaco': { show: 'si-ahora', el: 'blq-tabaco-cantidad' },
+      'otras-sustancias': { show: 'si', el: 'otras-spec' },
+      'anticonceptivos': { show: 'si', el: 'anticonceptivos-spec' },
+      'preocupacion-sexual': { show: 'si', el: 'preocupacion-spec' },
+      'medicacion': { show: 'si', el: 'medicacion-spec' },
+      'condicion-medica': { show: 'si', el: 'condicion-spec' },
+      'ocio': { show: 'si', el: 'ocio-spec' },
+    };
+    if (map[name]) {
+      const el = document.getElementById(map[name].el);
+      if (el) el.style.display = value === map[name].show ? 'block' : 'none';
+    }
+  }
+
+  // ── OPTIONAL TOGGLE ──
+  function toggleOptional(header) {
+    const icon = header.querySelector('.optional-icon');
+    const body = header.nextElementSibling;
+    icon.classList.toggle('open');
+    body.classList.toggle('open');
+  }
+
+  // ── SCORES ──
+  function getISI() {
+    const v = ['isi-1','isi-2','isi-3'].map(f => {
+      const el = document.querySelector(`input[name="${f}"]:checked`);
+      return el ? parseInt(el.value) : 0;
+    });
+    return v.reduce((a,b) => a+b, 0);
+  }
+
+  function getAUDIT() {
+    const v = ['audit-1','audit-2','audit-3'].map(f => {
+      const el = document.querySelector(`input[name="${f}"]:checked`);
+      return el ? parseInt(el.value) : 0;
+    });
+    return v.reduce((a,b) => a+b, 0);
+  }
+
+  function getPSS() {
+    const v = ['pss-1','pss-2','pss-3','pss-4'].map(f => {
+      const el = document.querySelector(`input[name="${f}"]:checked`);
+      return el ? parseInt(el.value) : 0;
+    });
+    return v.reduce((a,b) => a+b, 0);
+  }
+
+  // ── FINISH ──
+  function finishForm() {
+    // Save remaining text areas
+    answers['comentarios-finales'] = document.getElementById('comentarios-finales').value;
+    answers['medicacion-spec'] = document.getElementById('medicacion-spec')?.value || '';
+    answers['suplementos-spec'] = document.getElementById('suplementos-spec')?.value || '';
+    answers['intolerancia-spec'] = document.getElementById('intolerancia-spec')?.value || '';
+    answers['sector-spec'] = document.getElementById('sector-spec')?.value || '';
+    answers['ocio-spec'] = document.getElementById('ocio-spec')?.value || '';
+
+    const isi = getISI();
+    const audit = getAUDIT();
+    const pss = getPSS();
+    const now = new Date().toLocaleDateString('es-ES', { year:'numeric', month:'long', day:'numeric' });
+
+    // Hide sections, show summary
+    document.getElementById('sec-9').classList.remove('active');
+    const summary = document.getElementById('summary-section');
+    summary.style.display = 'block';
+
+    document.getElementById('meta-nombre').textContent = patientName;
+    document.getElementById('meta-fecha').textContent = now;
+    document.getElementById('meta-isi').textContent = isi + ' / 12' + (isi >= 8 ? ' ⚠️ Insomnio clínico' : ' ✓ Normal');
+    document.getElementById('meta-audit').textContent = audit + ' / 12' + (audit >= 4 ? ' ⚠️ Consumo de riesgo' : ' ✓ Sin riesgo');
+    document.getElementById('meta-pss').textContent = pss + ' / 16' + (pss >= 7 ? ' ⚠️ Estrés elevado' : ' ✓ Normal');
+
+    // Update progress to 100%
+    document.getElementById('progress-fill').style.width = '100%';
+    document.getElementById('progress-label').textContent = '✓ Completado';
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    // Store scores for PDF
+    answers['_isi'] = isi;
+    answers['_audit'] = audit;
+    answers['_pss'] = pss;
+    answers['_fecha'] = now;
+  }
+
+  // ── PDF GENERATION ──
+  function generatePDF() {
+    const isi = answers['_isi'];
+    const audit = answers['_audit'];
+    const pss = answers['_pss'];
+
+    const fieldLabels = {
+      'comidas-frecuencia': 'Frecuencia comidas principales',
+      'ultima-comida': 'Hora última comida',
+      'hidratacion': 'Hidratación diaria',
+      'frutas-verduras': 'Consumo frutas y verduras',
+      'procesada': 'Comida rápida / procesada',
+      'mediterranea': 'Marcadores dieta mediterránea',
+      'suplementos': '¿Toma suplementos?',
+      'suplementos-spec': 'Suplementos (detalle)',
+      'intolerancia': 'Intolerancia alimentaria',
+      'intolerancia-spec': 'Intolerancia (detalle)',
+      'ejercicio': 'Actividad física planificada',
+      'ejercicio-frecuencia': 'Frecuencia de ejercicio',
+      'ejercicio-tipo': 'Tipo de ejercicio',
+      'sedentarismo': 'Horas sentado/a al día',
+      'luz-natural': 'Exposición a luz natural',
+      'horas-sueno': 'Horas de sueño habituales',
+      'cronotipo': 'Cronotipo',
+      'hora-sueno': 'Hora habitual de dormir',
+      'pantallas-noche': 'Pantallas antes de dormir',
+      'siestas': 'Siestas',
+      'tabaco': 'Tabaco',
+      'tabaco-cantidad': 'Cantidad de tabaco',
+      'audit-1': 'AUDIT-C 1 (frecuencia alcohol)',
+      'audit-2': 'AUDIT-C 2 (cantidad por ocasión)',
+      'audit-3': 'AUDIT-C 3 (binge drinking)',
+      'alcohol-edad': 'Edad de inicio alcohol',
+      'cafeina': 'Consumo de cafeína',
+      'cannabis': 'Cannabis',
+      'otras-sustancias': 'Otras sustancias',
+      'relaciones-sexuales': 'Relaciones sexuales actualmente',
+      'anticonceptivos': 'Métodos anticonceptivos',
+      'its': 'Historia de ITS',
+      'preocupacion-sexual': 'Preocupación vida sexual',
+      'internet-ocio': 'Internet ocio (horas/día)',
+      'internet-trabajo': 'Internet trabajo (horas/día)',
+      'redes-sociales': 'Redes sociales usadas',
+      'frecuencia-redes': 'Frecuencia revisión redes',
+      'videojuegos': 'Videojuegos',
+      'interferencia-digital': 'Interferencia tecnología en vida diaria',
+      'afrontamiento': 'Estrategias de afrontamiento',
+      'burnout': 'Agotamiento emocional / burnout',
+      'ocio': 'Actividades de ocio',
+      'apoyo-social': 'Red de apoyo social',
+      'soledad': 'Frecuencia soledad / aislamiento',
+      'aces': 'Adversidad infantil (ACE)',
+      'proposito': 'Sentido de propósito vital',
+      'espiritualidad': 'Práctica espiritual o filosófica',
+      'situacion-laboral': 'Situación laboral',
+      'exposicion-toxica': 'Exposición tóxica laboral',
+      'calidad-aire': 'Calidad del aire entorno',
+      'estres-economico': 'Estrés económico',
+      'medicacion': '¿Toma medicación regular?',
+      'medicacion-spec': 'Medicación (detalle)',
+      'condicion-medica': 'Condición médica diagnosticada',
+      'condicion-spec': 'Diagnóstico (detalle)',
+      'atencion-psi': 'Atención psicológica / psiquiátrica',
+      'comentarios-finales': 'Comentarios adicionales'
+    };
+
+    const sectionMap = {
+      1: ['comidas-frecuencia','ultima-comida','hidratacion','frutas-verduras','procesada','mediterranea','suplementos','suplementos-spec','intolerancia','intolerancia-spec'],
+      2: ['ejercicio','ejercicio-frecuencia','ejercicio-tipo','sedentarismo','luz-natural'],
+      3: ['horas-sueno','cronotipo','hora-sueno','pantallas-noche','siestas'],
+      4: ['tabaco','tabaco-cantidad','audit-1','audit-2','audit-3','alcohol-edad','cafeina','cannabis','otras-sustancias'],
+      5: ['relaciones-sexuales','anticonceptivos','its','preocupacion-sexual'],
+      6: ['internet-ocio','internet-trabajo','redes-sociales','frecuencia-redes','videojuegos','interferencia-digital'],
+      7: ['afrontamiento','burnout','ocio','apoyo-social','soledad','aces','proposito','espiritualidad'],
+      8: ['situacion-laboral','exposicion-toxica','calidad-aire','estres-economico'],
+      9: ['medicacion','medicacion-spec','condicion-medica','condicion-spec','atencion-psi','comentarios-finales']
+    };
+
+    let html = `
+      <h1>Cuestionario de Estilo de Vida y Salud</h1>
+      <div class="pdf-meta">
+        CAPS Digital · UNIMED Consulting · Holomedicina® (Samuel Carmona Aguirre, 2014/UNESCO 2016)<br>
+        Paciente: <strong>${patientName}</strong> &nbsp;|&nbsp; Fecha: ${answers['_fecha']} &nbsp;|&nbsp; Versión 1.1
+      </div>
+
+      <h2>◆ Puntuaciones Instrumentos Validados</h2>
+      <div class="pdf-q"><div class="pdf-q-label">ISI breve (insomnio)</div><div class="pdf-q-answer">${isi} / 12 ${isi >= 8 ? '⚠️ Insomnio clínico significativo (punto de corte ≥8, Morin 2011)' : '✓ Sin insomnio clínico'}</div></div>
+      <div class="pdf-q"><div class="pdf-q-label">AUDIT-C (alcohol)</div><div class="pdf-q-answer">${audit} / 12 ${audit >= 4 ? '⚠️ Consumo de riesgo (punto de corte ≥4♂/≥3♀, Bush 1998)' : '✓ Sin riesgo detectado'}</div></div>
+      <div class="pdf-q"><div class="pdf-q-label">PSS-4 (estrés percibido)</div><div class="pdf-q-answer">${pss} / 16 ${pss >= 7 ? '⚠️ Estrés percibido elevado (punto de corte ≥7, Cohen 1983)' : '✓ Estrés dentro de rango normal'}</div></div>
+    `;
+
+    for (let s = 1; s <= 9; s++) {
+      html += `<h2>Sección ${s} · ${SECTIONS[s-1]}</h2>`;
+      (sectionMap[s] || []).forEach(field => {
+        const val = answers[field];
+        if (val && val !== '') {
+          html += `<div class="pdf-q">
+            <div class="pdf-q-label">${fieldLabels[field] || field}</div>
+            <div class="pdf-q-answer">${val}</div>
+          </div>`;
+        }
+      });
+    }
+
+    html += `<div class="pdf-footer">
+      Documento generado por CAPS Digital · UNIMED Consulting · 13MIL v6.1<br>
+      Holomedicina® (Samuel Carmona Aguirre, 2014/UNESCO 2016) · MH-AIAP<br>
+      Confidencial — Protegido bajo RGPD (UE 2016/679)
+    </div>`;
+
+    const pdfDiv = document.getElementById('pdf-content');
+    pdfDiv.innerHTML = html;
+    pdfDiv.style.display = 'block';
+
+    const opt = {
+      margin: [10, 10, 10, 10],
+      filename: `UNIMED_EstiloVida_${patientName.replace(/\s+/g,'_')}_${new Date().toISOString().slice(0,10)}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2, useCORS: true },
+      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(pdfDiv).save().then(() => {
+      pdfDiv.style.display = 'none';
+    });
+  }
+</script>
+
+</body>
+</html>
