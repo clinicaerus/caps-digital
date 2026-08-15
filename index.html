@@ -402,7 +402,6 @@ footer {
 </style>
 </head>
 <body>
-
 <!-- NAV -->
 <nav>
   <a class="nav-logo" href="#"><span>CAPS</span> Digital · UNIMED</a>
@@ -414,7 +413,6 @@ footer {
   </ul>
   <a class="nav-cta" href="#contacto">Hablar con CAPS Digital</a>
 </nav>
-
 <!-- HERO -->
 <section class="hero">
   <div class="hero-grid"></div>
@@ -435,7 +433,6 @@ footer {
     <span class="orb-text">HOLOMEDICINA · UNIMED · CAPS DIGITAL · APS ·</span>
   </div>
 </section>
-
 <!-- ABOUT -->
 <section class="about" id="about">
   <div class="about-inner">
@@ -476,13 +473,11 @@ footer {
     </div>
   </div>
 </section>
-
 <!-- SERVICES -->
 <section class="services" id="services">
   <div class="section-tag">Servicios</div>
   <h2>Elige cómo quieres<br />ser <em>acompañado/a</em></h2>
   <div class="tiers">
-
     <!-- BÁSICO -->
     <div class="tier tier-basic">
       <div class="tier-badge">Gratuito</div>
@@ -497,7 +492,6 @@ footer {
         <li>Derivación al equipo UNIMED cuando corresponda</li>
       </ul>
     </div>
-
     <!-- PRO -->
     <div class="tier tier-pro">
       <div class="tier-badge">⭐ Pro</div>
@@ -513,7 +507,6 @@ footer {
       </ul>
       <a href="https://buy.stripe.com/14A9ATgK7cQb6JH8YXgA807" target="_blank" style="display:inline-block;margin-top:1.5rem;padding:0.8rem 1.8rem;background:var(--gold);color:var(--ink);text-decoration:none;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Suscribirse ahora →</a>
     </div>
-
     <!-- TELEMEDICINA -->
     <div class="tier tier-tele">
       <div class="tier-badge">🏥 Clínico</div>
@@ -528,9 +521,7 @@ footer {
       </ul>
       <a href="https://cal.com/samuel-carmona-c8fagj/telemedicina-caps" target="_blank" style="display:inline-block;margin-top:1.5rem;padding:0.8rem 1.8rem;background:#7c3aed;color:#ffffff;text-decoration:none;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Agendar consulta →</a>
     </div>
-
   </div>
-
   <div class="limits-box">
     <h4>Lo que CAPS Digital no hace</h4>
     <div class="limits-grid">
@@ -541,7 +532,6 @@ footer {
     </div>
   </div>
 </section>
-
 <!-- DIFFERENTIATOR -->
 <section class="diff" id="diferencia">
   <div class="diff-inner">
@@ -574,7 +564,6 @@ footer {
     </div>
   </div>
 </section>
-
 <!-- CONTACT -->
 <section class="contact" id="contacto">
   <div class="contact-inner">
@@ -609,19 +598,16 @@ footer {
     </div>
   </div>
 </section>
-
 <!-- FOOTER -->
 <footer>
   <div class="footer-logo">CAPS Digital · UNIMED Consulting · Barcelona</div>
   <div class="footer-note">Marco HoloMed · Web Semántica · 13MIL v7.0 · © 2026 UNIMED</div>
 </footer>
-
 <!-- ═══════════════════════════════════════════════ -->
 <!-- CAPS Digital Widget — INDEPENDIENTE            -->
 <!-- Cloudflare Worker: caps-digital-api.samuel-6a5.workers.dev -->
 <!-- Reemplaza completamente a YouNet AI              -->
 <!-- ═══════════════════════════════════════════════ -->
-
 <style>
   #caps-bubble {
     position: fixed;
@@ -735,9 +721,7 @@ footer {
     background: #f8f9fa;
   }
 </style>
-
 <button id="caps-bubble" onclick="toggleChat()">💬</button>
-
 <div id="caps-chat">
   <div id="caps-header">
     🧬 CAPS Digital
@@ -758,33 +742,27 @@ footer {
     CAPS Digital · 13MIL v7.0 · UNIMED Consulting
   </div>
 </div>
-
 <script>
   const WORKER_URL = 'https://caps-digital-api.samuel-6a5.workers.dev';
-
   function toggleChat() {
     const chat = document.getElementById('caps-chat');
     chat.style.display = chat.style.display === 'none' ? 'block' : 'none';
   }
-
   function addMsg(text, isUser) {
     const div = document.createElement('div');
     div.className = 'caps-msg ' + (isUser ? 'caps-user' : 'caps-bot');
     div.textContent = text;
     document.getElementById('caps-messages').appendChild(div);
     document.getElementById('caps-messages').scrollTop = 99999;
+    return div;
   }
-
   async function sendMsg() {
     const input = document.getElementById('caps-input');
     const msg = input.value.trim();
     if (!msg) return;
-
     addMsg(msg, true);
     input.value = '';
-
     const typing = addMsg('Escribiendo...', false);
-
     try {
       const res = await fetch(WORKER_URL, {
         method: 'POST',
@@ -800,6 +778,5 @@ footer {
     }
   }
 </script>
-
 </body>
 </html>
