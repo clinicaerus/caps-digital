@@ -746,7 +746,8 @@ footer {
   const WORKER_URL = 'https://caps-digital-api.samuel-6a5.workers.dev';
   function toggleChat() {
     const chat = document.getElementById('caps-chat');
-    chat.style.display = chat.style.display === 'none' ? 'block' : 'none';
+    const isHidden = getComputedStyle(chat).display === 'none';
+    chat.style.display = isHidden ? 'block' : 'none';
   }
   function addMsg(text, isUser) {
     const div = document.createElement('div');
