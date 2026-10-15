@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro Semanal · Consumos y Sueño</title>
+<style>
+:root{--navy:#0B1F3A;--teal:#007A6E;--gold:#C8963E;--cream:#F7F5F0;--ink:#1E2430;--muted:#5A6472;--line:#D9D4C7;--bg:#FFFFFF;--card:#FFFFFF;--warn:#9B2C2C;--chip:#EEF4F3}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--navy:#E8EEF6;--teal:#4CC2B4;--gold:#E0B064;--cream:#1B2230;--ink:#E6E9EE;--muted:#A3ACB9;--line:#2E3747;--bg:#11161F;--card:#171E2A;--warn:#E07A7A;--chip:#1E2A33}}
+:root[data-theme="dark"]{--navy:#E8EEF6;--teal:#4CC2B4;--gold:#E0B064;--cream:#1B2230;--ink:#E6E9EE;--muted:#A3ACB9;--line:#2E3747;--bg:#11161F;--card:#171E2A;--warn:#E07A7A;--chip:#1E2A33}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Calibri,"Segoe UI",system-ui,-apple-system,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:20px 16px 90px}
+.brand{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);font-weight:700}
+h1{font-size:24px;line-height:1.2;color:var(--navy);margin:6px 0 4px}
+h2{font-size:18px;color:var(--navy);margin:22px 0 10px}
+h3{font-size:15px;color:var(--teal);margin:14px 0 8px}
+.sub{color:var(--muted);margin:0;font-size:14px}
+.rule{height:3px;background:var(--gold);border-radius:2px;margin:12px 0 16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:0 0 12px}
+.callout{background:var(--cream);border-left:4px solid var(--teal);border-radius:6px;padding:12px 14px;margin:0 0 14px;font-size:15px}
+.callout p{margin:0 0 6px}.callout p:last-child{margin:0}
+.tabs{position:sticky;top:0;z-index:5;background:var(--bg);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:8px 0;border-bottom:1px solid var(--line)}
+.tabs button{background:transparent;color:var(--muted);border:1px solid var(--line);padding:9px 4px;font-size:14px}
+.tabs button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.days{display:flex;gap:6px;overflow-x:auto;padding:10px 0 4px;margin-bottom:6px}
+.days button{flex:0 0 auto;background:transparent;color:var(--ink);border:1px solid var(--line);padding:6px 10px;font-size:13px;font-weight:500}
+.days button.on{border-color:var(--teal);background:var(--chip);color:var(--teal);font-weight:700}
+.days button .dot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--gold);margin-left:4px;vertical-align:middle}
+label.f{display:block;font-size:13px;color:var(--muted);margin:10px 0 4px}
+input[type=text],input[type=time],input[type=date],input[type=number],select,textarea{width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+textarea{min-height:60px;resize:vertical}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+@media (max-width:480px){.row3{grid-template-columns:1fr 1fr}}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button,.chips button{background:transparent;color:var(--ink);border:1px solid var(--line);padding:8px 11px;font-size:14px;font-weight:500}
+.seg button.on,.chips button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.scale{display:grid;grid-template-columns:repeat(11,1fr);gap:3px}
+.scale button{padding:8px 0;font-size:13px;background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+.scale button.on{background:var(--teal);border-color:var(--teal);color:#fff}
+.ends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:3px}
+button{font:inherit;border:0;border-radius:8px;padding:11px 16px;cursor:pointer;background:var(--teal);color:#fff;font-weight:600}
+button.sec{background:transparent;color:var(--teal);border:1px solid var(--teal)}
+button.danger{background:transparent;color:var(--warn);border:1px solid var(--warn)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.big button{padding:14px 8px;font-size:15px}
+.big button.alt{background:var(--navy);color:var(--bg)}
+.hidden{display:none!important}
+.entry{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--line)}
+.entry:last-child{border-bottom:0}
+.entry .t{font-variant-numeric:tabular-nums;font-weight:700;color:var(--teal);min-width:46px}
+.entry .b{flex:1;font-size:14px}
+.entry .b small{color:var(--muted);display:block}
+.entry .x{background:transparent;color:var(--muted);border:1px solid var(--line);padding:4px 9px;font-size:13px}
+.tag{display:inline-block;font-size:12px;padding:1px 7px;border-radius:10px;background:var(--chip);color:var(--teal);margin-right:4px;font-weight:600}
+.tag.ep{background:#F6E9E9;color:#9B2C2C}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .tag.ep{background:#3A2226;color:#E07A7A}}
+.ok{color:var(--teal);font-size:14px;margin-top:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{border-bottom:1px solid var(--line);padding:6px 5px;text-align:left;vertical-align:top}
+th{color:var(--muted);font-weight:600}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.scroll{overflow-x:auto}
+.foot{font-size:12px;color:var(--muted);margin-top:26px;border-top:1px solid var(--line);padding-top:12px}
+.help{font-size:13px;color:var(--muted);margin:4px 0 0}
+@media print{.tabs,.actions,.big,.noprint,.days{display:none!important}section.view{display:block!important}body{background:#fff;color:#000}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">CAPS Digital · UNIMED Consulting · Holomedicina®</div>
+  <h1>Registro semanal: consumos, sueño y cómo me siento</h1>
+  <p class="sub">Siete días de autoobservación para entender qué relación hay entre lo que tomas, cómo duermes y cómo te encuentras.</p>
+  <div class="rule"></div>
+
+  <nav class="tabs noprint">
+    <button data-v="hoy" class="on">Registrar</button>
+    <button data-v="sueno">Sueño</button>
+    <button data-v="dia">Mi día</button>
+    <button data-v="resumen">Resumen</button>
+  </nav>
+  <div class="days noprint" id="days"></div>
+
+  <!-- ===== REGISTRAR ===== -->
+  <section class="view" id="v-hoy">
+    <div class="big">
+      <button id="b-cons">+ Consumo</button>
+      <button id="b-epi" class="alt">+ Momento a anotar</button>
+    </div>
+
+    <div class="card hidden" id="f-cons">
+      <h3 style="margin-top:0">Nuevo consumo</h3>
+      <label class="f">¿Qué?</label>
+      <div class="seg" id="c-tipo"></div>
+      <div id="c-det"></div>
+      <div class="row">
+        <div><label class="f">Hora</label><input type="time" id="c-hora"></div>
+        <div><label class="f">Cantidad</label><input type="number" id="c-cant" min="0" step="0.5" value="1" inputmode="decimal"></div>
+      </div>
+      <label class="f">¿Por qué en ese momento? (puedes marcar varias)</label>
+      <div class="chips" id="c-motivo"></div>
+      <label class="f">Malestar o ansiedad justo antes (0 = nada, 10 = máximo)</label>
+      <div class="scale" id="c-antes"></div><div class="ends"><span>nada</span><span>máximo</span></div>
+      <label class="f">¿Qué estabas haciendo o dónde estabas?</label>
+      <input type="text" id="c-ctx" placeholder="Ej.: trabajando, en el sofá, con amigos…">
+      <label class="f">Después: ¿qué efecto notaste? (puedes rellenarlo más tarde)</label>
+      <div class="chips" id="c-efecto"></div>
+      <div class="actions"><button id="c-save">Guardar</button><button class="sec" id="c-cancel">Cancelar</button></div>
+    </div>
+
+    <div class="card hidden" id="f-epi">
+      <h3 style="margin-top:0">Momento a anotar</h3>
+      <div class="seg" id="e-tipo"></div>
+      <div class="row">
+        <div><label class="f">Hora</label><input type="time" id="e-hora"></div>
+        <div><label class="f">Duración aprox. (minutos)</label><input type="number" id="e-dur" min="0" inputmode="numeric"></div>
+      </div>
+      <label class="f">Intensidad (0-10)</label>
+      <div class="scale" id="e-int"></div><div class="ends"><span>muy leve</span><span>máxima</span></div>
+      <label class="f">¿Qué estaba pasando? ¿Qué lo pudo desencadenar?</label>
+      <textarea id="e-ctx"></textarea>
+      <label class="f">¿Qué hiciste y qué te ayudó (o no)?</label>
+      <textarea id="e-res"></textarea>
+      <div class="actions"><button id="e-save">Guardar</button><button class="sec" id="e-cancel">Cancelar</button></div>
+    </div>
+
+    <div class="card"><h3 style="margin-top:0" id="list-title">Registros del día</h3><div id="list"></div></div>
+
+    <div class="callout">
+      <p><strong>Cómo usarlo.</strong> Anota cada consumo en el momento, aunque sea solo el tipo y la hora: los detalles se pueden completar después. Por la mañana rellena <em>Sueño</em> y por la noche <em>Mi día</em> (2 minutos).</p>
+      <p>No hace falta cambiar nada esta semana. La idea es observar, no juzgar.</p>
+    </div>
+  </section>
+
+  <!-- ===== SUEÑO ===== -->
+  <section class="view hidden" id="v-sueno">
+    <div class="card">
+      <h3 style="margin-top:0">La noche anterior <span class="help" id="s-help"></span></h3>
+      <div class="row">
+        <div><label class="f">Me acosté a las</label><input type="time" id="s-acost"></div>
+        <div><label class="f">Me dormí a las (aprox.)</label><input type="time" id="s-dorm"></div>
+        <div><label class="f">Me desperté a las</label><input type="time" id="s-desp"></div>
+        <div><label class="f">Me levanté a las</label><input type="time" id="s-lev"></div>
+      </div>
+      <div class="row">
+        <div><label class="f">¿Cuántas veces me desperté?</label><input type="number" id="s-nd" min="0" inputmode="numeric"></div>
+        <div><label class="f">Tiempo despierto por la noche (min)</label><input type="number" id="s-td" min="0" inputmode="numeric"></div>
+      </div>
+      <label class="f">Al despertarme por la noche, ¿consumí algo?</label>
+      <div class="chips" id="s-noct"></div>
+      <label class="f">Calidad del sueño (0 = pésima, 10 = excelente)</label>
+      <div class="scale" id="s-cal"></div><div class="ends"><span>pésima</span><span>excelente</span></div>
+      <label class="f">¿Me levanté descansado? (0-10)</label>
+      <div class="scale" id="s-desc"></div><div class="ends"><span>nada</span><span>mucho</span></div>
+      <label class="f">En la última hora antes de dormir…</label>
+      <div class="chips" id="s-prev"></div>
+      <label class="f">Notas (sueños intensos, despertares con angustia, ruido…)</label>
+      <textarea id="s-nota"></textarea>
+      <div class="actions"><button id="s-save">Guardar sueño</button></div>
+      <div class="ok hidden" id="s-ok">Guardado.</div>
+    </div>
+  </section>
+
+  <!-- ===== MI DÍA ===== -->
+  <section class="view hidden" id="v-dia">
+    <div class="card">
+      <h3 style="margin-top:0">Cómo ha ido el día (rellénalo por la noche)</h3>
+      <div id="d-scales"></div>
+      <div class="row">
+        <div><label class="f">Actividad física (minutos)</label><input type="number" id="d-ej" min="0" inputmode="numeric"></div>
+        <div><label class="f">Tipo de actividad</label><input type="text" id="d-ejt" placeholder="caminar, gimnasio…"></div>
+        <div><label class="f">Comidas principales hechas</label><input type="number" id="d-com" min="0" max="6" inputmode="numeric"></div>
+        <div><label class="f">Horas de trabajo o estudio</label><input type="number" id="d-trab" min="0" step="0.5" inputmode="decimal"></div>
+        <div><label class="f">Horas de pantalla de ocio (aprox.)</label><input type="number" id="d-pant" min="0" step="0.5" inputmode="decimal"></div>
+        <div><label class="f">Siesta (minutos)</label><input type="number" id="d-sies" min="0" inputmode="numeric"></div>
+      </div>
+      <label class="f">Hoy hubo…</label>
+      <div class="chips" id="d-eventos"></div>
+      <label class="f">¿En qué momento del día me concentré mejor?</label>
+      <div class="chips" id="d-mejor"></div>
+      <label class="f">Lo más importante del día, en una frase</label>
+      <textarea id="d-nota"></textarea>
+      <div class="actions"><button id="d-save">Guardar día</button></div>
+      <div class="ok hidden" id="d-ok">Guardado.</div>
+    </div>
+  </section>
+
+  <!-- ===== RESUMEN ===== -->
+  <section class="view hidden" id="v-resumen">
+    <div class="card">
+      <div class="row">
+        <div><label class="f">Nombre</label><input type="text" id="r-nombre"></div>
+        <div><label class="f">Código de caso</label><input type="text" id="r-cod"></div>
+      </div>
+      <label class="f">Primer día de la semana de registro</label>
+      <input type="date" id="r-ini">
+    </div>
+    <h2>La semana de un vistazo</h2>
+    <div class="card scroll" id="r-tabla"></div>
+    <h2>Momentos anotados y lo que tomé en las 3 horas anteriores</h2>
+    <div class="card" id="r-rel"></div>
+    <h2>Consumo y sueño</h2>
+    <div class="card scroll" id="r-sueno"></div>
+    <h2>¿Por qué consumo?</h2>
+    <div class="card" id="r-mot"></div>
+    <div class="callout noprint">
+      <p><strong>Al terminar la semana</strong>, envía el registro a tu profesional de referencia: pulsa «Enviar resumen por correo» y adjunta también el archivo de «Descargar copia».</p>
+      <p>Los datos se guardan solo en este móvil o navegador. Si borras el historial o cambias de navegador se pierden: descarga una copia de vez en cuando.</p>
+    </div>
+    <div class="actions noprint">
+      <button id="x-mail">Enviar resumen por correo</button>
+      <button class="sec" id="x-csv">Descargar copia (Excel)</button>
+      <button class="sec" id="x-print">Imprimir / PDF</button>
+      <button class="danger" id="x-reset">Borrar todo</button>
+    </div>
+    <div class="ok hidden" id="x-msg"></div>
+  </section>
+
+  <div class="foot">
+    Herramienta de autoobservación dentro del acompañamiento de UNIMED. No es un tratamiento ni un instrumento diagnóstico, y no sustituye la valoración de un profesional sanitario. Las cantidades de cafeína son aproximadas.<br>
+    Si en algún momento te sientes desbordado o tienes pensamientos de hacerte daño, llama al <strong>024</strong> (línea de atención a la conducta suicida, 24 h) o al <strong>112</strong>, y avísanos.<br>
+    Samuel Carmona Aguirre, MSc · UNIMED Consulting · C/ Monlau 5, 1º-5º, 08027 Barcelona · salud@unimed-consulting.es · +34 673 815 148
+  </div>
+</div>
+
+<script>
+// ---------- almacenamiento ----------
+const KEY='unimed_registro_semanal_v1';
+let S={ini:null,nombre:'',cod:'',ent:[],dias:{}};
+try{const raw=localStorage.getItem(KEY); if(raw) S=Object.assign(S,JSON.parse(raw));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+const pad=n=>String(n).padStart(2,'0');
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const nowHM=()=>{const d=new Date();return `${pad(d.getHours())}:${pad(d.getMinutes())}`;};
+if(!S.ini){S.ini=iso(new Date());save();}
+let day=iso(new Date());
+const DN=['dom','lun','mar','mié','jue','vie','sáb'];
+function weekDays(){const a=[],b=new Date(S.ini+'T12:00:00');for(let i=0;i<7;i++){const d=new Date(b);d.setDate(b.getDate()+i);a.push(iso(d));}return a;}
+function lbl(ds){const d=new Date(ds+'T12:00:00');return `${DN[d.getDay()]} ${d.getDate()}/${d.getMonth()+1}`;}
+
+// ---------- catálogos ----------
+const CAF={'Espresso / cortado':65,'Café con leche / americano':90,'Café grande o de filtro':130,'Té negro o verde':40,'Refresco de cola (lata)':35,'Bebida energética 250 ml':80,'Bebida energética 500 ml':160};
+const TIPOS={
+  cafe:{n:'Cafeína',sub:Object.keys(CAF),u:'tazas / latas'},
+  tabaco:{n:'Tabaco',sub:['Cigarrillo','Liado','Vaper / pod','Otro'],u:'cigarrillos (vaper: nº de sesiones)'},
+  cannabis:{n:'Cannabis',sub:['Porro con tabaco','Porro sin tabaco','Vaporizador','Comestible','Otro'],u:'porros (0,5 = medio)',extra:true},
+  alcohol:{n:'Alcohol',sub:['Cerveza / caña','Copa de vino','Copa de destilado','Otro'],u:'unidades'},
+  otra:{n:'Otra',sub:['Medicamento','Otra sustancia'],u:'unidades',txt:true}
+};
+const MOTIVOS=['Hábito / rutina','Despertarme','Concentrarme','Aburrimiento','Estrés / ansiedad','Relajarme','Para dormir','Social','Ganas intensas','Después de comer'];
+const EFECTOS=['Me ayudó','Sin cambio','Peor','Más ansiedad / nervios','Más desconectado','Sueño / cansancio'];
+const EPIS={panico:'Ataque de ansiedad o pánico',desconexion:'«El pensamiento se va» / desconexión',ganas:'Ganas intensas de consumir',conflicto:'Discusión o conflicto',foco:'Buen momento de concentración',otro:'Otro'};
+const NOCT=['Nada','Tabaco','Cannabis','Comida','Móvil / pantalla'];
+const PREV=['Pantallas en la cama','Cannabis','Tabaco','Cafeína','Alcohol','Cena copiosa','Ejercicio intenso','Preocupaciones'];
+const EVENTOS=['Estrés laboral','Conflicto con alguien','Buena noticia','Día libre','Me salté comidas','Conducción rápida','Tiempo al aire libre','Tiempo con la pareja / amigos'];
+const MEJOR=['Mañana','Mediodía','Tarde','Noche','En ningún momento'];
+const DSCALES=[['animo','Ánimo','muy bajo','muy bueno'],['ansiedad','Ansiedad / nervios','nada','máxima'],['energia','Energía','agotado','mucha'],['conc','Concentración','nula','muy buena'],['irrit','Irritabilidad','nada','mucha'],['estres','Estrés del día','nada','máximo']];
+
+// ---------- componentes ----------
+function seg(el,opts,multi,onChange){
+  el.innerHTML='';el._v=multi?[]:null;
+  opts.forEach(([v,t])=>{const b=document.createElement('button');b.type='button';b.textContent=t;b.dataset.v=v;
+    b.onclick=()=>{ if(multi){const i=el._v.indexOf(v);i<0?el._v.push(v):el._v.splice(i,1);b.classList.toggle('on');}
+      else{el._v=(el._v===v?null:v);[...el.children].forEach(c=>c.classList.toggle('on',c.dataset.v===el._v));}
+      onChange&&onChange(el._v);};
+    el.appendChild(b);});
+  el.set=v=>{el._v=multi?[...(v||[])]:(v??null);[...el.children].forEach(c=>c.classList.toggle('on',multi?el._v.includes(c.dataset.v):c.dataset.v===el._v));};
+}
+function scale(el){el.innerHTML='';el._v=null;for(let i=0;i<=10;i++){const b=document.createElement('button');b.type='button';b.textContent=i;b.onclick=()=>{el._v=(el._v===i?null:i);[...el.children].forEach((c,j)=>c.classList.toggle('on',j===el._v));};el.appendChild(b);}
+  el.set=v=>{el._v=(v===undefined?null:v);[...el.children].forEach((c,j)=>c.classList.toggle('on',j===el._v));};}
+const $=id=>document.getElementById(id);
+const kv=a=>a.map(x=>[x,x]);
+
+// ---------- pestañas y días ----------
+let view='hoy';
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{view=b.dataset.v;document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('section.view').forEach(s=>s.classList.toggle('hidden',s.id!=='v-'+view));$('days').classList.toggle('hidden',view==='resumen');render();});
+function renderDays(){const el=$('days');el.innerHTML='';const wd=weekDays();if(!wd.includes(day))wd.push(day);
+  wd.forEach(ds=>{const b=document.createElement('button');const has=S.ent.some(e=>e.d===ds)||S.dias[ds];b.innerHTML=lbl(ds)+(has?'<span class="dot"></span>':'');b.classList.toggle('on',ds===day);b.onclick=()=>{day=ds;render();};el.appendChild(b);});}
+
+// ---------- consumo ----------
+let editId=null;
+seg($('c-tipo'),Object.entries(TIPOS).map(([k,v])=>[k,v.n]),false,t=>buildDet(t));
+seg($('c-motivo'),kv(MOTIVOS),true);seg($('c-efecto'),kv(EFECTOS),false);scale($('c-antes'));
+function buildDet(t,e={}){const el=$('c-det');el.innerHTML='';if(!t)return;const T=TIPOS[t];
+  let h=`<label class="f">Tipo</label><div class="chips" id="c-sub"></div>`;
+  if(T.extra)h+=`<label class="f">Variedad (si la sabes)</label><div class="chips" id="c-var"></div>`;
+  if(T.txt)h+=`<label class="f">¿Cuál?</label><input type="text" id="c-txt">`;
+  el.innerHTML=h;seg($('c-sub'),kv(T.sub),false);$('c-sub').set(e.sub);
+  if(T.extra){seg($('c-var'),kv(['Más THC','Más CBD','Mezcla','No lo sé']),false);$('c-var').set(e.var);}
+  if(T.txt)$('c-txt').value=e.txt||'';
+  $('c-cant').title=T.u;$('c-cant').placeholder=T.u;
+  document.querySelectorAll('#f-cons .row label.f')[1].textContent='Cantidad ('+T.u+')';
+}
+function openCons(e){editId=e?e.id:null;$('f-epi').classList.add('hidden');$('f-cons').classList.remove('hidden');
+  $('c-tipo').set(e?e.tipo:null);buildDet(e?e.tipo:null,e||{});$('c-hora').value=e?e.h:nowHM();$('c-cant').value=e?e.cant:1;
+  $('c-motivo').set(e?e.mot:[]);$('c-antes').set(e?e.antes:null);$('c-ctx').value=e?e.ctx||'':'';$('c-efecto').set(e?e.efe:null);
+  $('f-cons').scrollIntoView({behavior:'smooth'});}
+$('b-cons').onclick=()=>openCons();
+$('c-cancel').onclick=()=>$('f-cons').classList.add('hidden');
+$('c-save').onclick=()=>{const t=$('c-tipo')._v;if(!t){alertBox('Elige qué has tomado.');return;}
+  const e={id:editId||Date.now()+'',k:'c',d:day,h:$('c-hora').value||nowHM(),tipo:t,sub:$('c-sub')?$('c-sub')._v:null,var:$('c-var')?$('c-var')._v:null,txt:$('c-txt')?$('c-txt').value:'',
+    cant:Number($('c-cant').value)||0,mot:$('c-motivo')._v,antes:$('c-antes')._v,ctx:$('c-ctx').value,efe:$('c-efecto')._v};
+  upsert(e);$('f-cons').classList.add('hidden');render();};
+
+// ---------- momentos ----------
+seg($('e-tipo'),Object.entries(EPIS),false);scale($('e-int'));
+function openEpi(e){editId=e?e.id:null;$('f-cons').classList.add('hidden');$('f-epi').classList.remove('hidden');
+  $('e-tipo').set(e?e.tipo:null);$('e-hora').value=e?e.h:nowHM();$('e-dur').value=e?e.dur??'':'';$('e-int').set(e?e.int:null);$('e-ctx').value=e?e.ctx||'':'';$('e-res').value=e?e.res||'':'';
+  $('f-epi').scrollIntoView({behavior:'smooth'});}
+$('b-epi').onclick=()=>openEpi();
+$('e-cancel').onclick=()=>$('f-epi').classList.add('hidden');
+$('e-save').onclick=()=>{const t=$('e-tipo')._v;if(!t){alertBox('Elige qué tipo de momento quieres anotar.');return;}
+  upsert({id:editId||Date.now()+'',k:'e',d:day,h:$('e-hora').value||nowHM(),tipo:t,dur:$('e-dur').value===''?null:Number($('e-dur').value),int:$('e-int')._v,ctx:$('e-ctx').value,res:$('e-res').value});
+  $('f-epi').classList.add('hidden');render();};
+
+function upsert(e){const i=S.ent.findIndex(x=>x.id===e.id);i<0?S.ent.push(e):S.ent[i]=e;save();}
+function alertBox(m){const el=document.createElement('div');el.className='ok';el.style.color='var(--warn)';el.textContent=m;const f=document.querySelector('#f-cons:not(.hidden), #f-epi:not(.hidden)');f.appendChild(el);setTimeout(()=>el.remove(),3000);}
+function descC(e){const T=TIPOS[e.tipo];let s=`${e.sub||T.n}${e.txt?' ('+e.txt+')':''} · ${e.cant}`;if(e.tipo==='cafe'&&e.sub)s+=` · ≈${Math.round(CAF[e.sub]*e.cant)} mg`;if(e.var)s+=` · ${e.var}`;return s;}
+function renderList(){const el=$('list');$('list-title').textContent='Registros · '+lbl(day);
+  const L=S.ent.filter(e=>e.d===day).sort((a,b)=>a.h.localeCompare(b.h));
+  if(!L.length){el.innerHTML='<p class="help">Todavía no hay registros este día.</p>';return;}
+  el.innerHTML='';L.forEach(e=>{const r=document.createElement('div');r.className='entry';
+    const main=e.k==='c'?`<span class="tag">${TIPOS[e.tipo].n}</span>${descC(e)}`:`<span class="tag ep">${EPIS[e.tipo]}</span>${e.int!=null?'intensidad '+e.int:''}${e.dur?' · '+e.dur+' min':''}`;
+    const sub=e.k==='c'?[e.mot&&e.mot.length?e.mot.join(', '):'',e.antes!=null?'malestar antes '+e.antes:'',e.efe?'después: '+e.efe:''].filter(Boolean).join(' · '):(e.ctx||'');
+    r.innerHTML=`<div class="t">${e.h}</div><div class="b">${main}<small>${sub}</small></div>`;
+    const ed=document.createElement('button');ed.className='x';ed.textContent='Editar';ed.onclick=()=>e.k==='c'?openCons(e):openEpi(e);
+    const del=document.createElement('button');del.className='x';del.textContent='×';del.title='Borrar';del.onclick=()=>{if(confirm('¿Borrar este registro?')){S.ent=S.ent.filter(x=>x.id!==e.id);save();render();}};
+    const w=document.createElement('div');w.style.display='flex';w.style.gap='4px';w.append(ed,del);r.appendChild(w);el.appendChild(r);});}
+
+// ---------- sueño ----------
+seg($('s-noct'),kv(NOCT),true);seg($('s-prev'),kv(PREV),true);scale($('s-cal'));scale($('s-desc'));
+function loadSleep(){const s=(S.dias[day]||{}).sueno||{};$('s-help').textContent='· noche del '+lbl(prevDay(day))+' al '+lbl(day);
+  ['acost','dorm','desp','lev'].forEach(k=>$('s-'+k).value=s[k]||'');$('s-nd').value=s.nd??'';$('s-td').value=s.td??'';
+  $('s-noct').set(s.noct);$('s-prev').set(s.prev);$('s-cal').set(s.cal);$('s-desc').set(s.desc);$('s-nota').value=s.nota||'';$('s-ok').classList.add('hidden');}
+function prevDay(ds){const d=new Date(ds+'T12:00:00');d.setDate(d.getDate()-1);return iso(d);}
+$('s-save').onclick=()=>{S.dias[day]=S.dias[day]||{};S.dias[day].sueno={acost:$('s-acost').value,dorm:$('s-dorm').value,desp:$('s-desp').value,lev:$('s-lev').value,
+  nd:$('s-nd').value===''?null:Number($('s-nd').value),td:$('s-td').value===''?null:Number($('s-td').value),noct:$('s-noct')._v,prev:$('s-prev')._v,cal:$('s-cal')._v,desc:$('s-desc')._v,nota:$('s-nota').value};
+  save();$('s-ok').classList.remove('hidden');renderDays();};
+function hrs(a,b,minus){if(!a||!b)return null;let [h1,m1]=a.split(':').map(Number),[h2,m2]=b.split(':').map(Number);let t=(h2*60+m2)-(h1*60+m1);if(t<=0)t+=1440;t-=(minus||0);return t/60;}
+
+// ---------- día ----------
+const dsc=$('d-scales');DSCALES.forEach(([k,t,lo,hi])=>{dsc.insertAdjacentHTML('beforeend',`<label class="f">${t} (0-10)</label><div class="scale" id="d-${k}"></div><div class="ends"><span>${lo}</span><span>${hi}</span></div>`);scale($('d-'+k));});
+seg($('d-eventos'),kv(EVENTOS),true);seg($('d-mejor'),kv(MEJOR),false);
+function loadDay(){const s=(S.dias[day]||{}).dia||{};DSCALES.forEach(([k])=>$('d-'+k).set(s[k]));
+  [['ej','ej'],['ejt','ejt'],['com','com'],['trab','trab'],['pant','pant'],['sies','sies']].forEach(([i,k])=>$('d-'+i).value=s[k]??'');
+  $('d-eventos').set(s.ev);$('d-mejor').set(s.mejor);$('d-nota').value=s.nota||'';$('d-ok').classList.add('hidden');}
+$('d-save').onclick=()=>{const s={};DSCALES.forEach(([k])=>s[k]=$('d-'+k)._v);['ej','ejt','com','trab','pant','sies'].forEach(k=>{const v=$('d-'+k).value;s[k]=v===''?null:(k==='ejt'?v:Number(v));});
+  s.ev=$('d-eventos')._v;s.mejor=$('d-mejor')._v;s.nota=$('d-nota').value;S.dias[day]=S.dias[day]||{};S.dias[day].dia=s;save();$('d-ok').classList.remove('hidden');renderDays();};
+
+// ---------- resumen ----------
+function dayStats(ds){const C=S.ent.filter(e=>e.d===ds&&e.k==='c'),E=S.ent.filter(e=>e.d===ds&&e.k==='e');
+  const sum=t=>C.filter(e=>e.tipo===t).reduce((s,e)=>s+(e.cant||0),0);
+  const mg=C.filter(e=>e.tipo==='cafe'&&e.sub).reduce((s,e)=>s+CAF[e.sub]*e.cant,0);
+  const last=t=>{const x=C.filter(e=>e.tipo===t).map(e=>e.h).sort();return x.length?x[x.length-1]:'';};
+  const sl=(S.dias[ds]||{}).sueno||{},di=(S.dias[ds]||{}).dia||{};
+  return {mg:Math.round(mg),tab:sum('tabaco'),can:sum('cannabis'),alc:sum('alcohol'),lastCaf:last('cafe'),lastCan:last('cannabis'),
+    sueno:hrs(sl.dorm||sl.acost,sl.desp,sl.td),nd:sl.nd,cal:sl.cal,pan:E.filter(e=>e.tipo==='panico').length,des:E.filter(e=>e.tipo==='desconexion').length,ans:di.ansiedad,animo:di.animo,conc:di.conc,ej:di.ej};}
+const f=(v,d=0)=>v==null||v===''?'—':(typeof v==='number'?v.toFixed(d).replace('.',','):v);
+function renderResumen(){$('r-nombre').value=S.nombre||'';$('r-cod').value=S.cod||'';$('r-ini').value=S.ini;
+  const wd=weekDays();
+  let h=`<table><tr><th>Día</th><th class="n">Cafeína mg</th><th class="n">Tabaco</th><th class="n">Cannabis</th><th class="n">Alcohol</th><th class="n">Horas sueño</th><th class="n">Desp.</th><th class="n">Calidad</th><th class="n">Pánico</th><th class="n">Descon.</th><th class="n">Ansiedad</th><th class="n">Ánimo</th><th class="n">Concentr.</th><th class="n">Ejercicio</th></tr>`;
+  wd.forEach(ds=>{const s=dayStats(ds);h+=`<tr><td>${lbl(ds)}</td><td class="n">${s.mg||'—'}</td><td class="n">${f(s.tab||null,1)}</td><td class="n">${f(s.can||null,1)}</td><td class="n">${f(s.alc||null)}</td><td class="n">${f(s.sueno,1)}</td><td class="n">${f(s.nd)}</td><td class="n">${f(s.cal)}</td><td class="n">${s.pan||'—'}</td><td class="n">${s.des||'—'}</td><td class="n">${f(s.ans)}</td><td class="n">${f(s.animo)}</td><td class="n">${f(s.conc)}</td><td class="n">${f(s.ej)}</td></tr>`;});
+  $('r-tabla').innerHTML=h+'</table>';
+  // relación momentos ↔ consumos previos
+  const toMin=(d,h)=>new Date(d+'T'+h+':00').getTime()/60000;
+  const E=S.ent.filter(e=>e.k==='e').sort((a,b)=>(a.d+a.h).localeCompare(b.d+b.h));
+  if(!E.length)$('r-rel').innerHTML='<p class="help">Sin momentos anotados todavía.</p>';
+  else{let r='';E.forEach(e=>{const t=toMin(e.d,e.h);const prev=S.ent.filter(c=>c.k==='c'&&toMin(c.d,c.h)<=t&&t-toMin(c.d,c.h)<=180).sort((a,b)=>(a.d+a.h).localeCompare(b.d+b.h));
+    r+=`<div class="entry"><div class="t">${e.h}</div><div class="b"><span class="tag ep">${EPIS[e.tipo]}</span>${lbl(e.d)}${e.int!=null?' · intensidad '+e.int:''}<small>${prev.length?'Antes: '+prev.map(c=>c.h+' '+(TIPOS[c.tipo].n.toLowerCase())+(c.tipo==='cafe'&&c.sub?' ≈'+Math.round(CAF[c.sub]*c.cant)+' mg':' ×'+c.cant)).join(' · '):'Sin consumos en las 3 h previas'}${e.ctx?'<br>Contexto: '+esc(e.ctx):''}</small></div></div>`;});$('r-rel').innerHTML=r;}
+  // consumo de la tarde-noche y sueño siguiente
+  let z=`<table><tr><th>Noche</th><th class="n">Última cafeína</th><th class="n">Último cannabis</th><th class="n">Horas sueño</th><th class="n">Despertares</th><th class="n">Calidad</th></tr>`;
+  wd.forEach(ds=>{const nx=new Date(ds+'T12:00:00');nx.setDate(nx.getDate()+1);const n=iso(nx);const a=dayStats(ds),b=dayStats(n);
+    z+=`<tr><td>${lbl(ds)} → ${lbl(n)}</td><td class="n">${a.lastCaf||'—'}</td><td class="n">${a.lastCan||'—'}</td><td class="n">${f(b.sueno,1)}</td><td class="n">${f(b.nd)}</td><td class="n">${f(b.cal)}</td></tr>`;});
+  $('r-sueno').innerHTML=z+'</table>';
+  // motivos
+  const cnt={};S.ent.filter(e=>e.k==='c'&&weekDays().includes(e.d)).forEach(e=>(e.mot||[]).forEach(m=>{const k=TIPOS[e.tipo].n;cnt[k]=cnt[k]||{};cnt[k][m]=(cnt[k][m]||0)+1;}));
+  $('r-mot').innerHTML=Object.keys(cnt).length?Object.entries(cnt).map(([k,o])=>`<p style="margin:0 0 6px"><strong>${k}:</strong> ${Object.entries(o).sort((a,b)=>b[1]-a[1]).map(([m,n])=>m+' ('+n+')').join(', ')}</p>`).join(''):'<p class="help">Sin motivos anotados todavía.</p>';}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+$('r-nombre').oninput=e=>{S.nombre=e.target.value;save();};$('r-cod').oninput=e=>{S.cod=e.target.value;save();};
+$('r-ini').onchange=e=>{if(e.target.value){S.ini=e.target.value;save();renderResumen();}};
+
+// ---------- exportar ----------
+function csv(){const q=v=>`"${String(v??'').replace(/"/g,'""')}"`;const L=[];
+  L.push(['Nombre',S.nombre,'Código',S.cod,'Inicio',S.ini].map(q).join(';'));L.push('');
+  L.push(['REGISTROS'].map(q).join(';'));
+  L.push(['fecha','hora','clase','tipo','detalle','variedad','cantidad','cafeina_mg','motivos','malestar_antes','efecto','intensidad','duracion_min','contexto','que_hice'].map(q).join(';'));
+  S.ent.slice().sort((a,b)=>(a.d+a.h).localeCompare(b.d+b.h)).forEach(e=>L.push((e.k==='c'?
+    [e.d,e.h,'consumo',TIPOS[e.tipo].n,(e.sub||'')+(e.txt?' '+e.txt:''),e.var,e.cant,e.tipo==='cafe'&&e.sub?Math.round(CAF[e.sub]*e.cant):'',(e.mot||[]).join(', '),e.antes,e.efe,'','',e.ctx,'']:
+    [e.d,e.h,'momento',EPIS[e.tipo],'','','','','','','',e.int,e.dur,e.ctx,e.res]).map(q).join(';')));
+  L.push('');L.push(['DIAS'].map(q).join(';'));
+  const hd=['fecha','acostarse','dormirse','despertar','levantarse','horas_sueno','despertares','min_despierto','consumo_nocturno','antes_de_dormir','calidad','descansado','nota_sueno',...DSCALES.map(x=>x[0]),'ejercicio_min','tipo_ejercicio','comidas','horas_trabajo','horas_pantalla','siesta_min','eventos','mejor_momento','nota_dia'];
+  L.push(hd.map(q).join(';'));
+  Object.keys(S.dias).sort().forEach(ds=>{const s=S.dias[ds].sueno||{},d=S.dias[ds].dia||{};const h=hrs(s.dorm||s.acost,s.desp,s.td);
+    L.push([ds,s.acost,s.dorm,s.desp,s.lev,h==null?'':h.toFixed(1).replace('.',','),s.nd,s.td,(s.noct||[]).join(', '),(s.prev||[]).join(', '),s.cal,s.desc,s.nota,...DSCALES.map(x=>d[x[0]]),d.ej,d.ejt,d.com,d.trab,d.pant,d.sies,(d.ev||[]).join(', '),d.mejor,d.nota].map(q).join(';'));});
+  return '﻿'+L.join('\r\n');}
+$('x-csv').onclick=()=>{const b=new Blob([csv()],{type:'text/csv;charset=utf-8'});const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download=`registro_semanal_${(S.cod||'').replace(/\W+/g,'')||'unimed'}_${S.ini}.csv`;document.body.appendChild(a);a.click();a.remove();msg('Copia descargada. Adjúntala al correo.');};
+$('x-print').onclick=()=>window.print();
+$('x-mail').onclick=()=>{let t=`Registro semanal UNIMED\nNombre: ${S.nombre}\nCódigo: ${S.cod}\nSemana desde: ${S.ini}\n\nDía | cafeína mg | tabaco | cannabis | alcohol | h sueño | despertares | calidad | pánico | desconexión | ansiedad\n`;
+  weekDays().forEach(ds=>{const s=dayStats(ds);t+=`${lbl(ds)} | ${s.mg||0} | ${s.tab||0} | ${s.can||0} | ${s.alc||0} | ${f(s.sueno,1)} | ${f(s.nd)} | ${f(s.cal)} | ${s.pan} | ${s.des} | ${f(s.ans)}\n`;});
+  t+='\n(Adjunto el archivo descargado con el detalle completo.)';
+  location.href='mailto:salud@unimed-consulting.es?subject='+encodeURIComponent('Registro semanal '+(S.cod||S.nombre||''))+'&body='+encodeURIComponent(t);};
+$('x-reset').onclick=()=>{if(confirm('Se borrarán todos los registros de este dispositivo. ¿Has descargado una copia?')){S={ini:iso(new Date()),nombre:'',cod:'',ent:[],dias:{}};save();day=iso(new Date());render();}};
+function msg(m){const el=$('x-msg');el.textContent=m;el.classList.remove('hidden');setTimeout(()=>el.classList.add('hidden'),4000);}
+
+// ---------- render ----------
+function render(){renderDays();if(view==='hoy')renderList();if(view==='sueno')loadSleep();if(view==='dia')loadDay();if(view==='resumen')renderResumen();}
+render();
+</script>
+</body>
+</html>
