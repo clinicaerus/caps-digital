@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Escala de Experiencias Disociativas · DES-II</title>
+<style>
+  :root{
+    --navy:#0B1F3A; --teal:#007A6E; --teal-l:#1A9B8C; --gold:#C8963E; --cream:#F7F5F0;
+    --ink:#1E2430; --muted:#5A6472; --line:#D9D4C7; --bg:#FFFFFF; --card:#FFFFFF; --warn:#9B2C2C;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --navy:#E8EEF6; --teal:#4CC2B4; --teal-l:#6FD3C7; --gold:#E0B064; --cream:#1B2230;
+      --ink:#E6E9EE; --muted:#A3ACB9; --line:#2E3747; --bg:#11161F; --card:#171E2A; --warn:#E07A7A;
+    }
+  }
+  :root[data-theme="dark"]{
+    --navy:#E8EEF6; --teal:#4CC2B4; --teal-l:#6FD3C7; --gold:#E0B064; --cream:#1B2230;
+    --ink:#E6E9EE; --muted:#A3ACB9; --line:#2E3747; --bg:#11161F; --card:#171E2A; --warn:#E07A7A;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Calibri,"Segoe UI",system-ui,-apple-system,sans-serif}
+  .wrap{max-width:760px;margin:0 auto;padding:24px 16px 80px}
+  .brand{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--teal);font-weight:700}
+  h1{font-size:26px;line-height:1.2;color:var(--navy);margin:6px 0 4px}
+  .sub{color:var(--muted);margin:0 0 18px;font-size:14px}
+  .rule{height:3px;background:var(--gold);border-radius:2px;margin:12px 0 20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin:0 0 14px}
+  .callout{background:var(--cream);border-left:4px solid var(--teal);border-radius:6px;padding:14px 16px;margin:0 0 16px}
+  .callout.gold{border-left-color:var(--gold)}
+  .callout p{margin:0 0 8px}.callout p:last-child{margin:0}
+  label.f{display:block;font-size:13px;color:var(--muted);margin-bottom:4px}
+  input[type=text],input[type=date],input[type=password]{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--ink);font:inherit}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:520px){.grid2{grid-template-columns:1fr}}
+  .q{scroll-margin-top:80px}
+  .q.missing{border-color:var(--warn)}
+  .qn{font-weight:700;color:var(--teal);margin-right:6px}
+  .qt{margin:0 0 12px}
+  .scale{display:grid;grid-template-columns:repeat(11,1fr);gap:4px}
+  @media (max-width:520px){.scale{grid-template-columns:repeat(6,1fr)}}
+  .scale input{position:absolute;opacity:0;pointer-events:none}
+  .scale label{display:flex;align-items:center;justify-content:center;min-height:42px;border:1px solid var(--line);border-radius:8px;cursor:pointer;font-size:14px;font-variant-numeric:tabular-nums;user-select:none}
+  .scale input:checked + label{background:var(--teal);border-color:var(--teal);color:#fff;font-weight:700}
+  .scale input:focus-visible + label{outline:2px solid var(--gold);outline-offset:2px}
+  .ends{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-top:6px}
+  .bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 0 8px;border-bottom:1px solid var(--line);margin-bottom:16px}
+  .prog{height:6px;background:var(--line);border-radius:4px;overflow:hidden}
+  .prog i{display:block;height:100%;width:0;background:var(--teal);transition:width .2s}
+  .progt{font-size:12px;color:var(--muted);margin-top:4px}
+  button{font:inherit;border:0;border-radius:8px;padding:11px 18px;cursor:pointer;background:var(--teal);color:#fff;font-weight:600}
+  button.sec{background:transparent;color:var(--teal);border:1px solid var(--teal)}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .err{color:var(--warn);font-size:14px;margin-top:10px}
+  .hidden{display:none}
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  th,td{border-bottom:1px solid var(--line);padding:7px 6px;text-align:left;vertical-align:top}
+  th{color:var(--muted);font-weight:600}
+  td.n{text-align:right;font-variant-numeric:tabular-nums}
+  .flag{color:var(--warn);font-weight:700}
+  .foot{font-size:12px;color:var(--muted);margin-top:28px;border-top:1px solid var(--line);padding-top:12px}
+  @media print{
+    .bar,.actions,#pro-gate,.noprint{display:none!important}
+    body{background:#fff;color:#000}
+    .card{break-inside:avoid;border-color:#ccc}
+    .scale label{min-height:26px;font-size:11px}
+    .scale input:checked + label{background:#000!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="brand">CAPS Digital · UNIMED Consulting · Holomedicina®</div>
+  <h1>Escala de Experiencias Disociativas (DES-II)</h1>
+  <p class="sub">Eve Bernstein Carlson, Ph.D. y Frank W. Putnam, M.D. · Traducción y adaptación al castellano: Olaf Holm, psiquiatra (Salamanca, 2002) · Distribuida por la International Society for the Study of Trauma and Dissociation (ISSTD)</p>
+  <div class="rule"></div>
+
+  <section id="intro">
+    <div class="card">
+      <div class="grid2">
+        <div><label class="f" for="nombre">Nombre</label><input type="text" id="nombre" autocomplete="name"></div>
+        <div><label class="f" for="fecha">Fecha</label><input type="date" id="fecha"></div>
+        <div><label class="f" for="edad">Edad</label><input type="text" id="edad" inputmode="numeric"></div>
+        <div><label class="f" for="codigo">Código de caso (si se lo han indicado)</label><input type="text" id="codigo"></div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <p><strong>Instrucciones.</strong> El cuestionario consiste en veintiocho preguntas acerca de experiencias que puede tener en su vida diaria. Nos interesa saber con qué frecuencia tiene estas experiencias.</p>
+      <p>Es importante que sus respuestas indiquen con qué frecuencia le ocurren <strong>cuando no está bajo los efectos del alcohol u otras drogas</strong>.</p>
+      <p>Para cada pregunta, marque el porcentaje del tiempo en que la experiencia descrita le ocurre a usted: desde 0 % (nunca) hasta 100 % (siempre).</p>
+    </div>
+    <div class="callout gold">
+      <p>No hay respuestas correctas ni incorrectas. Muchas de estas experiencias son frecuentes en la población general. Responda según cómo es habitualmente. Le llevará unos 10 minutos.</p>
+    </div>
+  </section>
+
+  <div class="bar"><div class="prog"><i id="progbar"></i></div><div class="progt" id="progt">0 de 28 respondidas</div></div>
+
+  <form id="form" novalidate></form>
+
+  <div class="actions">
+    <button type="button" id="finish">Terminar</button>
+  </div>
+  <div class="err hidden" id="err"></div>
+
+  <section id="done" class="hidden">
+    <div class="callout">
+      <p><strong>Gracias por su colaboración.</strong></p>
+      <p>Para enviar sus respuestas, use una de estas opciones y hágalas llegar a su profesional de referencia (salud@unimed-consulting.es).</p>
+    </div>
+    <div class="actions">
+      <button type="button" id="print">Guardar como PDF / imprimir</button>
+      <button type="button" class="sec" id="copy">Copiar respuestas</button>
+    </div>
+    <div class="progt noprint" id="copied"></div>
+
+    <div id="pro-gate" class="card noprint" style="margin-top:28px">
+      <label class="f" for="code">Acceso profesional</label>
+      <div style="display:flex;gap:8px"><input type="password" id="code" autocomplete="off"><button type="button" class="sec" id="unlock">Ver puntuación</button></div>
+    </div>
+    <section id="pro" class="hidden"></section>
+  </section>
+
+  <div class="foot">
+    Instrumento de cribado. No es una prueba diagnóstica: una puntuación elevada indica la conveniencia de una evaluación clínica más completa. Las respuestas no se guardan ni se envían desde esta página; permanecen solo en este navegador hasta que se cierra.<br>
+    Samuel Carmona Aguirre, MSc · UNIMED Consulting · C/ Monlau 5, 1º-5º, 08027 Barcelona · salud@unimed-consulting.es · +34 673 815 148
+  </div>
+</div>
+
+<script>
+const ITEMS = [
+ "Algunas personas tienen la experiencia de darse cuenta repentinamente, mientras conducen un coche, de que no recuerdan lo que ha pasado durante el viaje o parte de él.",
+ "Algunas personas descubren que a veces están escuchando hablar a alguien y repentinamente se dan cuenta de que no oyeron todo o parte de lo que les dijeron.",
+ "Algunas personas tienen la experiencia de encontrarse en un lugar y no saber cómo llegaron hasta allí.",
+ "Algunas personas tienen la experiencia de verse a sí mismas vestidas con ropas que no recuerdan haberse puesto.",
+ "Algunas personas tienen la experiencia de encontrar cosas nuevas entre sus pertenencias que no recuerdan haber comprado.",
+ "Algunas personas descubren que se les acerca gente que no conocen y que les llama por otro nombre o insiste en que les conoce de antes.",
+ "Algunas personas tienen la experiencia de sentir como si estuvieran junto a sí mismas u observándose hacer algo, como si fueran otra persona.",
+ "A algunas personas les dicen que no reconocen a amigos o miembros de la familia.",
+ "Algunas personas no tienen el recuerdo de acontecimientos importantes en sus vidas (por ejemplo, una boda, una Semana Santa, unas Navidades).",
+ "Algunas personas son acusadas de mentir cuando piensan que no han mentido.",
+ "Algunas personas tienen la experiencia de mirarse en un espejo y no reconocerse a sí mismas.",
+ "Algunas personas tienen la experiencia de sentir que las personas, los objetos y el mundo que les rodea no son reales.",
+ "Algunas personas tienen la experiencia de sentir que su cuerpo no les pertenece.",
+ "Algunas personas tienen la experiencia de recordar el pasado, a veces tan intensamente, que sienten que lo están volviendo a vivir.",
+ "Algunas personas tienen la experiencia de no estar seguras de si las cosas que recuerdan sucedieron realmente o si solamente las soñaron.",
+ "Algunas personas tienen la experiencia de que, estando en un lugar conocido, lo encuentran extraño y poco familiar.",
+ "Algunas personas descubren que mientras ven la televisión o una película se encuentran tan absortas en la historia que no se dan cuenta de otros acontecimientos que ocurren a su alrededor.",
+ "Algunas personas se dan cuenta a veces de que están tan metidas en una fantasía, o soñando despiertas, que sienten como si estuviera ocurriendo de verdad.",
+ "Algunas personas descubren que a veces son capaces de ignorar el dolor.",
+ "Algunas personas descubren que están mirando al vacío, sin pensar, y no se dan cuenta del paso del tiempo.",
+ "Algunas personas descubren a veces que, cuando están solas, se hablan en voz alta a sí mismas.",
+ "Algunas personas se dan cuenta de que en una situación pueden actuar de forma tan diferente, comparada con otra situación, que sienten como si fueran personas diferentes.",
+ "Algunas personas descubren a veces que en ciertas situaciones son capaces de hacer cosas con asombrosa facilidad y espontaneidad cuando normalmente les resultarían difíciles (por ejemplo: deportes, trabajo, situaciones sociales, etc.).",
+ "Algunas personas a veces descubren que no pueden recordar si han hecho algo o solo pensaron en hacerlo (por ejemplo, si enviaron una carta o solo pensaron en enviarla).",
+ "Algunas personas encuentran evidencias de que han hecho cosas que no recuerdan haber hecho.",
+ "Algunas personas a veces encuentran escritos, dibujos o notas entre sus pertenencias que debieron de hacer ellas, pero no lo recuerdan.",
+ "Algunas personas a veces se dan cuenta de que oyen voces dentro de su cabeza que les dicen que hagan ciertas cosas, o que comentan las cosas que están haciendo.",
+ "Algunas personas sienten como si vieran el mundo a través de una neblina, de tal manera que las personas o los objetos parecen distantes o poco claros."
+];
+const VALS = [0,10,20,30,40,50,60,70,80,90,100];
+const form = document.getElementById('form');
+
+ITEMS.forEach((t,i)=>{
+  const n=i+1, d=document.createElement('div');
+  d.className='card q'; d.id='q'+n;
+  let h=`<p class="qt"><span class="qn">${n}.</span>${t}</p>
+  <div class="scale" role="radiogroup" aria-label="Pregunta ${n}: porcentaje del tiempo">`;
+  VALS.forEach(v=>{ h+=`<input type="radio" name="i${n}" id="i${n}_${v}" value="${v}"><label for="i${n}_${v}">${v}${v===0||v===100?'%':''}</label>`; });
+  h+=`</div><div class="ends"><span>0 % · nunca</span><span>100 % · siempre</span></div>`;
+  d.innerHTML=h; form.appendChild(d);
+});
+
+const fecha=document.getElementById('fecha');
+try{ fecha.value=new Date().toISOString().slice(0,10);}catch(e){}
+
+function answers(){ return ITEMS.map((_,i)=>{const c=form.querySelector(`input[name=i${i+1}]:checked`);return c?Number(c.value):null;}); }
+function updateProg(){
+  const a=answers(), k=a.filter(x=>x!==null).length;
+  document.getElementById('progbar').style.width=(k/28*100)+'%';
+  document.getElementById('progt').textContent=`${k} de 28 respondidas`;
+}
+form.addEventListener('change',e=>{ updateProg(); const q=e.target.closest('.q'); if(q) q.classList.remove('missing'); });
+
+document.getElementById('finish').addEventListener('click',()=>{
+  const a=answers(), miss=a.map((x,i)=>x===null?i+1:null).filter(Boolean);
+  const err=document.getElementById('err');
+  document.querySelectorAll('.q').forEach(q=>q.classList.remove('missing'));
+  if(miss.length){
+    miss.forEach(n=>document.getElementById('q'+n).classList.add('missing'));
+    err.textContent=`Faltan por responder: ${miss.join(', ')}.`; err.classList.remove('hidden');
+    document.getElementById('q'+miss[0]).scrollIntoView({behavior:'smooth'}); return;
+  }
+  err.classList.add('hidden');
+  document.getElementById('done').classList.remove('hidden');
+  document.getElementById('done').scrollIntoView({behavior:'smooth'});
+});
+
+function meta(){ return {
+  nombre:document.getElementById('nombre').value.trim(),
+  fecha:document.getElementById('fecha').value,
+  edad:document.getElementById('edad').value.trim(),
+  codigo:document.getElementById('codigo').value.trim()}; }
+
+document.getElementById('print').addEventListener('click',()=>window.print());
+document.getElementById('copy').addEventListener('click',async()=>{
+  const m=meta(), a=answers();
+  const txt=`DES-II · respuestas\nNombre: ${m.nombre}\nFecha: ${m.fecha}\nEdad: ${m.edad}\nCódigo: ${m.codigo}\n`+a.map((v,i)=>`${i+1}: ${v}`).join('\n');
+  const out=document.getElementById('copied');
+  try{ await navigator.clipboard.writeText(txt); out.textContent='Respuestas copiadas. Péguelas en un correo a salud@unimed-consulting.es.'; }
+  catch(e){ out.textContent='No se pudo copiar automáticamente. Use «Guardar como PDF».'; }
+});
+
+// Puntuación (Carlson y Putnam, 1993; Waller, Putnam y Carlson, 1996)
+const SUB = {
+  "Amnesia disociativa":[3,4,5,6,8,10,25,26],
+  "Despersonalización / desrealización":[7,11,12,13,16,28],
+  "Absorción e implicación imaginativa":[2,14,15,17,18,20,22,23]
+};
+const TAXON=[3,5,7,8,12,13,22,27];
+const mean=(a,idx)=>idx.reduce((s,n)=>s+a[n-1],0)/idx.length;
+const f1=x=>x.toFixed(1).replace('.',',');
+
+document.getElementById('unlock').addEventListener('click',()=>{
+  if(document.getElementById('code').value.trim()!=='UNIMED2026'){ document.getElementById('code').value=''; return; }
+  const a=answers(), total=a.reduce((s,x)=>s+x,0)/28, tax=mean(a,TAXON);
+  const sorted=[...a].sort((x,y)=>x-y), med=(sorted[13]+sorted[14])/2;
+  let h=`<div class="card"><p class="brand" style="margin:0 0 8px">Uso profesional</p>
+  <table><tr><th>Indicador</th><th class="n">Valor</th><th>Referencia orientativa</th></tr>
+  <tr><td><strong>Puntuación total (media de 28 ítems)</strong></td><td class="n ${total>=30?'flag':''}">${f1(total)}</td><td>≥ 30: valorar evaluación estructurada (SCID-D o MID)</td></tr>
+  <tr><td>Mediana de los 28 ítems</td><td class="n">${f1(med)}</td><td>Útil si hay ítems extremos</td></tr>
+  <tr><td>DES-T (ítems 3, 5, 7, 8, 12, 13, 22, 27)</td><td class="n ${tax>=20?'flag':''}">${f1(tax)}</td><td>≥ 20: perfil de disociación patológica más probable</td></tr>`;
+  for(const [k,idx] of Object.entries(SUB)) h+=`<tr><td>${k} (${idx.join(', ')})</td><td class="n">${f1(mean(a,idx))}</td><td>—</td></tr>`;
+  h+=`</table>`;
+  const notes=[];
+  if(a[26]>0) notes.push(`Ítem 27 (voces) = ${a[26]} %: explorar en entrevista.`);
+  [7,12,13,16,28].forEach(n=>{ if(a[n-1]>=30) notes.push(`Ítem ${n} = ${a[n-1]} %.`); });
+  if(notes.length) h+=`<p style="margin:12px 0 0"><strong>Ítems a revisar:</strong> ${notes.join(' ')}</p>`;
+  h+=`<p style="margin:12px 0 0;font-size:13px;color:var(--muted)">Puntos de corte orientativos, no diagnósticos. El consumo de cannabis, la privación de sueño, la ansiedad y el TDAH (absorción, divagación) pueden elevar puntuaciones. Interpretar con la entrevista clínica.</p>
+  <table style="margin-top:12px"><tr><th>Ítem</th><th class="n">%</th><th>Ítem</th><th class="n">%</th><th>Ítem</th><th class="n">%</th><th>Ítem</th><th class="n">%</th></tr>`;
+  for(let r=0;r<7;r++){ h+='<tr>'; for(let c=0;c<4;c++){const n=c*7+r+1; h+=`<td>${n}</td><td class="n">${a[n-1]}</td>`;} h+='</tr>'; }
+  h+=`</table></div>`;
+  const p=document.getElementById('pro'); p.innerHTML=h; p.classList.remove('hidden');
+  document.getElementById('pro-gate').classList.add('hidden');
+});
+</script>
+</body>
+</html>
