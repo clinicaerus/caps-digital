@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src https://vcfgnpnjllvpqdiwjlmz.supabase.co; img-src 'none'; base-uri 'none'; form-action 'none'; object-src 'none'">
+<title>Acceso de prueba · CAPS Digital</title>
+<link rel="stylesheet" href="estilos.css">
+<script defer src="config.js"></script>
+<script defer src="acceso.js"></script>
+</head>
+<body>
+<header><a href="/">CAPS <strong>Digital</strong></a><span>UNIMED Consulting</span></header>
+<main>
+<p class="eyebrow">PRUEBA DE ACCESO · SIN DATOS DE SALUD</p>
+<h1>Tu acceso personal,<br>paso a paso.</h1>
+<p class="intro">Espacio separado para comprobar el inicio de sesión por correo. Todavía no activa las funciones del Plan Avanzado.</p>
+<section class="card" aria-labelledby="title">
+<h2 id="title">Entrar con tu correo</h2>
+<p>Solo para la cuenta de prueba previamente invitada por UNIMED.</p>
+<form id="login-form">
+<label for="email">Correo electrónico</label>
+<input id="email" name="email" type="email" autocomplete="email" maxlength="254" placeholder="Tu correo de prueba" required disabled>
+<button id="send" type="submit" disabled>Recibir enlace de acceso</button>
+</form>
+<p id="status" class="status" role="status" aria-live="polite">Prueba desactivada. No se enviarán correos.</p>
+<div id="account" hidden>
+<p class="account-label">Correo verificado en esta sesión</p>
+<p id="account-email"></p>
+<p class="notice">Entrar no concede Pro. Aún no hay historial, informes PDF ni permisos de fundador conectados a esta página.</p>
+<button id="logout" type="button" class="secondary">Cerrar sesión de prueba</button>
+</div>
+</section>
+<p class="footnote">No introduzcas informes, diagnósticos ni datos de otras personas. Esta página no presta atención sanitaria ni recibe consultas.</p>
+<a class="back" href="/">← Volver a CAPS Digital</a>
+</main>
+<footer>Prueba técnica de autenticación · No es el área Pro publicada.</footer>
+</body></html>
