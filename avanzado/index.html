@@ -29,6 +29,9 @@
   .msg{border-top:1px solid var(--border);padding:14px 0} .msg:first-child{border-top:0}
   .q{font-weight:600} .a{white-space:pre-wrap;margin-top:8px} .meta{font-size:12px;color:var(--muted);margin-top:6px}
   .oculto{display:none!important}
+  .chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:10px 0;color:var(--ink)} .chk input{width:auto;margin-top:4px}
+  select{width:100%;background:var(--cream);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:11px 12px;font:inherit}
+  .der{border-top:1px solid var(--border);padding:12px 0;font-size:14px} .der:first-child{border-top:0}
 </style>
 </head>
 <body>
@@ -37,7 +40,7 @@
 
   <div class="card aviso"><b>CAPS Digital, tu agente de salud integral.</b> Orientación en salud desde el enfoque de la Holomedicina y sus 8 dimensiones, con respuestas generadas por inteligencia artificial. Lo que CAPS Digital no hace:
     <ul><li>No diagnostica enfermedades ni condiciones clínicas.</li><li>No prescribe medicamentos ni tratamientos.</li><li>No interpreta resultados individuales de exámenes.</li><li>No sustituye la consulta médica profesional.</li></ul>
-    <p style="margin:8px 0 0"><b>Ante una urgencia, llama al 112.</b> Durante la fase piloto, usa preguntas generales y evita escribir tu nombre, datos de contacto o datos de salud identificables.</p></div>
+    <p style="margin:8px 0 0"><b>Ante una urgencia, llama al 112.</b> Durante la fase piloto, usa preguntas generales y evita escribir tu nombre o datos de contacto en las preguntas.</p></div>
 
   <!-- Acceso -->
   <section id="vLogin" class="card oculto">
@@ -54,6 +57,20 @@
   <!-- App -->
   <section id="vApp" class="oculto">
     <div class="card row" id="estado"><span class="mut">Comprobando tu acceso…</span></div>
+    <div class="card oculto" id="cConsent" style="border-left:4px solid var(--teal)">
+      <h2 style="margin:0 0 6px;font-size:20px">Antes de empezar: tus datos y tu consentimiento</h2>
+      <p style="font-size:14px;margin:0 0 8px">Para usar el Plan Avanzado, CAPS Digital guarda tus preguntas y sus respuestas en tu historial, y las envía a un proveedor de inteligencia artificial para elaborarlas. Lo que escribas puede incluir datos sobre tu salud, que son una categoría especial de datos y solo podemos tratar con tu consentimiento explícito.</p>
+      <ul style="font-size:14px;margin:0 0 8px 18px;padding:0">
+        <li><b>Responsable:</b> Asociación UNIMED — Centro de Desarrollo e Innovación Médica (CIF G16769846). Contacto de privacidad: salud@unimed-consulting.es.</li>
+        <li><b>Para qué:</b> darte orientación en salud, recordar tus consultas y generar tus informes.</li>
+        <li><b>Quién más interviene:</b> Supabase (alojamiento en la UE, Estocolmo) y Anthropic (modelo de IA, con transferencia a EE. UU. con garantías). Nadie del equipo de UNIMED ve tu historial salvo que tú lo autorices en una derivación.</li>
+        <li><b>Tus derechos:</b> puedes borrar tu historial y retirar este consentimiento cuando quieras desde esta página, y ejercer tus demás derechos escribiendo a salud@unimed-consulting.es.</li>
+      </ul>
+      <p style="font-size:14px;margin:0 0 6px">Información completa en el <a href="/privacidad/" target="_blank">aviso de privacidad</a>.</p>
+      <label class="chk"><input type="checkbox" id="kEdad"> Declaro que tengo 18 años o más.</label>
+      <label class="chk"><input type="checkbox" id="kConsent"> Doy mi consentimiento explícito para que CAPS Digital trate los datos de salud que yo escriba, con las finalidades y en las condiciones descritas.</label>
+      <div class="row"><button class="pri" id="bConsent" disabled>Aceptar y continuar</button><span id="mConsent"></span></div>
+    </div>
     <div class="card" id="cPreg">
       <form id="fPreg">
         <label for="tPreg">Tu pregunta</label>
@@ -61,10 +78,31 @@
         <div class="row" style="margin-top:10px"><button class="pri" type="submit" id="bEnviar">Enviar</button><span class="mut" id="cont" style="font-size:13px">0 / 2000</span><span class="sp"></span><span id="mPreg"></span></div>
       </form>
     </div>
+    <div class="card oculto" id="cDeriv">
+      <div class="row"><h2 style="margin:0;font-size:18px">Hablar con el equipo clínico de UNIMED</h2></div>
+      <p class="mut" style="font-size:13px;margin:6px 0 0">Si quieres que un profesional de UNIMED valore tu caso, déjanos el motivo y cómo prefieres que te contactemos. No es un servicio de urgencias: ante una urgencia, llama al 112.</p>
+      <form id="fDeriv">
+        <label for="tMotivo">Motivo de la consulta</label>
+        <textarea id="tMotivo" maxlength="1500" placeholder="Cuéntanos brevemente qué te gustaría consultar."></textarea>
+        <div class="row" style="align-items:flex-start">
+          <div style="flex:1;min-width:180px"><label for="sContacto">Cómo prefieres que te contactemos</label>
+            <select id="sContacto"><option value="correo">Por correo electrónico</option><option value="telefono">Por teléfono</option><option value="videollamada">Por videollamada</option></select></div>
+          <div style="flex:1;min-width:180px"><label for="tTel">Teléfono (opcional)</label><input id="tTel" maxlength="30" inputmode="tel"></div>
+        </div>
+        <label class="chk"><input type="checkbox" id="kComparte"> <span><b>Opcional:</b> autorizo que el profesional de UNIMED que atienda esta solicitud consulte mi historial de CAPS Digital y utilice las herramientas de CAPS (incluida la inteligencia artificial) para preparar la consulta. Puedo retirar esta autorización en cualquier momento desde esta página.</span></label>
+        <div class="row"><button class="pri" type="submit" id="bDeriv">Enviar solicitud</button><span id="mDeriv"></span></div>
+      </form>
+      <div id="misDeriv" style="margin-top:10px"></div>
+    </div>
     <div class="card">
       <div class="row"><h2 style="margin:0;font-size:18px">Mi historial</h2><span class="sp"></span><button class="sm pri" id="bInforme">Generar informe PDF</button><button class="sm" id="bBorrarTodo">Borrar todo</button></div>
       <p class="mut" style="font-size:13px;margin:6px 0 0">Solo tú puedes verlo. Puedes borrarlo cuando quieras, también cuando termine tu plan.</p>
       <div id="hist" style="margin-top:8px"></div>
+    </div>
+    <div class="card oculto" id="cDatos">
+      <h2 style="margin:0 0 6px;font-size:18px">Mis datos y consentimientos</h2>
+      <p class="mut" style="font-size:13px;margin:0 0 8px">Puedes retirar tu consentimiento del Plan Avanzado cuando quieras. Dejarás de poder hacer consultas nuevas; tu historial se conserva hasta que lo borres (botón «Borrar todo»). Más información en el <a href="/privacidad/" target="_blank">aviso de privacidad</a>.</p>
+      <div class="row"><button class="sm" id="bRevocar">Retirar mi consentimiento</button><span id="mDatos"></span><span class="sp"></span><a id="lConsultor" class="oculto" href="/consultor/">Panel de consultor →</a></div>
     </div>
   </section>
 </main>
@@ -82,7 +120,8 @@ const ERR = {
   limite_diario_alcanzado:'Has alcanzado el límite de consultas de hoy. Podrás seguir mañana.', servicio_desactivado:'El servicio está desactivado en este momento.',
   pregunta_vacia:'Escribe una pregunta.', pregunta_demasiado_larga:'La pregunta es demasiado larga (máximo 2000 caracteres).',
   ia_no_disponible:'No se ha podido contactar con la IA. Inténtalo más tarde; no se ha descontado la consulta.',
-  respuesta_no_valida:'La IA no ha devuelto una respuesta válida; no se ha descontado la consulta.'
+  respuesta_no_valida:'La IA no ha devuelto una respuesta válida; no se ha descontado la consulta.',
+  falta_consentimiento:'Antes de continuar, acepta el consentimiento de tratamiento de datos (arriba).'
 };
 
 async function llamar(body) {
@@ -99,8 +138,67 @@ async function pintarEstado() {
   e.innerHTML = activo
     ? `<span class="pill on">Plan Avanzado activo</span><span class="mut">hasta el ${esc(fecha(data.valido_hasta))}</span><span class="sp"></span><span class="mut" style="font-size:13px">Consultas hoy: <b id="nHoy">${data.consultas_hoy}</b> / ${data.limite_diario}</span>`
     : `<span class="pill off">Sin plan activo</span><span class="mut">Puedes consultar y borrar tu historial, pero no hacer consultas nuevas.</span>`;
-  $('cPreg').classList.toggle('oculto', !activo);
+  const ok = activo && data.consentimiento;
+  $('cConsent').classList.toggle('oculto', !activo || data.consentimiento);
+  $('cPreg').classList.toggle('oculto', !ok);
+  $('cDeriv').classList.toggle('oculto', !data.consentimiento);
+  $('cDatos').classList.toggle('oculto', !data.consentimiento && !data.consultor);
+  $('bRevocar').classList.toggle('oculto', !data.consentimiento);
+  $('lConsultor').classList.toggle('oculto', !data.consultor);
+  $('bInforme').disabled = !ok;
+  if (data.consentimiento) pintarDerivaciones();
 }
+
+const V_CONSENT = 'avanzado-v1-2026-11', V_DERIV = 'derivacion-v1-2026-11';
+const ESTADO_DER = { nueva:'Recibida', en_curso:'En curso', cerrada:'Cerrada', cancelada:'Cancelada' };
+const CONTACTO = { correo:'correo', telefono:'teléfono', videollamada:'videollamada' };
+function revisaConsent() { $('bConsent').disabled = !($('kEdad').checked && $('kConsent').checked); }
+$('kEdad').onchange = revisaConsent; $('kConsent').onchange = revisaConsent;
+$('bConsent').onclick = async () => {
+  $('bConsent').disabled = true;
+  const { error } = await sb.rpc('caps_aceptar_tratamiento', { p_version: V_CONSENT });
+  if (error) { $('mConsent').className = 'err'; $('mConsent').textContent = 'No se pudo registrar. Inténtalo de nuevo.'; revisaConsent(); return; }
+  pintarEstado();
+};
+$('bRevocar').onclick = async () => {
+  if (!confirm('¿Retirar tu consentimiento? No podrás hacer consultas nuevas hasta que lo vuelvas a dar. Tu historial no se borra: puedes borrarlo con «Borrar todo».')) return;
+  const { error } = await sb.rpc('caps_revocar_tratamiento');
+  $('mDatos').className = error ? 'err' : 'ok'; $('mDatos').textContent = error ? 'No se pudo retirar. Inténtalo de nuevo.' : 'Consentimiento retirado.';
+  pintarEstado();
+};
+
+async function pintarDerivaciones() {
+  const { data, error } = await sb.from('caps_derivaciones').select('id, motivo, contacto, comparte_historial, estado, creado').eq('user_id', (await sb.auth.getUser()).data.user.id).order('creado', { ascending: false }).limit(20);
+  const c = $('misDeriv');
+  if (error || !data?.length) { c.innerHTML = ''; return; }
+  c.innerHTML = '<h3 style="font-size:15px;margin:8px 0 0">Mis solicitudes</h3>' + data.map(d => {
+    const abierta = d.estado === 'nueva' || d.estado === 'en_curso';
+    return `<div class="der"><div class="row"><span class="pill ${abierta ? 'on' : ''}">${esc(ESTADO_DER[d.estado] || d.estado)}</span><span class="mut">${esc(fecha(d.creado))} · contacto por ${esc(CONTACTO[d.contacto] || d.contacto)}</span></div>
+      <div style="margin-top:6px">${esc(d.motivo)}</div>
+      <div class="row meta"><span>${d.comparte_historial ? 'Has autorizado que el profesional consulte tu historial.' : 'No has autorizado el acceso a tu historial.'}</span><span class="sp"></span>
+      ${abierta ? `<button class="sm" data-comp="${d.id}" data-v="${d.comparte_historial ? 0 : 1}">${d.comparte_historial ? 'Retirar autorización' : 'Autorizar acceso al historial'}</button><button class="sm" data-cancel="${d.id}">Cancelar solicitud</button>` : ''}</div></div>`;
+  }).join('');
+  c.querySelectorAll('[data-comp]').forEach(b => b.onclick = async () => {
+    const dar = b.dataset.v === '1';
+    if (dar && !confirm('¿Autorizas que el profesional de UNIMED consulte tu historial de CAPS Digital y use las herramientas de CAPS para preparar tu consulta?')) return;
+    await sb.rpc('caps_derivacion_compartir', { p_id: Number(b.dataset.comp), p_comparte: dar, p_version: V_DERIV }); pintarDerivaciones();
+  });
+  c.querySelectorAll('[data-cancel]').forEach(b => b.onclick = async () => {
+    if (!confirm('¿Cancelar esta solicitud? También se retira la autorización de acceso al historial.')) return;
+    await sb.rpc('caps_cancelar_derivacion', { p_id: Number(b.dataset.cancel) }); pintarDerivaciones();
+  });
+}
+$('fDeriv').onsubmit = async ev => {
+  ev.preventDefault(); const m = $('mDeriv'), motivo = $('tMotivo').value.trim();
+  if (motivo.length < 5) { m.className = 'err'; m.textContent = 'Escribe brevemente el motivo.'; return; }
+  if ($('sContacto').value === 'telefono' && !$('tTel').value.trim()) { m.className = 'err'; m.textContent = 'Indica un teléfono o elige otra forma de contacto.'; return; }
+  $('bDeriv').disabled = true;
+  const { error } = await sb.rpc('caps_crear_derivacion', { p_motivo: motivo, p_contacto: $('sContacto').value, p_telefono: $('tTel').value, p_comparte: $('kComparte').checked, p_version: V_DERIV });
+  $('bDeriv').disabled = false;
+  if (error) { m.className = 'err'; m.textContent = /demasiadas/.test(error.message) ? 'Ya tienes 3 solicitudes abiertas. Espera a que te contactemos.' : 'No se pudo enviar la solicitud.'; return; }
+  m.className = 'ok'; m.textContent = 'Solicitud enviada. El equipo de UNIMED se pondrá en contacto contigo.';
+  $('tMotivo').value = ''; $('tTel').value = ''; $('kComparte').checked = false; pintarDerivaciones();
+};
 
 async function pintarHistorial() {
   const { data, error } = await sb.from('caps_historial').select('id, pregunta, respuesta, created_at').order('created_at', { ascending: false }).limit(100);
