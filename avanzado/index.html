@@ -68,6 +68,7 @@
     </div>
   </section>
 </main>
+<p style="max-width:760px;margin:24px auto;padding:0 16px;font-size:11px;opacity:.7;line-height:1.5">This material contains content from LOINC (<a href="https://loinc.org">http://loinc.org</a>). LOINC is copyright © Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at <a href="https://loinc.org/license">http://loinc.org/license</a>. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.</p>
 
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
@@ -188,7 +189,7 @@ footer{margin-top:22px;border-top:1px solid rgba(10,126,110,.25);padding-top:8px
 <div class="aviso"><b>Informe generado por inteligencia artificial.</b> Es orientativo: no es un diagnóstico ni una prescripción, no interpreta resultados individuales y no sustituye la consulta profesional. Ante una urgencia, llama al 112.</div>
 <div class="noprint"><button onclick="window.print()" style="padding:9px 18px;border-radius:999px;border:0;background:#0a7e6e;color:#fff;font:inherit;cursor:pointer">Guardar como PDF / Imprimir</button></div>
 ${cuerpo}
-<footer>Marco: ${esc(data.ontologia)} · CAPS Digital · UNIMED Consulting · info@unimed-consulting.es${data.incompleto ? ' · Nota: el informe pudo quedar recortado por longitud.' : ''}</footer>
+<footer>Marco: ${esc(data.ontologia)} · CAPS Digital · UNIMED Consulting · info@unimed-consulting.es${data.incompleto ? ' · Nota: el informe pudo quedar recortado por longitud.' : ''}${data.loinc ? '<br><small>'+'This material contains content from LOINC (<a href="https://loinc.org">http://loinc.org</a>). LOINC is copyright © Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at <a href="https://loinc.org/license">http://loinc.org/license</a>. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.'+'</small>' : ''}</footer>
 </body></html>`;
   v.document.open(); v.document.write(html); v.document.close();
   pintarEstado();
