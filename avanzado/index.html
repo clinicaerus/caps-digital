@@ -62,7 +62,7 @@
       </form>
     </div>
     <div class="card">
-      <div class="row"><h2 style="margin:0;font-size:18px">Mi historial</h2><span class="sp"></span><button class="sm" id="bBorrarTodo">Borrar todo</button></div>
+      <div class="row"><h2 style="margin:0;font-size:18px">Mi historial</h2><span class="sp"></span><button class="sm pri" id="bInforme">Generar informe PDF</button><button class="sm" id="bBorrarTodo">Borrar todo</button></div>
       <p class="mut" style="font-size:13px;margin:6px 0 0">Solo tú puedes verlo. Puedes borrarlo cuando quieras, también cuando termine tu plan.</p>
       <div id="hist" style="margin-top:8px"></div>
     </div>
@@ -150,6 +150,48 @@ $('bBorrarTodo').onclick = async () => {
   if (!confirm('¿Borrar TODO tu historial? No se puede deshacer.')) return;
   const { data: { user } } = await sb.auth.getUser();
   await sb.from('caps_historial').delete().eq('owner_id', user.id); pintarHistorial();
+};
+function informeHTML(txt) {
+  const out = []; let enLista = false;
+  for (const l of String(txt).replace(/\*\*(.+?)\*\*/g, '$1').split('\n')) {
+    const t = l.trim();
+    const esItem = /^[-•]\s+/.test(t);
+    if (enLista && !esItem) { out.push('</ul>'); enLista = false; }
+    if (!t) continue;
+    if (t.startsWith('## ')) out.push('<h2>' + esc(t.slice(3)) + '</h2>');
+    else if (esItem) { if (!enLista) { out.push('<ul>'); enLista = true; } out.push('<li>' + esc(t.replace(/^[-•]\s+/, '')) + '</li>'); }
+    else out.push('<p>' + esc(t) + '</p>');
+  }
+  if (enLista) out.push('</ul>');
+  return out.join('\n');
+}
+$('bInforme').onclick = async () => {
+  const b = $('bInforme'); const v = window.open('', '_blank');
+  if (!v) { alert('Permite las ventanas emergentes para ver el informe.'); return; }
+  v.document.write('<p style="font-family:sans-serif;padding:2rem">Elaborando tu informe de orientación… puede tardar unos segundos.</p>');
+  b.disabled = true; b.textContent = 'Generando…';
+  const { data, error } = await llamar({ accion: 'informe' });
+  b.disabled = false; b.textContent = 'Generar informe PDF';
+  if (error) { v.close(); alert(error === 'sin_consultas' ? 'Todavía no tienes consultas en tu historial para elaborar un informe.' : (ERR[error] || 'No se pudo generar el informe.')); return; }
+  const { data: { user } } = await sb.auth.getUser();
+  const fechaInf = new Date(data.generado).toLocaleString('es-ES', { day:'2-digit', month:'long', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  const cuerpo = informeHTML(data.informe);
+  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Informe de orientación HoloMed · CAPS Digital</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>@page{size:A4;margin:18mm 16mm}body{font:11pt/1.55 'DM Sans',system-ui,sans-serif;color:#0d1f2d;max-width:760px;margin:0 auto;padding:24px}
+header{border-bottom:2px solid #0a7e6e;padding-bottom:10px;margin-bottom:16px}header .m{font-size:9pt;color:#6b7f8e;letter-spacing:.08em;text-transform:uppercase}
+h1{font:600 24pt/1.1 'Cormorant Garamond',serif;margin:6px 0 4px}h1 em{color:#0a7e6e;font-weight:400}h2{font:600 15pt/1.2 'Cormorant Garamond',serif;color:#0a7e6e;margin:18px 0 6px;break-after:avoid}
+.meta{font-size:9.5pt;color:#6b7f8e}.aviso{border-left:4px solid #c9a84c;background:#f7f3ed;padding:10px 12px;font-size:9.5pt;margin:14px 0}ul{margin:4px 0 8px 18px;padding:0}li{margin:2px 0}
+footer{margin-top:22px;border-top:1px solid rgba(10,126,110,.25);padding-top:8px;font-size:8.5pt;color:#6b7f8e}.noprint{margin:16px 0}@media print{.noprint{display:none}}</style></head><body>
+<header><div class="m">CAPS Digital · UNIMED Consulting · Plan Avanzado</div><h1>Informe de orientación <em>HoloMed</em></h1>
+<div class="meta">Generado el ${esc(fechaInf)} · Cuenta: ${esc(user?.email || '')} · Basado en ${data.consultas_incluidas} consulta(s) de tu historial</div></header>
+<div class="aviso"><b>Informe generado por inteligencia artificial.</b> Es orientativo: no es un diagnóstico ni una prescripción, no interpreta resultados individuales y no sustituye la consulta profesional. Ante una urgencia, llama al 112.</div>
+<div class="noprint"><button onclick="window.print()" style="padding:9px 18px;border-radius:999px;border:0;background:#0a7e6e;color:#fff;font:inherit;cursor:pointer">Guardar como PDF / Imprimir</button></div>
+${cuerpo}
+<footer>Marco: ${esc(data.ontologia)} · CAPS Digital · UNIMED Consulting · info@unimed-consulting.es${data.incompleto ? ' · Nota: el informe pudo quedar recortado por longitud.' : ''}</footer>
+</body></html>`;
+  v.document.open(); v.document.write(html); v.document.close();
+  pintarEstado();
 };
 sb.auth.onAuthStateChange(() => vista());
 vista();
