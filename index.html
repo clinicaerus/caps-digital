@@ -745,7 +745,16 @@ footer {
   </div>
 </div>
 <script>
-  const WORKER_URL = 'https://caps-digital-api.samuel-6a5.workers.dev';
+  // Plan Esencial: función de servidor en Supabase (sin registro, con límites y ontología HoloMed).
+  // Para volver al Worker anterior: restaurar esta sección desde el historial de GitHub.
+  const CAPS_ESENCIAL_URL = 'https://vcfgnpnjllvpqdiwjlmz.supabase.co/functions/v1/caps-esencial';
+  const capsTurnos = [];  // conversación de esta visita (solo en el navegador)
+  const CAPS_ERRORES = {
+    limite_visitante: 'Has alcanzado el número de consultas gratuitas de hoy. Puedes volver mañana o pasar al Plan Avanzado.',
+    limite_global: 'CAPS Digital ha atendido hoy el máximo de consultas gratuitas. Inténtalo de nuevo mañana.',
+    pregunta_demasiado_larga: 'Tu mensaje es demasiado largo. Intenta resumirlo (máximo 800 caracteres).',
+    servicio_desactivado: 'El servicio no está disponible en este momento. Inténtalo más tarde.'
+  };
   function toggleChat() {
     const chat = document.getElementById('caps-chat');
     const isHidden = getComputedStyle(chat).display === 'none';
@@ -767,17 +776,22 @@ footer {
     input.value = '';
     const typing = addMsg('Escribiendo...', false);
     try {
-      const res = await fetch(WORKER_URL, {
+      const res = await fetch(CAPS_ESENCIAL_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: msg })
+        body: JSON.stringify({ pregunta: msg, historial: capsTurnos.slice(-4) })
       });
       const data = await res.json();
       typing.remove();
-      addMsg(data.reply, false);
+      if (res.ok && data.reply) {
+        addMsg(data.reply, false);
+        capsTurnos.push({ p: msg, r: data.reply });
+      } else {
+        addMsg(CAPS_ERRORES[data.error] || 'Lo siento, estoy teniendo dificultades. Contacta con UNIMED en info@unimed-consulting.es', false);
+      }
     } catch (e) {
       typing.remove();
-      addMsg('Lo siento, estoy teniendo dificultades. Contacta con UNIMED en salud@unimed-consulting.es', false);
+      addMsg('Lo siento, estoy teniendo dificultades. Contacta con UNIMED en info@unimed-consulting.es', false);
     }
   }
 </script>
