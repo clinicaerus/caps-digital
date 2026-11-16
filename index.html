@@ -764,6 +764,7 @@ footer {
     const div = document.createElement('div');
     div.className = 'caps-msg ' + (isUser ? 'caps-user' : 'caps-bot');
     div.textContent = text;
+    div.style.whiteSpace = 'pre-wrap';
     document.getElementById('caps-messages').appendChild(div);
     document.getElementById('caps-messages').scrollTop = 99999;
     return div;
@@ -784,7 +785,7 @@ footer {
       const data = await res.json();
       typing.remove();
       if (res.ok && data.reply) {
-        addMsg(data.reply, false);
+        addMsg(data.reply.replace(/^#{1,6}\s*/gm, '').replace(/\*\*(.+?)\*\*/g, '$1').replace(/^---+$/gm, '').replace(/\n{3,}/g, '\n\n').trim(), false);
         capsTurnos.push({ p: msg, r: data.reply });
       } else {
         addMsg(CAPS_ERRORES[data.error] || 'Lo siento, estoy teniendo dificultades. Contacta con UNIMED en info@unimed-consulting.es', false);
