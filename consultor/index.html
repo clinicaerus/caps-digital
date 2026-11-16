@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Panel de consultor · CAPS Digital — UNIMED Consulting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0d1f2d;--teal:#0a7e6e;--teal-l:#13a692;--gold:#c9a84c;--cream:#f7f3ed;--white:#fff;--muted:#6b7f8e;--border:rgba(10,126,110,.18);--err:#b4233c;--ok:#0a7e6e}
+  *{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font:15px/1.6 'DM Sans',system-ui,sans-serif}
+  main{max-width:1180px;margin:0 auto;padding:24px 18px 60px}
+  header{display:flex;align-items:flex-end;gap:12px;margin-bottom:18px;border-bottom:1px solid var(--border);padding-bottom:12px}
+  header h1{font:600 28px/1.1 'Cormorant Garamond',serif;margin:0} header h1 em{color:var(--teal);font-style:italic;font-weight:400}
+  header small{color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+  .sp{flex:1} .card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:16px 18px;margin-bottom:12px}
+  h2{font:600 20px/1.2 'Cormorant Garamond',serif;margin:0 0 8px} h3{font-size:14px;margin:14px 0 6px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px}
+  input,textarea,select{width:100%;background:var(--cream);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:9px 11px;font:inherit}
+  textarea{min-height:70px;resize:vertical}
+  button{font:inherit;border-radius:999px;border:1px solid var(--border);background:var(--white);color:var(--ink);padding:8px 16px;cursor:pointer;font-weight:500}
+  button:hover{border-color:var(--teal)} button.pri{background:var(--teal);border-color:var(--teal);color:#fff} button.sm{padding:5px 11px;font-size:13px} button:disabled{opacity:.5;cursor:default}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap} .mut{color:var(--muted)} .err{color:var(--err)} .ok{color:var(--ok)}
+  .pill{display:inline-block;padding:2px 10px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
+  .nueva{color:#9a6b00;background:rgba(201,168,76,.15)} .en_curso{color:var(--teal);background:rgba(10,126,110,.08)} .cerrada,.cancelada{color:var(--muted)}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:14px} @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .item{padding:10px 12px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer;background:var(--white)}
+  .item.sel{border-color:var(--teal);box-shadow:0 0 0 2px rgba(10,126,110,.15)} .item p{margin:4px 0 0;font-size:13px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+  .msg{border-top:1px solid var(--border);padding:10px 0;font-size:14px} .msg:first-child{border-top:0} .q{font-weight:600} .a{white-space:pre-wrap;margin-top:6px}
+  .ficha{white-space:normal} .ficha h4{font:600 17px/1.25 'Cormorant Garamond',serif;color:var(--teal);margin:14px 0 4px} .ficha p{margin:0 0 6px}
+  .nota{border-left:3px solid var(--gold);padding:6px 10px;margin:6px 0;background:var(--cream);border-radius:6px;font-size:14px;white-space:pre-wrap}
+  .oculto{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <header><div><small><a href="/avanzado/" style="color:inherit;text-decoration:none">← Plan Avanzado</a> · uso exclusivo del equipo clínico de UNIMED</small><h1>Panel de <em>consultor</em></h1></div><span class="sp"></span><button class="sm oculto" id="bSalir">Salir</button></header>
+
+  <section id="vLogin" class="card oculto" style="max-width:460px">
+    <h2>Entrar</h2>
+    <form id="fLogin">
+      <label>Correo</label><input type="email" name="e" autocomplete="username" required>
+      <label>Contraseña</label><input type="password" name="p" autocomplete="current-password" required>
+      <p id="mLogin" class="err"></p>
+      <button class="pri" type="submit">Entrar</button>
+    </form>
+  </section>
+
+  <section id="vNoAut" class="card oculto"><p class="err" style="margin:0">Esta cuenta no tiene acceso al panel de consultor.</p></section>
+
+  <section id="vApp" class="oculto">
+    <div class="grid">
+      <div>
+        <div class="card" style="padding:12px 14px">
+          <div class="row"><select id="sFiltro" style="width:auto;flex:1"><option value="abiertas">Abiertas</option><option value="todas">Todas</option></select><button class="sm" id="bRecargar">Actualizar</button></div>
+        </div>
+        <div id="lista"></div>
+      </div>
+      <div>
+        <div class="card" id="det"><p class="mut" style="margin:0">Selecciona una solicitud.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const sb = createClient('https://vcfgnpnjllvpqdiwjlmz.supabase.co', 'sb_publishable_CttN_vok5_EL_z6g_IUygw_WrvzUlA5');
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fecha = d => new Date(d).toLocaleString('es-ES', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+const ESTADO = { nueva:'Nueva', en_curso:'En curso', cerrada:'Cerrada', cancelada:'Cancelada' };
+const CONTACTO = { correo:'Correo', telefono:'Teléfono', videollamada:'Videollamada' };
+let derivs = [], selId = null;
+
+function fichaHTML(txt) {
+  const out = []; let par = [];
+  const flush = () => { if (par.length) { out.push('<p>' + par.map(esc).join('<br>') + '</p>'); par = []; } };
+  for (const l of String(txt).split('\n')) {
+    const t = l.trim();
+    if (/^##\s+/.test(t)) { flush(); out.push('<h4>' + esc(t.replace(/^##\s+/, '')) + '</h4>'); }
+    else if (!t) flush(); else par.push(t.replace(/^\*\*(.+)\*\*$/, '$1'));
+  }
+  flush(); return out.join('');
+}
+
+async function vista() {
+  const { data: { session } } = await sb.auth.getSession();
+  $('bSalir').classList.toggle('oculto', !session);
+  $('vLogin').classList.toggle('oculto', !!session);
+  if (!session) { $('vApp').classList.add('oculto'); $('vNoAut').classList.add('oculto'); return; }
+  const { data: esC } = await sb.rpc('es_consultor');
+  $('vNoAut').classList.toggle('oculto', !!esC); $('vApp').classList.toggle('oculto', !esC);
+  if (esC) cargar();
+}
+
+async function cargar() {
+  let q = sb.from('caps_derivaciones').select('id, email, motivo, contacto, telefono, comparte_historial, estado, creado, actualizado').order('creado', { ascending: false }).limit(200);
+  if ($('sFiltro').value === 'abiertas') q = q.in('estado', ['nueva', 'en_curso']);
+  const { data, error } = await q;
+  if (error) { $('lista').innerHTML = '<p class="err">No se pudieron cargar las solicitudes.</p>'; return; }
+  derivs = data;
+  $('lista').innerHTML = data.length ? data.map(d => `<div class="item ${d.id === selId ? 'sel' : ''}" data-id="${d.id}">
+      <div class="row"><span class="pill ${d.estado}">${esc(ESTADO[d.estado])}</span><span class="mut" style="font-size:12px">${esc(fecha(d.creado))}</span><span class="sp"></span>${d.comparte_historial ? '<span class="pill en_curso">Historial autorizado</span>' : ''}</div>
+      <p>${esc(d.motivo)}</p></div>`).join('') : '<p class="mut">No hay solicitudes.</p>';
+  $('lista').querySelectorAll('.item').forEach(el => el.onclick = () => abrir(Number(el.dataset.id)));
+  if (selId && !data.find(d => d.id === selId)) { selId = null; $('det').innerHTML = '<p class="mut" style="margin:0">Selecciona una solicitud.</p>'; }
+}
+
+async function abrir(id) {
+  selId = id; const d = derivs.find(x => x.id === id); if (!d) return;
+  document.querySelectorAll('.item').forEach(el => el.classList.toggle('sel', Number(el.dataset.id) === id));
+  $('det').innerHTML = `
+    <div class="row"><h2 style="margin:0">Solicitud n.º ${d.id}</h2><span class="sp"></span>
+      <select id="sEstado" style="width:auto">${Object.entries(ESTADO).map(([k, v]) => `<option value="${k}" ${k === d.estado ? 'selected' : ''}>${v}</option>`).join('')}</select></div>
+    <p class="mut" style="margin:4px 0 0;font-size:13px">Recibida el ${esc(fecha(d.creado))}</p>
+    <h3>Motivo</h3><div style="white-space:pre-wrap">${esc(d.motivo)}</div>
+    <h3>Contacto</h3><div>${esc(CONTACTO[d.contacto])} · <a href="mailto:${esc(d.email)}">${esc(d.email)}</a>${d.telefono ? ' · ' + esc(d.telefono) : ''}</div>
+    <h3>Historial de CAPS</h3>
+    <div id="dHist">${d.comparte_historial
+      ? '<button class="sm" id="bHist">Ver historial autorizado</button> <span class="mut" style="font-size:12px">Cada acceso queda registrado.</span>'
+      : '<span class="mut">La persona no ha autorizado el acceso a su historial.</span>'}</div>
+    <h3>Ficha de preparación</h3>
+    <div class="row"><button class="pri sm" id="bFicha">Generar ficha</button><span id="mFicha" class="mut" style="font-size:13px">Usa IA, ontología HoloMed, LOINC, MedlinePlus y PubMed${d.comparte_historial ? ' y el historial autorizado' : ''}.</span></div>
+    <div id="dFicha"></div>
+    <h3>Notas privadas</h3>
+    <div id="dNotas"></div>
+    <textarea id="tNota" maxlength="8000" placeholder="Nota privada (la persona no la ve)"></textarea>
+    <div class="row" style="margin-top:6px"><button class="sm" id="bNota">Guardar nota</button><span id="mNota"></span></div>`;
+  $('sEstado').onchange = async e => {
+    const { error } = await sb.from('caps_derivaciones').update({ estado: e.target.value }).eq('id', id);
+    if (!error) { d.estado = e.target.value; cargar(); }
+  };
+  if ($('bHist')) $('bHist').onclick = verHistorial;
+  $('bFicha').onclick = generarFicha;
+  $('bNota').onclick = guardarNota;
+  pintarNotas();
+}
+
+async function verHistorial() {
+  const { data, error } = await sb.rpc('consultor_historial', { p_derivacion: selId });
+  const c = $('dHist');
+  if (error) { c.innerHTML = '<span class="err">No disponible: la autorización puede haberse retirado.</span>'; return; }
+  c.innerHTML = data.length ? data.map(h => `<div class="msg"><div class="mut" style="font-size:12px">${esc(fecha(h.creado))}</div><div class="q">${esc(h.pregunta)}</div><div class="a">${esc(h.respuesta)}</div></div>`).join('') : '<span class="mut">Sin consultas en el historial.</span>';
+}
+
+async function generarFicha() {
+  const b = $('bFicha'), m = $('mFicha'); b.disabled = true; m.className = 'mut'; m.textContent = 'Preparando la ficha (puede tardar unos 30 segundos)…';
+  const { data, error } = await sb.functions.invoke('caps-chat', { body: { accion: 'ficha', derivacion: selId } });
+  b.disabled = false;
+  if (error || !data?.ficha) { let det = null; try { det = await error?.context?.json(); } catch {} m.className = 'err'; m.textContent = 'No se pudo generar la ficha' + (det?.error ? ' (' + det.error + ')' : '') + '.'; return; }
+  m.className = 'ok'; m.textContent = `Generada · historial incluido: ${data.historial_compartido} consultas · búsqueda PubMed: «${data.consulta_pubmed || '—'}»`;
+  const refs = (data.referencias || []).map(r => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.titulo)}</a> · ${esc(r.revista)} ${esc(r.anio)} · PMID ${esc(r.pmid)}</li>`).join('');
+  const mlp = (data.fuentes || []).map(f => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a></li>`).join('');
+  $('dFicha').innerHTML = `<div class="card ficha" style="margin-top:10px">${fichaHTML(data.ficha)}
+    ${refs ? `<h4>Enlaces PubMed</h4><ul>${refs}</ul>` : ''}${mlp ? `<h4>Enlaces MedlinePlus</h4><ul>${mlp}</ul>` : ''}
+    <p class="mut" style="font-size:12px">Ficha generada por IA para uso profesional. No es un diagnóstico; la valoración clínica corresponde al profesional.</p>
+    <div class="row"><button class="sm" id="bGuardarFicha">Guardar como nota</button><button class="sm" id="bImprimir">Imprimir / PDF</button></div></div>`;
+  $('bGuardarFicha').onclick = async () => { $('tNota').value = 'FICHA DE PREPARACIÓN (' + new Date().toLocaleDateString('es-ES') + ')\n\n' + data.ficha; await guardarNota(); };
+  $('bImprimir').onclick = () => {
+    const w = window.open('', '_blank'); if (!w) return;
+    w.document.write(`<!DOCTYPE html><html lang="es"><head><meta charset="utf-8"><title>Ficha de preparación · solicitud ${selId}</title>
+      <style>body{font:14px/1.6 system-ui,sans-serif;max-width:760px;margin:30px auto;color:#0d1f2d}h1{font-size:20px}h4{color:#0a7e6e;margin:16px 0 4px;font-size:16px}footer{margin-top:24px;font-size:11px;color:#6b7f8e}</style></head>
+      <body><h1>Ficha de preparación · solicitud n.º ${selId}</h1>${$('dFicha').querySelector('.ficha').innerHTML.replace(/<div class="row">[\s\S]*?<\/div>\s*$/, '')}
+      <footer>CAPS Digital · UNIMED Consulting · Documento confidencial de uso profesional.</footer></body></html>`);
+    w.document.close(); w.focus(); setTimeout(() => w.print(), 400);
+  };
+}
+
+async function pintarNotas() {
+  const { data } = await sb.from('caps_notas_consultor').select('id, texto, creado').eq('derivacion_id', selId).order('creado', { ascending: false });
+  $('dNotas').innerHTML = (data || []).map(n => `<div class="nota"><div class="mut" style="font-size:12px">${esc(fecha(n.creado))} <button class="sm" data-del="${n.id}" style="float:right">Borrar</button></div>${esc(n.texto)}</div>`).join('') || '<p class="mut" style="font-size:13px;margin:0">Sin notas.</p>';
+  $('dNotas').querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+    if (!confirm('¿Borrar esta nota?')) return;
+    await sb.from('caps_notas_consultor').delete().eq('id', Number(b.dataset.del)); pintarNotas();
+  });
+}
+async function guardarNota() {
+  const t = $('tNota').value.trim(), m = $('mNota'); if (!t) return;
+  const { error } = await sb.from('caps_notas_consultor').insert({ derivacion_id: selId, texto: t.slice(0, 8000) });
+  m.className = error ? 'err' : 'ok'; m.textContent = error ? 'No se pudo guardar.' : 'Guardada.';
+  if (!error) { $('tNota').value = ''; pintarNotas(); }
+}
+
+$('fLogin').onsubmit = async ev => {
+  ev.preventDefault(); const f = ev.target;
+  const { error } = await sb.auth.signInWithPassword({ email: f.e.value.trim(), password: f.p.value });
+  if (error) { $('mLogin').textContent = 'No se pudo entrar: revisa el correo y la contraseña.'; return; }
+  vista();
+};
+$('bSalir').onclick = async () => { await sb.auth.signOut(); vista(); };
+$('sFiltro').onchange = cargar; $('bRecargar').onclick = cargar;
+vista();
+</script>
+</body>
+</html>
