@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Plan Avanzado · CAPS Digital — UNIMED Consulting</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--ink:#0d1f2d;--teal:#0a7e6e;--teal-l:#13a692;--gold:#c9a84c;--cream:#f7f3ed;--white:#fff;--muted:#6b7f8e;--border:rgba(10,126,110,.18);--err:#b4233c;--ok:#0a7e6e}
+  *{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 'DM Sans',system-ui,sans-serif}
+  main{max-width:860px;margin:0 auto;padding:28px 18px 60px}
+  header{display:flex;align-items:flex-end;gap:12px;margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:14px}
+  header h1{font:600 30px/1.1 'Cormorant Garamond',serif;margin:0} header h1 em{color:var(--teal);font-style:italic;font-weight:400}
+  header small{color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:11px}
+  .sp{flex:1} .card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 2px 14px rgba(13,31,45,.04)}
+  .aviso{border-left:4px solid var(--gold);font-size:14px} .aviso b{color:var(--ink)} .aviso ul{margin:8px 0 0 18px;padding:0} .aviso li{margin:2px 0}
+  h2{font:600 22px/1.2 'Cormorant Garamond',serif}
+  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px}
+  input,textarea{width:100%;background:var(--cream);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:11px 12px;font:inherit}
+  textarea{min-height:90px;resize:vertical} input:focus,textarea:focus{outline:2px solid var(--teal-l);border-color:transparent}
+  button{font:inherit;border-radius:999px;border:1px solid var(--border);background:var(--white);color:var(--ink);padding:10px 18px;cursor:pointer;font-weight:500}
+  button:hover{border-color:var(--teal)} button.pri{background:var(--teal);border-color:var(--teal);color:#fff} button.pri:hover{background:var(--teal-l)}
+  button.sm{padding:6px 12px;font-size:13px} button:disabled{opacity:.5;cursor:default}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap} .mut{color:var(--muted)} .err{color:var(--err)} .ok{color:var(--ok)}
+  .pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
+  .pill.on{color:var(--teal);background:rgba(10,126,110,.07)} .pill.off{color:var(--err);border-color:rgba(180,35,60,.3)}
+  .msg{border-top:1px solid var(--border);padding:14px 0} .msg:first-child{border-top:0}
+  .q{font-weight:600} .a{white-space:pre-wrap;margin-top:8px} .meta{font-size:12px;color:var(--muted);margin-top:6px}
+  .oculto{display:none!important}
+</style>
+</head>
+<body>
+<main>
+  <header><div><small><a href="/" style="color:inherit;text-decoration:none">← CAPS Digital · UNIMED Consulting</a> · fase piloto</small><h1>Plan <em>Avanzado</em></h1></div><span class="sp"></span><button class="sm oculto" id="bSalir">Salir</button></header>
+
+  <div class="card aviso"><b>CAPS Digital, tu agente de salud integral.</b> Orientación en salud desde el enfoque de la Holomedicina y sus 8 dimensiones, con respuestas generadas por inteligencia artificial. Lo que CAPS Digital no hace:
+    <ul><li>No diagnostica enfermedades ni condiciones clínicas.</li><li>No prescribe medicamentos ni tratamientos.</li><li>No interpreta resultados individuales de exámenes.</li><li>No sustituye la consulta médica profesional.</li></ul>
+    <p style="margin:8px 0 0"><b>Ante una urgencia, llama al 112.</b> Durante la fase piloto, usa preguntas generales y evita escribir tu nombre, datos de contacto o datos de salud identificables.</p></div>
+
+  <!-- Acceso -->
+  <section id="vLogin" class="card oculto">
+    <h2 style="margin:0 0 6px;font-size:18px">Entrar</h2>
+    <form id="fLogin">
+      <label>Correo</label><input type="email" name="e" autocomplete="username" required>
+      <label>Contraseña</label><input type="password" name="p" autocomplete="current-password">
+      <p class="mut" style="font-size:13px;margin:8px 0 0">¿No tienes contraseña? Escribe tu correo y pulsa «Enviarme un enlace».</p>
+      <p id="mLogin" class="err"></p>
+      <div class="row"><button class="pri" type="submit">Entrar</button><button type="button" id="bMagic">Enviarme un enlace de acceso</button></div>
+    </form>
+  </section>
+
+  <!-- App -->
+  <section id="vApp" class="oculto">
+    <div class="card row" id="estado"><span class="mut">Comprobando tu acceso…</span></div>
+    <div class="card" id="cPreg">
+      <form id="fPreg">
+        <label for="tPreg">Tu pregunta</label>
+        <textarea id="tPreg" maxlength="2000" placeholder="Ej.: ¿Para qué sirve en general una analítica de hemoglobina glicada?"></textarea>
+        <div class="row" style="margin-top:10px"><button class="pri" type="submit" id="bEnviar">Enviar</button><span class="mut" id="cont" style="font-size:13px">0 / 2000</span><span class="sp"></span><span id="mPreg"></span></div>
+      </form>
+    </div>
+    <div class="card">
+      <div class="row"><h2 style="margin:0;font-size:18px">Mi historial</h2><span class="sp"></span><button class="sm" id="bBorrarTodo">Borrar todo</button></div>
+      <p class="mut" style="font-size:13px;margin:6px 0 0">Solo tú puedes verlo. Puedes borrarlo cuando quieras, también cuando termine tu plan.</p>
+      <div id="hist" style="margin-top:8px"></div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+const sb = createClient('https://vcfgnpnjllvpqdiwjlmz.supabase.co', 'sb_publishable_CttN_vok5_EL_z6g_IUygw_WrvzUlA5');
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fecha = d => new Date(d).toLocaleString('es-ES', { day:'2-digit', month:'short', year:'numeric', hour:'2-digit', minute:'2-digit' });
+const ERR = {
+  sin_sesion:'Tu sesión ha caducado. Vuelve a entrar.', sin_permiso_activo:'Tu cuenta no tiene ahora un Plan Avanzado activo.',
+  limite_diario_alcanzado:'Has alcanzado el límite de consultas de hoy. Podrás seguir mañana.', servicio_desactivado:'El servicio está desactivado en este momento.',
+  pregunta_vacia:'Escribe una pregunta.', pregunta_demasiado_larga:'La pregunta es demasiado larga (máximo 2000 caracteres).',
+  ia_no_disponible:'No se ha podido contactar con la IA. Inténtalo más tarde; no se ha descontado la consulta.',
+  respuesta_no_valida:'La IA no ha devuelto una respuesta válida; no se ha descontado la consulta.'
+};
+
+async function llamar(body) {
+  const { data, error } = await sb.functions.invoke('caps-chat', { body });
+  if (!error) return { data };
+  let det = null; try { det = await error.context.json(); } catch {}
+  return { error: det?.error || 'error_desconocido', det };
+}
+
+async function pintarEstado() {
+  const { data, error, det } = await llamar({ accion: 'estado' });
+  const e = $('estado'), activo = data?.acceso_activo;
+  if (error) { e.innerHTML = `<span class="err">${esc(ERR[error] || 'No se pudo comprobar tu acceso.')}</span>`; $('cPreg').classList.add('oculto'); return; }
+  e.innerHTML = activo
+    ? `<span class="pill on">Plan Avanzado activo</span><span class="mut">hasta el ${esc(fecha(data.valido_hasta))}</span><span class="sp"></span><span class="mut" style="font-size:13px">Consultas hoy: <b id="nHoy">${data.consultas_hoy}</b> / ${data.limite_diario}</span>`
+    : `<span class="pill off">Sin plan activo</span><span class="mut">Puedes consultar y borrar tu historial, pero no hacer consultas nuevas.</span>`;
+  $('cPreg').classList.toggle('oculto', !activo);
+}
+
+async function pintarHistorial() {
+  const { data, error } = await sb.from('caps_historial').select('id, pregunta, respuesta, created_at').order('created_at', { ascending: false }).limit(100);
+  const h = $('hist');
+  if (error) { h.innerHTML = '<p class="err">No se pudo cargar el historial.</p>'; return; }
+  $('bBorrarTodo').disabled = !data.length;
+  h.innerHTML = data.length ? data.map(r => `<div class="msg"><div class="q">${esc(r.pregunta)}</div><div class="a">${esc(r.respuesta)}</div>
+    <div class="row meta"><span>${esc(fecha(r.created_at))} · respuesta de CAPS Digital (IA)</span><span class="sp"></span><button class="sm" data-del="${r.id}">Borrar</button></div></div>`).join('')
+    : '<p class="mut">Todavía no hay consultas.</p>';
+  h.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+    if (!confirm('¿Borrar esta consulta? No se puede deshacer.')) return;
+    await sb.from('caps_historial').delete().eq('id', b.dataset.del); pintarHistorial();
+  });
+}
+
+async function vista() {
+  const { data: { session } } = await sb.auth.getSession();
+  $('vLogin').classList.toggle('oculto', !!session); $('vApp').classList.toggle('oculto', !session); $('bSalir').classList.toggle('oculto', !session);
+  if (session) { pintarEstado(); pintarHistorial(); }
+}
+
+$('fLogin').onsubmit = async ev => {
+  ev.preventDefault(); const f = ev.target, m = $('mLogin'); m.className = 'err'; m.textContent = '';
+  if (!f.p.value) { m.textContent = 'Escribe tu contraseña o usa «Enviarme un enlace».'; return; }
+  const { error } = await sb.auth.signInWithPassword({ email: f.e.value.trim(), password: f.p.value });
+  if (error) { m.textContent = 'No se pudo entrar: revisa el correo y la contraseña.'; return; }
+  vista();
+};
+$('bMagic').onclick = async () => {
+  const e = $('fLogin').e.value.trim(), m = $('mLogin'); m.className = 'err';
+  if (!e) { m.textContent = 'Escribe primero tu correo.'; return; }
+  const { error } = await sb.auth.signInWithOtp({ email: e, options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname } });
+  if (error) { m.textContent = 'No se pudo enviar el enlace. Comprueba que es el correo con el que te registraste.'; return; }
+  m.className = 'ok'; m.textContent = 'Te hemos enviado un enlace de acceso. Ábrelo desde este mismo dispositivo.';
+};
+$('bSalir').onclick = async () => { await sb.auth.signOut(); vista(); };
+$('tPreg').oninput = e => $('cont').textContent = e.target.value.length + ' / 2000';
+$('fPreg').onsubmit = async ev => {
+  ev.preventDefault(); const t = $('tPreg'), m = $('mPreg'), b = $('bEnviar'); const q = t.value.trim();
+  if (!q) return; b.disabled = true; m.className = 'mut'; m.textContent = 'Consultando…';
+  const { data, error } = await llamar({ pregunta: q });
+  b.disabled = false;
+  if (error) { m.className = 'err'; m.textContent = ERR[error] || 'Ha ocurrido un error.'; pintarEstado(); return; }
+  m.className = 'ok'; m.textContent = data.incompleta ? 'Respuesta recibida, pero incompleta (se alcanzó el límite de longitud).' : 'Respuesta guardada en tu historial.';
+  t.value = ''; $('cont').textContent = '0 / 2000';
+  pintarEstado(); pintarHistorial();
+};
+$('bBorrarTodo').onclick = async () => {
+  if (!confirm('¿Borrar TODO tu historial? No se puede deshacer.')) return;
+  const { data: { user } } = await sb.auth.getUser();
+  await sb.from('caps_historial').delete().eq('owner_id', user.id); pintarHistorial();
+};
+sb.auth.onAuthStateChange(() => vista());
+vista();
+</script>
+</body>
+</html>
