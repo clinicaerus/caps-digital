@@ -8,35 +8,52 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{--ink:#0d1f2d;--teal:#0a7e6e;--teal-l:#13a692;--gold:#c9a84c;--cream:#f7f3ed;--white:#fff;--muted:#6b7f8e;--border:rgba(10,126,110,.18);--err:#b4233c;--ok:#0a7e6e}
-  *{box-sizing:border-box} body{margin:0;background:var(--cream);color:var(--ink);font:16px/1.6 'DM Sans',system-ui,sans-serif}
-  main{max-width:860px;margin:0 auto;padding:28px 18px 60px}
-  header{display:flex;align-items:flex-end;gap:12px;margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:14px}
-  header h1{font:600 30px/1.1 'Cormorant Garamond',serif;margin:0} header h1 em{color:var(--teal);font-style:italic;font-weight:400}
-  header small{color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-size:11px}
-  .sp{flex:1} .card{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:20px;margin-bottom:14px;box-shadow:0 2px 14px rgba(13,31,45,.04)}
-  .aviso{border-left:4px solid var(--gold);font-size:14px} .aviso b{color:var(--ink)} .aviso ul{margin:8px 0 0 18px;padding:0} .aviso li{margin:2px 0}
-  h2{font:600 22px/1.2 'Cormorant Garamond',serif}
-  label{display:block;font-size:13px;color:var(--muted);margin:10px 0 5px}
-  input,textarea{width:100%;background:var(--cream);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:11px 12px;font:inherit}
-  textarea{min-height:90px;resize:vertical} input:focus,textarea:focus{outline:2px solid var(--teal-l);border-color:transparent}
-  button{font:inherit;border-radius:999px;border:1px solid var(--border);background:var(--white);color:var(--ink);padding:10px 18px;cursor:pointer;font-weight:500}
-  button:hover{border-color:var(--teal)} button.pri{background:var(--teal);border-color:var(--teal);color:#fff} button.pri:hover{background:var(--teal-l)}
-  button.sm{padding:6px 12px;font-size:13px} button:disabled{opacity:.5;cursor:default}
+  :root{--ink:#0d1f2d;--ink2:#132a3b;--teal:#0a7e6e;--teal-l:#13a692;--gold:#c9a84c;--cream:#f7f3ed;--white:#fff;--muted:#8fa3b2;--border:rgba(19,166,146,.22);--err:#ff7a8f;--ok:#13a692;--txt:rgba(255,255,255,.88)}
+  *{box-sizing:border-box} html{scroll-behavior:smooth}
+  body{margin:0;background:var(--ink);color:var(--txt);font:16px/1.65 'DM Sans',system-ui,sans-serif;font-weight:300;position:relative;min-height:100vh}
+  body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(ellipse 70% 60% at 85% 20%,rgba(10,126,110,.13) 0%,transparent 70%),radial-gradient(ellipse 40% 40% at 10% 90%,rgba(201,168,76,.06) 0%,transparent 60%),
+    linear-gradient(rgba(10,126,110,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(10,126,110,.035) 1px,transparent 1px);
+    background-size:auto,auto,60px 60px,60px 60px}
+  a{color:var(--teal-l)}
+  nav.top{position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:1.1rem 2.5rem;background:rgba(13,31,45,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+  nav.top .logo{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:300;letter-spacing:.12em;color:#fff;text-decoration:none} nav.top .logo span{color:var(--teal-l)}
+  nav.top .lk{display:flex;gap:2rem;align-items:center} nav.top .lk a{font-size:.75rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.6);text-decoration:none} nav.top .lk a:hover{color:var(--teal-l)}
+  main{position:relative;z-index:1;max-width:880px;margin:0 auto;padding:44px 20px 60px}
+  header{display:flex;align-items:flex-end;gap:12px;margin-bottom:26px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+  header small{display:inline-flex;align-items:center;gap:.6rem;color:var(--teal-l);letter-spacing:.2em;text-transform:uppercase;font-size:11px}
+  header small::before{content:'';display:block;width:2rem;height:1px;background:var(--teal-l)}
+  header h1{font:300 clamp(34px,5vw,52px)/1.08 'Cormorant Garamond',serif;margin:10px 0 0;color:#fff} header h1 em{color:var(--teal-l);font-style:italic}
+  .sp{flex:1}
+  .card{background:rgba(255,255,255,.035);border:1px solid var(--border);border-radius:4px;padding:22px;margin-bottom:16px;backdrop-filter:blur(4px)}
+  .aviso{border-left:3px solid var(--gold);font-size:14px} .aviso b{color:#fff} .aviso ul{margin:8px 0 0 18px;padding:0} .aviso li{margin:2px 0}
+  h2{font:400 24px/1.2 'Cormorant Garamond',serif;color:#fff}
+  label{display:block;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin:12px 0 6px}
+  .chk{text-transform:none;letter-spacing:0}
+  input,textarea,select{width:100%;background:rgba(13,31,45,.6);border:1px solid var(--border);color:#fff;border-radius:2px;padding:11px 12px;font:inherit;font-weight:300}
+  select option{background:var(--ink);color:#fff}
+  textarea{min-height:90px;resize:vertical} input:focus,textarea:focus,select:focus{outline:1px solid var(--teal-l);border-color:var(--teal-l)}
+  input::placeholder,textarea::placeholder{color:rgba(255,255,255,.35)}
+  button{font:inherit;font-size:13px;letter-spacing:.08em;text-transform:uppercase;border-radius:0;border:1px solid rgba(255,255,255,.25);background:transparent;color:rgba(255,255,255,.8);padding:10px 20px;cursor:pointer;font-weight:400;transition:all .25s}
+  button:hover{border-color:var(--teal-l);color:var(--teal-l)} button.pri{background:var(--teal);border-color:var(--teal);color:#fff} button.pri:hover{background:var(--teal-l);border-color:var(--teal-l);color:#fff;transform:translateY(-1px)}
+  button.sm{padding:6px 12px;font-size:11px} button:disabled{opacity:.45;cursor:default;transform:none}
   .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap} .mut{color:var(--muted)} .err{color:var(--err)} .ok{color:var(--ok)}
   .pill{display:inline-block;padding:3px 12px;border-radius:999px;font-size:12px;border:1px solid var(--border)}
-  .pill.on{color:var(--teal);background:rgba(10,126,110,.07)} .pill.off{color:var(--err);border-color:rgba(180,35,60,.3)}
-  .msg{border-top:1px solid var(--border);padding:14px 0} .msg:first-child{border-top:0}
-  .q{font-weight:600} .a{white-space:pre-wrap;margin-top:8px} .meta{font-size:12px;color:var(--muted);margin-top:6px}
+  .pill.on{color:var(--teal-l);background:rgba(19,166,146,.1)} .pill.off{color:var(--err);border-color:rgba(255,122,143,.35)}
+  .msg{border-top:1px solid var(--border);padding:16px 0} .msg:first-child{border-top:0}
+  .q{font-weight:500;color:#fff} .a{white-space:pre-wrap;margin-top:8px} .meta{font-size:12px;color:var(--muted);margin-top:6px}
   .oculto{display:none!important}
-  .chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:10px 0;color:var(--ink)} .chk input{width:auto;margin-top:4px}
-  select{width:100%;background:var(--cream);border:1px solid var(--border);color:var(--ink);border-radius:10px;padding:11px 12px;font:inherit}
+  .chk{display:flex;gap:10px;align-items:flex-start;font-size:14px;margin:10px 0;color:var(--txt)} .chk input{width:auto;margin-top:5px;accent-color:var(--teal)}
   .der{border-top:1px solid var(--border);padding:12px 0;font-size:14px} .der:first-child{border-top:0}
+  footer.pie{position:relative;z-index:1;border-top:1px solid var(--border);padding:22px 20px;text-align:center;font-size:12px;color:var(--muted)}
+  footer.pie .l{font-family:'Cormorant Garamond',serif;font-size:1rem;letter-spacing:.1em;color:rgba(255,255,255,.7)}
+  @media(max-width:700px){nav.top{padding:1rem 1.2rem} nav.top .lk{gap:1rem} nav.top .lk .x{display:none}}
 </style>
 </head>
 <body>
+<nav class="top"><a class="logo" href="/"><span>CAPS</span> Digital · UNIMED</a><div class="lk"><a class="x" href="/#services">Servicios</a><a class="x" href="/privacidad/">Privacidad</a><a href="/">← Inicio</a></div></nav>
 <main>
-  <header><div><small><a href="/" style="color:inherit;text-decoration:none">← CAPS Digital · UNIMED Consulting</a> · fase piloto</small><h1>Plan <em>Avanzado</em></h1></div><span class="sp"></span><button class="sm oculto" id="bSalir">Salir</button></header>
+  <header><div><small>CAPS Digital · fase piloto</small><h1>Plan <em>Avanzado</em></h1></div><span class="sp"></span><button class="sm oculto" id="bSalir">Salir</button></header>
 
   <div class="card aviso"><b>CAPS Digital no es un chatbot: es un agente epistémico de salud.</b> Es el agente digital de orientación en Atención Primaria de Salud de UNIMED Consulting. Nace del modelo HoloMed, que comprende la salud como un sistema dinámico y complejo donde ninguna dimensión de la persona puede ignorarse. Razona con conocimiento explícito y fuentes verificables, y te muestra en qué se basa. Funciona con inteligencia artificial. Lo que CAPS Digital no hace:
     <ul><li>No diagnostica enfermedades ni condiciones clínicas.</li><li>No prescribe medicamentos ni tratamientos.</li><li>No interpreta resultados individuales de exámenes.</li><li>No sustituye la consulta médica profesional.</li></ul>
@@ -106,8 +123,9 @@
     </div>
   </section>
 </main>
-<p style="max-width:760px;margin:24px auto 0;padding:0 16px;font-size:11px;opacity:.7;line-height:1.5">Parte de la información de salud procede de MedlinePlus.gov (Biblioteca Nacional de Medicina de EE. UU.), que no avala este servicio.</p>
-<p style="max-width:760px;margin:8px auto 24px;padding:0 16px;font-size:11px;opacity:.7;line-height:1.5">This material contains content from LOINC (<a href="https://loinc.org">http://loinc.org</a>). LOINC is copyright © Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at <a href="https://loinc.org/license">http://loinc.org/license</a>. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.</p>
+<footer class="pie"><div class="l">CAPS Digital · UNIMED Consulting</div><div>Marco HoloMed · 13MIL v7.0 · © 2026 UNIMED · <a href="/privacidad/" style="color:inherit">Aviso de privacidad</a></div><p style="max-width:760px;margin:14px auto 0;padding:0 16px;font-size:11px;opacity:.7;line-height:1.5">Parte de la información de salud procede de MedlinePlus.gov (Biblioteca Nacional de Medicina de EE. UU.), que no avala este servicio.</p>
+<p style="max-width:760px;margin:8px auto 0;padding:0 16px;font-size:11px;opacity:.7;line-height:1.5">This material contains content from LOINC (<a href="https://loinc.org">http://loinc.org</a>). LOINC is copyright © Regenstrief Institute, Inc. and the Logical Observation Identifiers Names and Codes (LOINC) Committee and is available at no cost under the license at <a href="https://loinc.org/license">http://loinc.org/license</a>. LOINC® is a registered United States trademark of Regenstrief Institute, Inc.</p></footer>
+
 
 <script type="module">
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
