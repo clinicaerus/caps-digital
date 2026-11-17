@@ -217,7 +217,8 @@ async function verAvisos() {
   c.querySelectorAll('[data-guardav]').forEach(b => b.onclick = async () => {
     const id = b.dataset.guardav;
     const { error } = await sb.from('caps_avisos').update({ estado: c.querySelector(`[data-est="${id}"]`).value, respuesta_equipo: c.querySelector(`[data-resp="${id}"]`).value.trim() || null }).eq('id', Number(id));
-    b.textContent = error ? 'Error' : 'Guardado';
+    if (error) { b.textContent = 'Error'; return; }
+    verAvisos();
   });
 }
 $('bAvisos').onclick = verAvisos;
