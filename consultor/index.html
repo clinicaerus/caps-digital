@@ -54,6 +54,7 @@
       <div>
         <div class="card" style="padding:12px 14px">
           <div class="row"><select id="sFiltro" style="width:auto;flex:1"><option value="abiertas">Abiertas</option><option value="todas">Todas</option></select><button class="sm" id="bRecargar">Actualizar</button></div>
+          <div class="row" style="margin-top:8px"><button class="sm" id="bAvisos" style="flex:1">Avisos de calidad</button></div>
         </div>
         <div id="lista"></div>
       </div>
@@ -158,7 +159,19 @@ async function generarFicha() {
   $('dFicha').innerHTML = `<div class="card ficha" style="margin-top:10px">${fichaHTML(data.ficha)}
     ${refs ? `<h4>Enlaces PubMed</h4><ul>${refs}</ul>` : ''}${mlp ? `<h4>Enlaces MedlinePlus</h4><ul>${mlp}</ul>` : ''}${meds ? `<h4>Medicamentos (CIMA · AEMPS)</h4><ul>${meds}</ul>` : ''}
     <p class="mut" style="font-size:12px">Ficha generada por IA para uso profesional. No es un diagnóstico; la valoración clínica corresponde al profesional.</p>
-    <div class="row"><button class="sm" id="bGuardarFicha">Guardar como nota</button><button class="sm" id="bImprimir">Imprimir / PDF</button></div></div>`;
+    <div class="row"><button class="sm" id="bGuardarFicha">Guardar como nota</button><button class="sm" id="bImprimir">Imprimir / PDF</button><button class="sm" id="bErrFicha">Señalar un error</button></div>
+    <div class="oculto" id="fErrFicha" style="margin-top:10px;padding:12px;border:1px dashed var(--border);border-radius:10px">
+      <label>Tipo de error</label><select id="cErr"><option value="incorrecto">Dato incorrecto</option><option value="fuente">Fuente o referencia equivocada</option><option value="incompleto">Falta información</option><option value="otro">Otro</option></select>
+      <label>Qué está mal y cómo debería ser</label><textarea id="tErr" maxlength="1000"></textarea>
+      <div class="row" style="margin-top:6px"><button class="sm pri" id="bEnvErr">Enviar aviso</button><span id="mErr"></span></div>
+    </div></div>`;
+  $('bErrFicha').onclick = () => $('fErrFicha').classList.toggle('oculto');
+  $('bEnvErr').onclick = async () => {
+    const t = $('tErr').value.trim(), m = $('mErr'); if (t.length < 3) { m.className = 'err'; m.textContent = 'Describe el error.'; return; }
+    const { error } = await sb.rpc('caps_enviar_aviso', { p_origen: 'ficha', p_historial: null, p_derivacion: selId, p_categoria: $('cErr').value, p_texto: t, p_contexto: data.ficha });
+    m.className = error ? 'err' : 'ok'; m.textContent = error ? 'No se pudo enviar.' : 'Aviso registrado. Lo revisaremos para corregir la causa.';
+    if (!error) $('tErr').value = '';
+  };
   $('bGuardarFicha').onclick = async () => { $('tNota').value = 'FICHA DE PREPARACIÓN (' + new Date().toLocaleDateString('es-ES') + ')\n\n' + data.ficha; await guardarNota(); };
   $('bImprimir').onclick = () => {
     const w = window.open('', '_blank'); if (!w) return;
@@ -185,6 +198,29 @@ async function guardarNota() {
   if (!error) { $('tNota').value = ''; pintarNotas(); }
 }
 
+const CAT = { incorrecto:'Dato incorrecto', no_entiendo:'No se entiende', incompleto:'Falta información', fuente:'Fuente dudosa', otro:'Otro' };
+const EST_AV = { nuevo:'Nuevo', revisado:'Revisado', corregido:'Corregido', descartado:'Descartado' };
+async function verAvisos() {
+  selId = null; document.querySelectorAll('.item').forEach(el => el.classList.remove('sel'));
+  const { data, error } = await sb.rpc('consultor_avisos', { p_estado: null });
+  const c = $('det');
+  if (error) { c.innerHTML = '<p class="err">No se pudieron cargar los avisos.</p>'; return; }
+  c.innerHTML = `<h2>Avisos de calidad</h2><p class="mut" style="font-size:13px;margin:0 0 8px">Cuando una persona o un profesional cuestiona lo que ha generado la IA. De una persona solo se muestra la consulta concreta sobre la que avisó.</p>` +
+    (data.length ? data.map(a => `<div class="msg">
+      <div class="row"><span class="pill ${a.estado === 'nuevo' ? 'nueva' : 'en_curso'}">${esc(EST_AV[a.estado])}</span><b>${esc(CAT[a.categoria] || a.categoria)}</b><span class="mut" style="font-size:12px">${a.rol === 'persona' ? 'Persona usuaria · sobre una respuesta' : 'Consultor · sobre la ficha de la solicitud n.º ' + esc(a.derivacion_id)} · ${esc(fecha(a.creado))}</span></div>
+      <div style="margin:6px 0;white-space:pre-wrap">«${esc(a.texto)}»</div>
+      ${a.pregunta ? `<details><summary class="mut" style="cursor:pointer">Ver la consulta</summary><div class="q" style="margin-top:6px">${esc(a.pregunta)}</div><div class="a">${esc(limpia(a.respuesta || ''))}</div></details>` : ''}
+      ${a.contexto ? `<details><summary class="mut" style="cursor:pointer">Ver la ficha</summary><div class="a" style="font-size:13px">${esc(a.contexto)}</div></details>` : ''}
+      <div class="row" style="margin-top:6px"><select data-est="${a.id}" style="width:auto">${Object.entries(EST_AV).map(([k, v]) => `<option value="${k}" ${k === a.estado ? 'selected' : ''}>${v}</option>`).join('')}</select>
+        <input data-resp="${a.id}" maxlength="2000" placeholder="${a.rol === 'persona' ? 'Respuesta visible para la persona (opcional)' : 'Nota (opcional)'}" value="${esc(a.respuesta_equipo || '')}" style="flex:1;min-width:200px">
+        <button class="sm" data-guardav="${a.id}">Guardar</button></div></div>`).join('') : '<p class="mut">No hay avisos.</p>');
+  c.querySelectorAll('[data-guardav]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.guardav;
+    const { error } = await sb.from('caps_avisos').update({ estado: c.querySelector(`[data-est="${id}"]`).value, respuesta_equipo: c.querySelector(`[data-resp="${id}"]`).value.trim() || null }).eq('id', Number(id));
+    b.textContent = error ? 'Error' : 'Guardado';
+  });
+}
+$('bAvisos').onclick = verAvisos;
 $('fLogin').onsubmit = async ev => {
   ev.preventDefault(); const f = ev.target;
   const { error } = await sb.auth.signInWithPassword({ email: f.e.value.trim(), password: f.p.value });

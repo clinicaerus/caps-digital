@@ -201,17 +201,43 @@ $('fDeriv').onsubmit = async ev => {
   $('tMotivo').value = ''; $('tTel').value = ''; $('kComparte').checked = false; pintarDerivaciones();
 };
 
+const CAT_AVISO = { incorrecto:'Algo no es correcto', no_entiendo:'No lo entiendo', incompleto:'Falta información', fuente:'Dudo de la fuente', otro:'Otro motivo' };
+const EST_AVISO = { nuevo:'enviado, pendiente de revisar', revisado:'revisado por el equipo', corregido:'revisado y corregido', descartado:'revisado' };
 async function pintarHistorial() {
   const { data, error } = await sb.from('caps_historial').select('id, pregunta, respuesta, created_at').order('created_at', { ascending: false }).limit(100);
   const h = $('hist');
   if (error) { h.innerHTML = '<p class="err">No se pudo cargar el historial.</p>'; return; }
+  const { data: avs } = await sb.from('caps_avisos').select('historial_id, estado, respuesta_equipo, creado').eq('origen', 'respuesta').order('creado', { ascending: false });
+  const avisoDe = {}; (avs || []).forEach(a => { if (a.historial_id && !avisoDe[a.historial_id]) avisoDe[a.historial_id] = a; });
   $('bBorrarTodo').disabled = !data.length;
-  h.innerHTML = data.length ? data.map(r => `<div class="msg"><div class="q">${esc(r.pregunta)}</div><div class="a">${esc(limpia(r.respuesta))}</div>
-    <div class="row meta"><span>${esc(fecha(r.created_at))} · respuesta de CAPS Digital (IA)</span><span class="sp"></span><button class="sm" data-del="${r.id}">Borrar</button></div></div>`).join('')
-    : '<p class="mut">Todavía no hay consultas.</p>';
+  h.innerHTML = data.length ? data.map(r => {
+    const av = avisoDe[r.id];
+    return `<div class="msg"><div class="q">${esc(r.pregunta)}</div><div class="a">${esc(limpia(r.respuesta))}</div>
+    <div class="row meta"><span>${esc(fecha(r.created_at))} · respuesta de CAPS Digital (IA)</span><span class="sp"></span><button class="sm" data-av="${r.id}">¿Algo no es correcto o no se entiende?</button><button class="sm" data-del="${r.id}">Borrar</button></div>
+    ${av ? `<div class="meta" style="color:var(--teal)">Tu aviso: ${esc(EST_AVISO[av.estado] || av.estado)}${av.respuesta_equipo ? ' · Respuesta del equipo: ' + esc(av.respuesta_equipo) : ''}</div>` : ''}
+    <div class="oculto" id="fav${r.id}" style="margin-top:8px;padding:12px;border:1px dashed var(--border);border-radius:10px">
+      <label>¿Qué ocurre con esta respuesta?</label>
+      <select id="cav${r.id}">${Object.entries(CAT_AVISO).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>
+      <label>Explícalo brevemente</label>
+      <textarea id="tav${r.id}" maxlength="1000" style="min-height:60px" placeholder="Por ejemplo: este dato no coincide con lo que me dijo mi médico, o no entiendo esta parte."></textarea>
+      <p class="mut" style="font-size:12px;margin:6px 0">Al enviarlo, el equipo de UNIMED podrá ver <b>solo esta pregunta y su respuesta</b> para revisarla y mejorar CAPS Digital. Tu aviso nos ayuda a que la IA no tenga la última palabra.</p>
+      <div class="row"><button class="sm pri" data-envav="${r.id}">Enviar aviso</button><button class="sm" data-cancav="${r.id}">Cancelar</button><span id="mav${r.id}"></span></div>
+    </div></div>`;
+  }).join('') : '<p class="mut">Todavía no hay consultas.</p>';
   h.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
     if (!confirm('¿Borrar esta consulta? No se puede deshacer.')) return;
     await sb.from('caps_historial').delete().eq('id', b.dataset.del); pintarHistorial();
+  });
+  h.querySelectorAll('[data-av]').forEach(b => b.onclick = () => $('fav' + b.dataset.av).classList.toggle('oculto'));
+  h.querySelectorAll('[data-cancav]').forEach(b => b.onclick = () => $('fav' + b.dataset.cancav).classList.add('oculto'));
+  h.querySelectorAll('[data-envav]').forEach(b => b.onclick = async () => {
+    const id = b.dataset.envav, t = $('tav' + id).value.trim(), m = $('mav' + id);
+    if (t.length < 3) { m.className = 'err'; m.textContent = 'Escribe brevemente qué ocurre.'; return; }
+    b.disabled = true;
+    const { error } = await sb.rpc('caps_enviar_aviso', { p_origen: 'respuesta', p_historial: Number(id), p_derivacion: null, p_categoria: $('cav' + id).value, p_texto: t, p_contexto: null });
+    b.disabled = false;
+    if (error) { m.className = 'err'; m.textContent = /demasiados/.test(error.message) ? 'Has enviado muchos avisos hoy; inténtalo mañana.' : 'No se pudo enviar el aviso.'; return; }
+    pintarHistorial();
   });
 }
 
