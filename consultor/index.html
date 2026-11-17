@@ -81,7 +81,7 @@ function fichaHTML(txt) {
   for (const l of String(txt).split('\n')) {
     const t = l.trim();
     if (/^##\s+/.test(t)) { flush(); out.push('<h4>' + esc(t.replace(/^##\s+/, '')) + '</h4>'); }
-    else if (!t) flush(); else par.push(t.replace(/^\*\*(.+)\*\*$/, '$1'));
+    else if (!t) flush(); else par.push(t.replace(/\*\*(.+?)\*\*/g, '$1'));
   }
   flush(); return out.join('');
 }
@@ -123,7 +123,7 @@ async function abrir(id) {
       ? '<button class="sm" id="bHist">Ver historial autorizado</button> <span class="mut" style="font-size:12px">Cada acceso queda registrado.</span>'
       : '<span class="mut">La persona no ha autorizado el acceso a su historial.</span>'}</div>
     <h3>Ficha de preparación</h3>
-    <div class="row"><button class="pri sm" id="bFicha">Generar ficha</button><span id="mFicha" class="mut" style="font-size:13px">Usa IA, ontología HoloMed, LOINC, MedlinePlus y PubMed${d.comparte_historial ? ' y el historial autorizado' : ''}.</span></div>
+    <div class="row"><button class="pri sm" id="bFicha">Generar ficha</button><span id="mFicha" class="mut" style="font-size:13px">Usa IA, ontología HoloMed, LOINC, MedlinePlus, PubMed y CIMA${d.comparte_historial ? ' y el historial autorizado' : ''}.</span></div>
     <div id="dFicha"></div>
     <h3>Notas privadas</h3>
     <div id="dNotas"></div>
@@ -151,11 +151,12 @@ async function generarFicha() {
   const { data, error } = await sb.functions.invoke('caps-chat', { body: { accion: 'ficha', derivacion: selId } });
   b.disabled = false;
   if (error || !data?.ficha) { let det = null; try { det = await error?.context?.json(); } catch {} m.className = 'err'; m.textContent = 'No se pudo generar la ficha' + (det?.error ? ' (' + det.error + ')' : '') + '.'; return; }
-  m.className = 'ok'; m.textContent = `Generada · historial incluido: ${data.historial_compartido} consultas · búsqueda PubMed: «${data.consulta_pubmed || '—'}»`;
+  m.className = 'ok'; m.textContent = `Generada · historial incluido: ${data.historial_compartido} consultas · PubMed: ${(data.referencias || []).length} referencias · CIMA: ${(data.medicamentos || []).length} medicamentos`;
   const refs = (data.referencias || []).map(r => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.titulo)}</a> · ${esc(r.revista)} ${esc(r.anio)} · PMID ${esc(r.pmid)}</li>`).join('');
+  const meds = (data.medicamentos || []).map(m => `<li>${esc(m.nombre)} · <b>${esc(m.principio)}</b>${m.ficha_tecnica ? ` · <a href="${esc(m.ficha_tecnica)}" target="_blank" rel="noopener">ficha técnica</a>` : ''}${m.prospecto ? ` · <a href="${esc(m.prospecto)}" target="_blank" rel="noopener">prospecto</a>` : ''}</li>`).join('');
   const mlp = (data.fuentes || []).map(f => `<li><a href="${esc(f.url)}" target="_blank" rel="noopener">${esc(f.titulo)}</a></li>`).join('');
   $('dFicha').innerHTML = `<div class="card ficha" style="margin-top:10px">${fichaHTML(data.ficha)}
-    ${refs ? `<h4>Enlaces PubMed</h4><ul>${refs}</ul>` : ''}${mlp ? `<h4>Enlaces MedlinePlus</h4><ul>${mlp}</ul>` : ''}
+    ${refs ? `<h4>Enlaces PubMed</h4><ul>${refs}</ul>` : ''}${mlp ? `<h4>Enlaces MedlinePlus</h4><ul>${mlp}</ul>` : ''}${meds ? `<h4>Medicamentos (CIMA · AEMPS)</h4><ul>${meds}</ul>` : ''}
     <p class="mut" style="font-size:12px">Ficha generada por IA para uso profesional. No es un diagnóstico; la valoración clínica corresponde al profesional.</p>
     <div class="row"><button class="sm" id="bGuardarFicha">Guardar como nota</button><button class="sm" id="bImprimir">Imprimir / PDF</button></div></div>`;
   $('bGuardarFicha').onclick = async () => { $('tNota').value = 'FICHA DE PREPARACIÓN (' + new Date().toLocaleDateString('es-ES') + ')\n\n' + data.ficha; await guardarNota(); };
