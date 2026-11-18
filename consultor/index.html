@@ -41,9 +41,10 @@
     <h2>Entrar</h2>
     <form id="fLogin">
       <label>Correo</label><input type="email" name="e" autocomplete="username" required>
-      <label>Contraseña</label><input type="password" name="p" autocomplete="current-password" required>
+      <label>Contraseña</label><input type="password" name="p" autocomplete="current-password">
+      <p class="mut" style="font-size:13px;margin:6px 0 0">¿Sin contraseña? Escribe tu correo y pulsa «Enviarme un enlace».</p>
       <p id="mLogin" class="err"></p>
-      <button class="pri" type="submit">Entrar</button>
+      <button class="pri" type="submit">Entrar</button> <button type="button" id="bEnlace">Enviarme un enlace</button>
     </form>
   </section>
 
@@ -233,9 +234,17 @@ async function verAvisos() {
 $('bAvisos').onclick = verAvisos;
 $('fLogin').onsubmit = async ev => {
   ev.preventDefault(); const f = ev.target;
+  if (!f.p.value) { $('mLogin').className = 'err'; $('mLogin').textContent = 'Escribe la contraseña o usa «Enviarme un enlace».'; return; }
   const { error } = await sb.auth.signInWithPassword({ email: f.e.value.trim(), password: f.p.value });
   if (error) { $('mLogin').textContent = 'No se pudo entrar: revisa el correo y la contraseña.'; return; }
   vista();
+};
+$('bEnlace').onclick = async () => {
+  const e = $('fLogin').e.value.trim();
+  if (!e) { $('mLogin').textContent = 'Escribe tu correo.'; return; }
+  const { error } = await sb.auth.signInWithOtp({ email: e, options: { shouldCreateUser: false, emailRedirectTo: location.origin + location.pathname } });
+  $('mLogin').className = error ? 'err' : 'ok';
+  $('mLogin').textContent = error ? 'No se pudo enviar el enlace. Comprueba que es tu correo de consultor.' : 'Te hemos enviado un enlace de acceso. Ábrelo en este mismo dispositivo.';
 };
 $('bSalir').onclick = async () => { await sb.auth.signOut(); vista(); };
 $('sFiltro').onchange = cargar; $('bRecargar').onclick = cargar;
