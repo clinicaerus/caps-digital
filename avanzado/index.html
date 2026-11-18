@@ -59,6 +59,8 @@
     <ul><li>No diagnostica enfermedades ni condiciones clínicas.</li><li>No prescribe medicamentos ni tratamientos.</li><li>No interpreta resultados individuales de exámenes.</li><li>No sustituye la consulta médica profesional.</li></ul>
     <p style="margin:8px 0 0"><b>Ante una urgencia, llama al 112.</b> Durante la fase piloto, usa preguntas generales y evita escribir tu nombre o datos de contacto en las preguntas.</p></div>
 
+  <div class="card oculto" id="cPago" style="border-left:3px solid var(--teal-l)"><b style="color:#fff">Gracias por suscribirte a CAPS Digital.</b> Tu Plan Avanzado se activa en unos segundos. Para entrar, escribe el <b>mismo correo con el que has pagado</b> y pulsa «Enviarme un enlace de acceso». Si no te llega en unos minutos, revisa la carpeta de correo no deseado o escríbenos a salud@unimed-consulting.es.</div>
+
   <!-- Acceso -->
   <section id="vLogin" class="card oculto">
     <h2 style="margin:0 0 6px;font-size:18px">Entrar</h2>
@@ -258,6 +260,8 @@ async function pintarHistorial() {
     pintarHistorial();
   });
 }
+
+if (new URLSearchParams(location.search).get('pago') === 'ok') $('cPago').classList.remove('oculto');
 
 async function vista() {
   const { data: { session } } = await sb.auth.getSession();
