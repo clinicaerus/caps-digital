@@ -29,6 +29,7 @@
   .item.sel{border-color:var(--teal);box-shadow:0 0 0 2px rgba(10,126,110,.15)} .item p{margin:4px 0 0;font-size:13px;color:var(--muted);overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
   .msg{border-top:1px solid var(--border);padding:10px 0;font-size:14px} .msg:first-child{border-top:0} .q{font-weight:600} .a{white-space:pre-wrap;margin-top:6px}
   .ficha{white-space:normal} .ficha h4{font:600 17px/1.25 'Cormorant Garamond',serif;color:var(--teal);margin:14px 0 4px} .ficha p{margin:0 0 6px}
+  .nota .nh{display:block;margin:10px 0 2px;color:var(--ink);font-size:15px}
   .nota{border-left:3px solid var(--gold);padding:6px 10px;margin:6px 0;background:var(--cream);border-radius:6px;font-size:14px;white-space:pre-wrap}
   .oculto{display:none!important}
 </style>
@@ -193,9 +194,16 @@ async function generarFicha() {
   };
 }
 
+// Muestra las notas con los títulos «## » como encabezados; las largas (p. ej. una ficha guardada) quedan plegadas
+function notaHTML(txt) {
+  const html = esc(txt).replace(/^## (.+)$/gm, '<b class="nh">$1</b>').replace(/\n{3,}/g, '\n\n');
+  if (txt.length < 700) return html;
+  const primera = esc(txt.split('\n')[0].slice(0, 120));
+  return `<details><summary style="cursor:pointer;font-weight:600">${primera} <span class="mut" style="font-weight:400">(desplegar)</span></summary>${html.slice(html.indexOf('\n') + 1)}</details>`;
+}
 async function pintarNotas() {
   const { data } = await sb.from('caps_notas_consultor').select('id, texto, creado').eq('derivacion_id', selId).order('creado', { ascending: false });
-  $('dNotas').innerHTML = (data || []).map(n => `<div class="nota"><div class="mut" style="font-size:12px">${esc(fecha(n.creado))} <button class="sm" data-del="${n.id}" style="float:right">Borrar</button></div>${esc(n.texto)}</div>`).join('') || '<p class="mut" style="font-size:13px;margin:0">Sin notas.</p>';
+  $('dNotas').innerHTML = (data || []).map(n => `<div class="nota"><div class="mut" style="font-size:12px">${esc(fecha(n.creado))} <button class="sm" data-del="${n.id}" style="float:right">Borrar</button></div>${notaHTML(n.texto)}</div>`).join('') || '<p class="mut" style="font-size:13px;margin:0">Sin notas.</p>';
   $('dNotas').querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
     if (!confirm('¿Borrar esta nota?')) return;
     await sb.from('caps_notas_consultor').delete().eq('id', Number(b.dataset.del)); pintarNotas();
