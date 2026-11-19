@@ -426,8 +426,8 @@ footer {
       de ocho dimensiones que merecen ser comprendidas.
     </p>
     <div class="hero-actions">
-      <a href="#services" class="btn-primary">Explorar servicios</a>
-      <a href="#about" class="btn-secondary">Conocer el enfoque</a>
+      <a href="#" class="btn-primary" onclick="event.preventDefault(); abrirChat();">Pregunta ahora, es gratis →</a>
+      <a href="#services" class="btn-secondary">Ver planes</a>
     </div>
   </div>
   <div class="hero-orb">
@@ -739,6 +739,13 @@ footer {
     padding: 4px;
     background: #f8f9fa;
   }
+  .caps-ejemplos { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .caps-ejemplos button {
+    text-align: left; font: inherit; font-size: 0.82em; line-height: 1.35;
+    padding: 7px 10px; border-radius: 10px; cursor: pointer;
+    border: 1px solid rgba(108,92,231,0.45); background: #f6f4ff; color: #4b3fc4;
+  }
+  .caps-ejemplos button:hover { background: #ebe7ff; }
 </style>
 <button id="caps-bubble" onclick="toggleChat()">💬</button>
 <div id="caps-chat">
@@ -750,7 +757,12 @@ footer {
     <div class="caps-msg caps-bot">
       Hola. Soy <b>CAPS Digital</b>, el agente digital de orientación en Atención Primaria de Salud de UNIMED Consulting. Nazco del modelo HoloMed, que comprende la salud como un sistema dinámico y complejo donde ninguna dimensión de la persona puede ignorarse. Funciono con inteligencia artificial.<br><br>
       No soy un chatbot: soy un <b>agente epistémico de salud</b>. Te comprendo desde <b>8 dimensiones</b>, razono con la <b>ontología HoloMed</b> y fuentes verificables, y te muestro en qué me baso. No diagnostico ni prescribo; cuando lo necesites, te conecto con el <b>equipo clínico de UNIMED</b>.<br><br>
-      ¿En qué puedo ayudarte hoy?
+      ¿En qué puedo ayudarte hoy? <b>Escribe tu pregunta abajo</b> o prueba con un ejemplo:
+      <div class="caps-ejemplos">
+        <button type="button" onclick="preguntaEjemplo(this)">¿Para qué sirve una analítica de hemoglobina glicada?</button>
+        <button type="button" onclick="preguntaEjemplo(this)">Duermo mal desde hace semanas, ¿qué puede influir?</button>
+        <button type="button" onclick="preguntaEjemplo(this)">¿Qué preguntas llevo a mi médico por un cansancio que no se va?</button>
+      </div>
     </div>
   </div>
   <div id="caps-input-area">
@@ -772,6 +784,14 @@ footer {
     pregunta_demasiado_larga: 'Tu mensaje es demasiado largo. Intenta resumirlo (máximo 800 caracteres).',
     servicio_desactivado: 'El servicio no está disponible en este momento. Inténtalo más tarde.'
   };
+  function abrirChat() {
+    document.getElementById('caps-chat').style.display = 'block';
+    document.getElementById('caps-input').focus();
+  }
+  function preguntaEjemplo(b) {
+    document.getElementById('caps-input').value = b.textContent;
+    sendMsg();
+  }
   function toggleChat() {
     const chat = document.getElementById('caps-chat');
     const isHidden = getComputedStyle(chat).display === 'none';
