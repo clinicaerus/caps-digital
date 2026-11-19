@@ -507,7 +507,20 @@ footer {
         <li>Ontologías clínicas avanzadas (CIE-11, LOINC, HPO, Orphanet, NBO, MHMO)</li>
         <li>Prioridad en derivación al equipo especializado</li>
       </ul>
-      <a href="https://buy.stripe.com/14A9ATgK7cQb6JH8YXgA807" target="_blank" style="display:inline-block;margin-top:1.5rem;padding:0.8rem 1.8rem;background:var(--gold);color:var(--ink);text-decoration:none;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;">Suscribirse ahora →</a>
+      <label style="display:flex;gap:0.6rem;align-items:flex-start;margin-top:1.5rem;font-size:0.78rem;line-height:1.5;color:rgba(255,255,255,0.75);cursor:pointer;">
+        <input type="checkbox" id="consInicio" style="margin-top:0.2rem;flex-shrink:0;accent-color:var(--gold);">
+        <span>Pido que el Plan Avanzado empiece de inmediato. Sé que puedo desistir en los 14 días siguientes a la contratación y que, si lo hago, se me descontará la parte proporcional del servicio ya disfrutado. Suscripción mensual renovable; puedo cancelarla cuando quiera.</span>
+      </label>
+      <a id="btnSuscribir" href="https://buy.stripe.com/14A9ATgK7cQb6JH8YXgA807" target="_blank" aria-disabled="true" style="display:inline-block;margin-top:1rem;padding:0.8rem 1.8rem;background:var(--gold);color:var(--ink);text-decoration:none;font-size:0.78rem;letter-spacing:0.1em;text-transform:uppercase;opacity:0.4;cursor:not-allowed;">Suscribirse ahora →</a>
+      <script>
+        (function () {
+          var c = document.getElementById('consInicio'), b = document.getElementById('btnSuscribir');
+          function act() { b.style.opacity = c.checked ? '1' : '0.4'; b.style.cursor = c.checked ? 'pointer' : 'not-allowed'; b.setAttribute('aria-disabled', c.checked ? 'false' : 'true'); }
+          c.addEventListener('change', act);
+          b.addEventListener('click', function (e) { if (!c.checked) { e.preventDefault(); c.focus(); c.parentElement.style.color = 'var(--gold)'; } });
+          act();
+        })();
+      </script>
       <p style="margin-top:0.9rem;font-size:0.8rem;"><a href="/avanzado/" style="color:inherit;">¿Ya tienes el Plan Avanzado o eres fundador/a? Entra aquí →</a></p>
     </div>
     <!-- TELEMEDICINA -->
